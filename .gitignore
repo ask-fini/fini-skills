@@ -1,0 +1,9 @@
+.DS_Store
+node_modules/
+*.log
+
+# Local planning notes, not part of the public skill package.
+cx-public-api-workflow-discovery.md
+fini-api-skill-pack-findings.md
+team-discovery-questions-by-skill.md
+v1-local-draft-plan.md

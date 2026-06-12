@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fini API Coordinator"
+  short_description: "Route Fini API intents to the right workflow skill."
+  default_prompt: "Which Fini API workflow should I use for this task?"

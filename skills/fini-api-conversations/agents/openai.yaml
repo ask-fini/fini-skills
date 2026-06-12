@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fini Conversations API"
+  short_description: "Export, inspect, analyze, and safely delete conversations."
+  default_prompt: "Help me export or inspect Fini conversations through the API."

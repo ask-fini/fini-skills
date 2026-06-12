@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fini Knowledge API"
+  short_description: "Generate, manage, publish, organize, and assign knowledge."
+  default_prompt: "Help me generate or manage Fini knowledge through the API."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fini Generate Answer API"
+  short_description: "Send a message turn into a Fini agent and interpret events."
+  default_prompt: "Help me send a message to a Fini agent through the API."
