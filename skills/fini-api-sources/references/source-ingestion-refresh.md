@@ -24,6 +24,8 @@ Key mistake: using source IDs instead of URLs for web `documentIdsToAdd`.
 
 Key mistake: skipping registration and trying to ingest provider-native IDs directly.
 
+Provider discovery is for new importable content. If the user asks what is already in Fini, use the source-listing route with provider/source filters instead.
+
 ## Refresh Existing Sources
 
 1. Refresh known source IDs.
@@ -32,6 +34,12 @@ Key mistake: skipping registration and trying to ingest provider-native IDs dire
 4. Keep changed sources that are linked to existing knowledge when updating live content.
 5. Bulk-generate knowledge from changed source IDs, usually as drafts.
 6. Poll knowledge jobs and review/publish through `fini-api-knowledge`.
+
+Customer phrase translation:
+
+- "Update the bot from changed docs" means refresh sources, find changed linked sources, generate draft knowledge, review/publish, and verify assignment.
+- "Sync only what changed" means do not bulk-generate from every source unless the user explicitly accepts that broader update.
+- "Train the bot" means continue into `fini-api-knowledge`; completed ingestion alone does not change answers.
 
 ## Polling Checklist
 

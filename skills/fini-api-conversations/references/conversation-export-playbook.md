@@ -12,6 +12,15 @@ Use this reference for conversation export, analysis, and deletion planning. Fet
 6. Preserve source IDs and cursors in any durable export.
 7. Summarize what was included and what was intentionally excluded.
 
+For QA exports, also preserve:
+
+- Conversation ID and event IDs.
+- Status, resolved flag, feedback, approval, and CSAT fields when present.
+- User attributes used for context.
+- Used articles and used folders/subfolders.
+- Event role, type, message, and timestamp.
+- Source/channel filters and bot ID.
+
 ## Pagination Rules To Remember
 
 - Results are newest-first.
@@ -47,6 +56,7 @@ Conversation evidence
 - Relevant assistant turns:
 - Used articles or cited knowledge:
 - User attributes:
+- Resolution/feedback:
 - Tags/outcome:
 - Interpretation:
 - Confidence:

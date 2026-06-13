@@ -1,6 +1,6 @@
 ---
 name: fini-api-sources
-description: Use when the user wants to import, crawl, register, ingest, refresh, list, inspect, poll, detect changed content for, or delete Fini sources through the public API, including web URLs, provider resources such as Notion, Zendesk, or Confluence, source status polling, and handoff from processed sources into knowledge generation.
+description: Use when the user wants to import, crawl, register, ingest, refresh, list, inspect, poll, detect changed content for, or delete Fini sources through the public API; train a Fini bot from help center articles, internal docs, website pages, Notion, Zendesk, or Confluence; sync changed source content; or hand processed sources into knowledge generation.
 ---
 
 # Fini API Sources
@@ -25,6 +25,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - Prefer reviewable generated drafts after source import or refresh.
 - For refresh, generate knowledge only for sources that actually changed and already link to knowledge, unless the user explicitly wants broader behavior.
 - Do not promise answer changes until knowledge generation, publish/review, and assignment are verified.
+- Translate "train the bot" or "sync docs" into source processing plus a knowledge handoff; source import alone is not enough.
 
 ## Gotchas
 
@@ -34,6 +35,8 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - A queued ingestion response is not completion.
 - Completed source processing does not mean live agent answers changed.
 - Provider discovery may exclude already-imported resources.
+- Provider discovery requires the provider to be connected in the workspace first.
+- Discovery is for new importable provider content; list sources for content already imported into Fini.
 - Source deletion can optionally delete linked articles; treat this as destructive.
 
 ## Proof Of Completion

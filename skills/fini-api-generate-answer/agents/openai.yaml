@@ -1,4 +1,4 @@
 interface:
   display_name: "Fini Generate Answer API"
-  short_description: "Send a message turn into a Fini agent and interpret events."
-  default_prompt: "Help me send a message to a Fini agent through the API."
+  short_description: "Test Fini agent replies with metadata."
+  default_prompt: "Use $fini-api-generate-answer to test a Fini agent reply with user attributes."

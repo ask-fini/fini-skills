@@ -9,6 +9,7 @@ Use this reference for generating Fini knowledge from candidate text, inbox/conv
 | Processed source IDs | Bulk source-backed generation |
 | Raw text supplied by user/system | Single generation from candidate text |
 | Conversation or inbox evidence | Single generation with evidence linkage |
+| Golden-set failure caused by missing/stale KB | Draft improvement loop |
 | Manual final article text | Direct article management, not generation |
 
 ## Source-Backed Generation
@@ -39,6 +40,7 @@ Default to draft when:
 - The input is customer feedback or conversation evidence.
 - The user has not approved final wording.
 - Assignment/visibility is not yet understood.
+- The input is a golden-set failure or QA finding.
 
 Live generation is appropriate only when:
 

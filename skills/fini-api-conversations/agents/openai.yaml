@@ -1,4 +1,4 @@
 interface:
   display_name: "Fini Conversations API"
-  short_description: "Export, inspect, analyze, and safely delete conversations."
-  default_prompt: "Help me export or inspect Fini conversations through the API."
+  short_description: "Export conversations for QA and evidence."
+  default_prompt: "Use $fini-api-conversations to export Fini conversations for QA and golden-set analysis."

@@ -1,4 +1,4 @@
 interface:
   display_name: "Fini Sources API"
-  short_description: "Ingest, refresh, poll, and hand off sources to knowledge."
-  default_prompt: "Help me import or refresh sources through the Fini API."
+  short_description: "Ingest and refresh source content."
+  default_prompt: "Use $fini-api-sources to import or refresh sources before generating knowledge."

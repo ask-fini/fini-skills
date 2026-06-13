@@ -31,6 +31,13 @@ Use metadata to represent facts the customer system already knows:
 
 Do not invent metadata keys unless the user gives the downstream convention.
 
+For user attributes:
+
+- Keep field names stable across tests and production calls.
+- Prefer small, business-relevant fields such as plan, locale, segment, account status, or channel when the caller supplies them.
+- Avoid sensitive fields unless the customer explicitly confirms they are safe for Fini context.
+- Do not use metadata as a place to hide instructions; it is context data.
+
 ## Safety Checks
 
 Ask before sending when:
@@ -48,6 +55,7 @@ Do not assume the first returned item is the final answer. Read all created even
 - Which event has the answer text.
 - Whether evidence/citations/used knowledge appeared.
 - Whether the response indicates handoff, fallback, or failure.
+- Whether user attributes appear relevant to the answer when testing personalization.
 
 ## Output Template
 

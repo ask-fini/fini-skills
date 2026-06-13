@@ -1,6 +1,6 @@
 ---
 name: fini-api-conversations
-description: Use when the user wants to list, export, inspect, summarize, analyze, paginate, retrieve, delete, or bulk-delete Fini conversations through the public API; build QA, analytics, compliance, BI, RCA, or support-review workflows from Fini conversation data; or understand conversation filters, cursors, evidence fields, and deletion guardrails.
+description: Use when the user wants to list, export, inspect, summarize, analyze, paginate, retrieve, delete, or bulk-delete Fini conversations through the public API; build QA, analytics, compliance, BI, RCA, golden-set, support-review, CSAT/feedback, or knowledge-improvement workflows from Fini conversation data; or understand conversation filters, cursors, evidence fields, used articles, user attributes, and deletion guardrails.
 ---
 
 # Fini API Conversations
@@ -17,7 +17,8 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 4. List conversations with the narrowest useful filters.
 5. Page newest to older using the documented cursor and direction semantics.
 6. For analytics/RCA, extract evidence fields and preserve source conversation IDs.
-7. For deletion, produce an exact deletion plan and wait for explicit confirmation before calling delete routes.
+7. For QA/golden-set work, preserve expected vs actual answer fields, used articles, user attributes, feedback, and next action.
+8. For deletion, produce an exact deletion plan and wait for explicit confirmation before calling delete routes.
 
 ## Defaults
 
@@ -25,6 +26,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - Treat 90 days as the maximum single query window unless current docs say otherwise.
 - Store or summarize cursor state when paging long exports.
 - Return counts, filters used, time window, and pagination status in summaries.
+- Preserve event IDs, used articles, user attributes, status/resolution, and feedback fields when the export is for quality improvement.
 - Do not bulk delete unless the user explicitly confirms exact IDs.
 
 ## Gotchas
@@ -39,9 +41,12 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 
 - Export: report filters, time range, count, whether `hasMore` remains, and where data was written or how it was summarized.
 - Single conversation lookup: include the conversation ID, event count, key timestamps, and whether referenced articles or user attributes were present.
+- QA/golden-set export: include question/evidence, actual answer, used articles, feedback/resolution signal, and recommended next action.
 - Deletion plan: include exact IDs, count, route type, expected irreversibility, and confirmation status.
 - Completed deletion: re-check or report API response evidence from current docs.
 
 ## References
 
 Read [conversation-export-playbook.md](references/conversation-export-playbook.md) for export pagination, analysis outputs, and deletion planning templates.
+
+Read [qa-and-golden-set.md](references/qa-and-golden-set.md) when using conversations to build a golden set, find KB gaps, evaluate user attributes, or plan knowledge improvements.

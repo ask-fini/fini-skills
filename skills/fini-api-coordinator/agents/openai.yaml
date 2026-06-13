@@ -1,4 +1,4 @@
 interface:
   display_name: "Fini API Coordinator"
-  short_description: "Route Fini API intents to the right workflow skill."
-  default_prompt: "Which Fini API workflow should I use for this task?"
+  short_description: "Route bot and KB API workflows."
+  default_prompt: "Use $fini-api-coordinator to choose the right Fini public API workflow for my task."

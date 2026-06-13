@@ -1,4 +1,4 @@
 interface:
   display_name: "Fini Knowledge API"
-  short_description: "Generate, manage, publish, organize, and assign knowledge."
-  default_prompt: "Help me generate or manage Fini knowledge through the API."
+  short_description: "Manage knowledge, drafts, and assignment."
+  default_prompt: "Use $fini-api-knowledge to generate draft knowledge and verify agent visibility."
