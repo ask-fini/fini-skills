@@ -1,6 +1,6 @@
 ---
 name: fini-api-knowledge
-description: Use when the user wants to generate Fini knowledge from raw text, inbox evidence, conversations, golden-set failures, or sources; bulk-generate from source IDs; poll knowledge jobs; manage live articles or draft articles; publish, update, delete, or fetch articles; inspect or organize the knowledge tree; move articles or folders; initialize or persist a tree; assign folders/knowledge to agents; or run a draft-review-to-publish improvement loop through the public API.
+description: Use when the user wants to generate Fini knowledge from raw text, PDFs/files converted to text, inbox evidence, conversations, golden-set failures, or sources; create draft KB articles through Generate knowledge with candidateKnowledge and isDraft; bulk-generate from source IDs; poll knowledge jobs; manage articles/drafts; publish, update, delete, move, organize, or assign knowledge through the public API.
 ---
 
 # Fini API Knowledge
@@ -14,7 +14,8 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 | User intent | Path |
 | --- | --- |
 | Turn imported/changed source content into knowledge | Source-backed generation |
-| Turn raw text, feedback, or inbox evidence into knowledge | Single generation job |
+| Turn a PDF/file/raw text into a KB draft | Single Generate knowledge job with `candidateKnowledge`, `origin: "generated"`, `isDraft: true` |
+| Turn feedback or inbox evidence into knowledge | Single generation job with evidence linkage |
 | Fix a golden-set failure caused by missing or stale KB content | Draft improvement loop |
 | Write exact article text manually | Direct article management |
 | Review before changing answers | Draft workflow |
@@ -23,20 +24,21 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 
 ## Workflow Gates
 
-1. Resolve the target: source IDs, candidate text, article IDs, folder IDs, or `botId`.
-2. Choose draft vs live. Default to draft when quality or assignment is uncertain.
-3. Queue generation or article operation.
-4. Poll async jobs when the route queues work.
-5. Inspect result state: draft, live, no-op, failed, or duplicate.
-6. Publish only after explicit confirmation if the request did not already authorize live change.
-7. Verify folder placement and agent assignment when the user expects answers to change.
-8. Test with Generate Answer only if the user wants behavioral proof.
+1. Resolve the target: source IDs, extracted candidate text, article IDs, folder IDs, or `botId`.
+2. For raw PDF/file/text payloads, extract supportable facts and call Generate knowledge as a draft by default: `candidateKnowledge`, `origin: "generated"`, optional `botId`, `isDraft: true`.
+3. Choose draft vs live. Default to draft when quality or assignment is uncertain.
+4. Queue generation or article operation.
+5. Poll async jobs when the route queues work.
+6. Inspect result state: draft, live, no-op, failed, or duplicate.
+7. Publish only after explicit confirmation if the request did not already authorize live change.
+8. Verify folder placement and agent assignment when the user expects answers to change.
+9. Test with Generate Answer only if the user wants behavioral proof.
 
 ## Defaults
 
 - Prefer source-backed generation for imported source content.
-- Prefer generation over direct article writes when the agent is transforming evidence into a KB entry.
-- Prefer drafts for newly generated or refreshed knowledge.
+- Prefer Generate knowledge over direct article writes when transforming raw text, PDFs/files, feedback, or other evidence into a KB entry.
+- Prefer drafts for newly generated or refreshed knowledge; set `isDraft: true` explicitly even if current docs default it.
 - Prefer a draft improvement loop for golden-set failures and conversation evidence.
 - Use `restrictedOps` when the user wants to prevent unexpected creates, updates, or duplicates.
 - Treat publish, delete, folder delete, move, and assignment as live-impacting.

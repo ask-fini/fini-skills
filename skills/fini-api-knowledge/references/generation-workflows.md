@@ -7,7 +7,7 @@ Use this reference for generating Fini knowledge from candidate text, inbox/conv
 | Input | Preferred path |
 | --- | --- |
 | Processed source IDs | Bulk source-backed generation |
-| Raw text supplied by user/system | Single generation from candidate text |
+| Raw text or extracted PDF/file content | Single Generate knowledge job with `candidateKnowledge`, `origin: "generated"`, `isDraft: true` |
 | Conversation or inbox evidence | Single generation with evidence linkage |
 | Golden-set failure caused by missing/stale KB | Draft improvement loop |
 | Manual final article text | Direct article management, not generation |
@@ -25,8 +25,8 @@ Use this reference for generating Fini knowledge from candidate text, inbox/conv
 ## Single Generation
 
 1. Confirm candidate text is the content to transform.
-2. Choose origin and required linkage IDs from current docs.
-3. Default to draft.
+2. For raw text or extracted PDF/file content, use `origin: "generated"` with no source/event linkage ID.
+3. Set `isDraft: true` explicitly, even if current docs default it.
 4. Use restricted operations if the user wants constraints.
 5. Queue job.
 6. Poll.
