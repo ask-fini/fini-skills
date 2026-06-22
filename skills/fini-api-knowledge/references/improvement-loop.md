@@ -14,6 +14,8 @@ Before changing knowledge, decide which failure type applies:
 - Prompt, rulebook, routing, escalation, or tag classification was wrong.
 - The expected answer should be handled by product, policy, or human escalation rather than KB.
 
+Mental shortcut: knowledge fixes facts and source truth. It does not fix routing, escalation policy, tone, prompt instructions, or missing runtime metadata.
+
 Route accordingly:
 
 - Missing KB -> generate draft knowledge.

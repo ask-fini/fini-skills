@@ -2,6 +2,8 @@
 
 Use this reference when the user describes a Fini API goal and the agent needs to choose the right skill or sequence.
 
+If the request is broad, asks what the APIs can do, or mixes configuration/content/runtime concerns, read [api-mental-model.md](api-mental-model.md) first.
+
 ## Routing Rules
 
 | Customer phrase | Likely intent | Skill | First docs lookup |

@@ -2,6 +2,17 @@
 
 Use this reference for starting or continuing a Fini conversation through Generate Answer. Fetch current docs first for exact request and response fields.
 
+## Runtime Mental Model
+
+Generate Answer is the runtime proof harness. It creates conversation events and can trigger an AI reply for `role=user`, but it does not edit prompts, rules, tags, sources, or knowledge.
+
+Use it to answer:
+
+- Does this exact agent respond correctly now?
+- Did the prompt/rule/tag/knowledge change affect behavior?
+- Did the supplied user attributes or channel matter?
+- Should the next fix go to configuration, knowledge, sources, or caller metadata?
+
 ## Start New Conversation
 
 1. Resolve target agent.

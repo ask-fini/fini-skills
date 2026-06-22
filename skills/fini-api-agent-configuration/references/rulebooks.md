@@ -2,6 +2,20 @@
 
 Use this reference when the user says rulebook, rule, business rule, intent rule, escalation workflow, routing behavior, or asks to generate behavior from instructions.
 
+## Rulebook Mental Model
+
+Rules/rulebooks are behavior and workflow controls for existing agents. Use them when the desired change is about what the agent should do in a class of situations, not when the issue is simply missing documentation.
+
+Common rulebook jobs:
+
+- route specific intents
+- trigger escalation or handoff behavior
+- guide structured workflow steps
+- use tags or input schema as conditions
+- constrain behavior around sensitive or high-risk situations
+
+Drafts are review artifacts. Published rules assigned to `botIds` can affect live behavior.
+
 ## Choose The Safe Path
 
 | Intent | Default |

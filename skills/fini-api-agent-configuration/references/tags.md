@@ -2,6 +2,15 @@
 
 Use this reference when the user wants classification, routing labels, output labels, analytics tags, or rulebook conditions.
 
+## Tag Taxonomy Model
+
+Tags are shared vocabulary for classification, routing, reporting, and downstream review. Design the taxonomy before mutating it:
+
+- Routing tags should be stable and available to Rulebooks.
+- Output/reporting tags can describe the final state or outcome after a conversation.
+- Tag names should be short; descriptions and prompts carry the distinction rules.
+- A tag group should answer one classification question. Do not mix unrelated dimensions in one group.
+
 ## Design First
 
 Before creating tags, classify the group:

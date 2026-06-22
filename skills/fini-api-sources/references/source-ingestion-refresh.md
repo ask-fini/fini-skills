@@ -2,6 +2,22 @@
 
 Use this reference for source import, refresh, polling, changed-source detection, and source deletion. Fetch current docs first for exact request fields and supported source types.
 
+## Source Lifecycle
+
+Sources are raw content records. They do not become live bot knowledge by themselves.
+
+Lifecycle:
+
+1. Discover or choose source inputs.
+2. Register provider resources when needed.
+3. Ingest or refresh source records.
+4. Poll processing status.
+5. Detect changed linked sources when updating existing content.
+6. Hand processed source IDs to Knowledge generation.
+7. Publish and assign resulting knowledge before expecting answer changes.
+
+If content is already current but behavior is wrong, route to Agent Configuration rather than repeating source refresh.
+
 ## Web Import
 
 1. Decide whether seed URLs should be crawled or used directly.

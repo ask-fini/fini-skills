@@ -2,6 +2,20 @@
 
 Use this reference for generating Fini knowledge from candidate text, inbox/conversation evidence, or processed sources. Fetch current docs first for exact fields, job status values, and route names.
 
+## Knowledge Lifecycle
+
+Knowledge is the factual retrieval layer. A complete behavior-changing workflow usually needs:
+
+1. Candidate content or processed source IDs.
+2. Draft generation job.
+3. Job polling and result inspection.
+4. Review/publish decision.
+5. Folder placement.
+6. Agent folder assignment.
+7. Generate Answer proof.
+
+Drafts, unassigned folders, and unprocessed sources are not enough to change what an agent can answer.
+
 ## Choose Generation Type
 
 | Input | Preferred path |

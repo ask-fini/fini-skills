@@ -30,6 +30,17 @@ This sequence configures an existing Fini agent. Do not claim the public APIs ca
 7. Inspect conversations:
    - use conversation exports for QA, golden-set candidates, and rollout evidence
 
+## Configuration Mental Model
+
+Agent configuration changes how an existing agent behaves before or around knowledge retrieval:
+
+- Prompts shape global instructions, tone, planning, and channel behavior.
+- Rules/rulebooks shape routing, escalation, workflow branches, and structured behavior.
+- Tags/tag groups provide categories that rules, reporting, and output classification can depend on.
+- Knowledge provides factual content. Do not use knowledge generation to fix prompt, rule, or tag problems.
+
+If the agent gives a bad answer, decide whether the failure is behavior, content, visibility, or runtime context before changing configuration.
+
 ## Defaults
 
 - Keep configuration writes reviewable: draft rules, prompt plan, tag design, draft knowledge.

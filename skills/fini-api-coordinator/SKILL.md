@@ -79,6 +79,8 @@ The docs already contain endpoint references. The skills add workflow judgment: 
 
 ## References
 
+Read [api-mental-model.md](references/api-mental-model.md) when the user asks what the Fini public APIs can do, how the API areas fit together, how to triage a bad answer, or how to configure/onboard an existing agent end to end.
+
 Read [workflow-routing.md](references/workflow-routing.md) when the user needs a multi-step plan, a skill routing table, or a customer-facing explanation of which Fini API workflow to use.
 
 Read [customer-recipes.md](references/customer-recipes.md) when the user describes a customer job such as training a bot from docs, refreshing changed sources, proving quality with golden sets, using user attributes, or making knowledge visible to one agent.

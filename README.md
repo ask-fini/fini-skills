@@ -63,6 +63,7 @@ These skills intentionally avoid copying endpoint tables, request schemas, and l
 
 - workflow choice
 - endpoint sequencing
+- API mental models and lifecycle expectations
 - agent prompt/rule/tag configuration sequencing
 - async polling expectations
 - source ingestion vs live knowledge distinction

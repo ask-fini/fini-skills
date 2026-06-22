@@ -2,6 +2,18 @@
 
 Use this reference when the user wants to inspect, compare, or update an existing Fini agent's prompts.
 
+## Prompt Lifecycle
+
+Prompts are versioned configuration for one existing agent:
+
+1. Read the merged prompt view.
+2. Check history to understand saved agent-specific versions.
+3. Edit the full prompt arrays offline.
+4. Save a new version after approval.
+5. Re-fetch and test behavior with Generate Answer.
+
+Use prompts for instruction, tone, planning, channel behavior, and general handling policy. Do not use prompts as a substitute for missing factual knowledge, source ingestion, or customer-owned action APIs.
+
 ## Read Current Prompts
 
 1. Resolve `botId` with List agents if needed.

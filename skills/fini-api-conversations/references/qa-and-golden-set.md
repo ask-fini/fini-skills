@@ -2,6 +2,16 @@
 
 Use this reference when conversations are being exported for QA, golden-set creation, regression testing, or knowledge improvement. Fetch current conversation docs first for exact response fields.
 
+## Conversation Evidence Model
+
+Conversations are evidence, not the fix. Use them to decide which workflow should happen next:
+
+- Missing or stale facts -> Sources/Knowledge.
+- Bad routing, escalation, or classification -> Agent Configuration.
+- Missing user/account context -> Generate Answer metadata or caller integration.
+- Good answer candidates -> golden-set regression rows.
+- Delete requests -> destructive conversation cleanup only, not quality improvement.
+
 ## Build A Golden Set From Conversations
 
 1. Export a bounded sample with explicit time window and filters.
