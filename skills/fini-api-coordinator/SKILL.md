@@ -1,6 +1,6 @@
 ---
 name: fini-api-coordinator
-description: Use when the user asks which Fini public API workflow or endpoint to use for Fini client bot/runtime or knowledge-base management; wants to train a bot from help center, internal docs, websites, Notion, Zendesk, or Confluence; refresh or sync changed knowledge sources; generate, review, publish, organize, or assign knowledge; export conversations for QA or golden-set work; send or test a message turn with metadata/user attributes; or choose between source-backed generation, direct article management, Generate Answer, and conversation APIs. Route to the narrower Fini API skill and verify current endpoint details through docs.usefini.com/llms.txt.
+description: Use when the user asks which Fini public API workflow or endpoint to use for Fini client bot/runtime, agent configuration, or knowledge-base management; wants to train a bot from help center, internal docs, websites, Notion, Zendesk, or Confluence; configure prompts, prompt history, rulebooks/rules, rule drafts, tags, or tag groups; refresh or sync changed knowledge sources; generate, review, publish, organize, or assign knowledge; export conversations for QA or golden-set work; send or test a message turn with metadata/user attributes; or choose between agent configuration, source-backed generation, direct article management, Generate Answer, and conversation APIs. Route to the narrower Fini API skill and verify current endpoint details through docs.usefini.com/llms.txt.
 ---
 
 # Fini API Coordinator
@@ -16,15 +16,17 @@ When this skill comes from an installed Fini skills package, check whether the p
 For project-scoped installs, run from the project root:
 
 ```bash
-npx skills update --project fini-api-coordinator fini-api-conversations fini-api-generate-answer fini-api-sources fini-api-knowledge -y
+npx skills update --project fini-api-coordinator fini-api-agent-configuration fini-api-conversations fini-api-generate-answer fini-api-sources fini-api-knowledge -y
 ```
 
-For global installs, use `--global` instead of `--project`. If the install is not tracked by the CLI or the update command is unavailable, re-run `npx skills add ask-fini/fini-skills --all --copy -y`, then continue. Always verify live endpoint details through `https://docs.usefini.com/llms.txt`.
+For global installs, use `--global` instead of `--project`. If the install is not tracked by the CLI, the update command is unavailable, or a newly released Fini skill is missing after update, re-run `npx skills add ask-fini/fini-skills --all --copy -y`, then continue. Always verify live endpoint details through `https://docs.usefini.com/llms.txt`.
 
 ## Routing
 
 | User intent | Use |
 | --- | --- |
+| Configure prompts, prompt history, rulebooks/rules, rule drafts, tags, or tag groups | `fini-api-agent-configuration` |
+| Onboard/configure an existing Slack/support agent's behavior | `fini-api-agent-configuration` first, then Sources/Knowledge/Test as needed |
 | Export, inspect, analyze, or delete conversations | `fini-api-conversations` |
 | Build QA exports, golden-set candidates, or conversation evidence | `fini-api-conversations` |
 | Send a test/user turn into a Fini agent, continue a conversation, or pass user metadata | `fini-api-generate-answer` |
@@ -35,11 +37,12 @@ For global installs, use `--global` instead of `--project`. If the install is no
 
 If the request spans multiple areas, sequence skills in the product workflow order:
 
-1. Sources: ingest or refresh raw content.
-2. Knowledge: generate drafts or live articles from processed sources.
-3. Knowledge: organize articles into folders and assign folders to agents.
-4. Generate Answer: test whether the intended agent can answer from the updated knowledge.
-5. Conversations: export or inspect real conversations for QA, analytics, or evidence.
+1. Agent configuration: design tags, draft/publish rulebooks, and adjust prompts for existing agents.
+2. Sources: ingest or refresh raw content.
+3. Knowledge: generate drafts or live articles from processed sources.
+4. Knowledge: organize articles into folders and assign folders to agents.
+5. Generate Answer: test whether the intended agent behaves correctly.
+6. Conversations: export or inspect real conversations for QA, analytics, or evidence.
 
 ## Default Behavior
 
@@ -47,26 +50,24 @@ If the request spans multiple areas, sequence skills in the product workflow ord
 - Prefer draft/review paths before live publish.
 - Prefer source-backed generation for imported content.
 - Use direct article management only when the user wants exact manual control over the article body or lifecycle.
-- Treat delete, publish, folder assignment, and production answer generation as live-impacting.
+- Prefer rule drafts before published rule creation when configuring behavior from natural-language instructions.
+- Treat prompt updates, rule publish/update/delete, tag delete, knowledge publish/delete, folder assignment, and production answer generation as live-impacting.
 - Produce a dry-run style plan before live-impacting actions unless the user already gave exact IDs and explicit execution intent.
 - Do not ask the user to paste API keys into chat. Use environment variables or the caller's secure API flow when available.
 - Translate customer language into Fini concepts: "train/sync docs" usually means Sources plus Knowledge, while "make the bot use it" usually also needs folder assignment and a runtime test.
+- Translate "configure/onboard the agent" into prompts, rulebooks/rules, tags, knowledge, and runtime tests depending on the requested layer.
 - Do not imply Fini public APIs can perform customer-owned business actions unless the live docs show a supported route.
 
-## What This Pack Adds
+## Pack Boundary
 
-The docs already contain endpoint references. The skills should add the judgment layer:
-
-- Which workflow to choose.
-- Which API response determines the next step.
-- Where async polling is required.
-- Whether draft, live, or assignment state means behavior has changed.
-- When read vs write scope is needed.
-- What proof shows the workflow worked.
-- When to stop and ask before destructive or live-impacting changes.
+The docs already contain endpoint references. The skills add workflow judgment: which path to choose, which response determines the next step, where review/polling is required, and what proof shows the workflow worked.
 
 ## High-Value Gotchas
 
+- Agent configuration APIs are for existing Fini agents; do not promise full agent/workspace/Slack provisioning unless current docs expose those routes.
+- Prompt updates save a new version and require the full prompt section arrays.
+- Natural-language rulebook creation should default to a draft rule, not direct published rule creation.
+- Tag groups marked as output-only are not available to Rulebooks.
 - Source ingestion is not live knowledge.
 - Generated drafts do not affect answers until reviewed/published and visible to the agent.
 - Knowledge can exist but still be invisible to an agent if folder assignment is wrong.

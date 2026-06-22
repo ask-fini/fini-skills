@@ -55,6 +55,7 @@ For each row:
 3. Include only the metadata needed for the scenario.
 4. Capture actual answer, event IDs, used articles, and whether the result should pass.
 5. Fetch the full conversation only when persistence or audit evidence is needed.
+6. Route failures by type: content gaps to Knowledge/Sources, wrong behavior config to Agent Configuration, and missing context to user attributes.
 
 ## Attachments
 

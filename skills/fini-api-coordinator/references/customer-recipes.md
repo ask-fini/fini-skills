@@ -2,6 +2,38 @@
 
 Use this reference when the user describes a customer job rather than an endpoint name. Keep endpoint details in the live docs; use this file to choose the workflow and proof.
 
+## Configure Or Onboard An Existing Agent
+
+Customer phrases:
+
+- "Set up this Slack agent."
+- "Configure the bot behavior."
+- "Add rulebooks and tags."
+- "Update the prompt for this agent."
+
+Workflow:
+
+1. `fini-api-agent-configuration`: resolve the target agent.
+2. Design routing or output tag groups before rules that depend on them.
+3. Create/refine rule drafts from behavior instructions; publish only after review and explicit target agents.
+4. Read prompt history/current prompts; update a new prompt version only after approval.
+5. Use `fini-api-sources` and `fini-api-knowledge` if the behavior gap is missing content rather than configuration.
+6. Use `fini-api-generate-answer` for targeted runtime tests.
+7. Use `fini-api-conversations` for rollout QA or golden-set evidence.
+
+Proof:
+
+- Agent ID resolved.
+- Tags/tag groups listed or created and Rulebook availability is clear.
+- Rules are draft or published with target `botIds` explicit.
+- Prompt version status is explicit.
+- Knowledge changes are separated from configuration changes.
+- Runtime tests or conversation evidence show whether behavior changed.
+
+Boundary:
+
+- This configures an existing Fini agent. Do not promise full workspace, Slack install, or new-agent provisioning unless the current public docs expose those routes.
+
 ## Train The Bot From Customer Docs
 
 Customer phrases:

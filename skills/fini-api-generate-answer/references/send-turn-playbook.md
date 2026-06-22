@@ -47,6 +47,21 @@ Ask before sending when:
 - The request is a load test or repeated send.
 - The message contains sensitive customer data and the workspace is unclear.
 
+## Config Or Knowledge Change Proof
+
+Use Generate Answer as a proof step after another workflow changes agent behavior:
+
+- Prompt, rulebook, or tag changes -> route setup to `fini-api-agent-configuration`, then test here.
+- Source or knowledge changes -> route setup to `fini-api-sources` or `fini-api-knowledge`, then test here.
+- User attributes or channel behavior -> send only the minimal metadata needed for the scenario.
+
+If the answer is wrong, classify the likely failure before proposing a fix:
+
+- Missing/stale content -> Knowledge or Sources.
+- Wrong routing, escalation, tone, or rule behavior -> Agent Configuration.
+- Missing personalization context -> Generate Answer metadata/user attributes.
+- Customer-owned action not supported by public Fini docs -> integration gap, not KB/config.
+
 ## Response Interpretation
 
 Do not assume the first returned item is the final answer. Read all created events and summarize:
@@ -67,6 +82,7 @@ Generate Answer result
 - Events created:
 - Assistant reply:
 - Evidence/used articles:
+- Likely follow-up workflow:
 - Full conversation fetched:
 - Caveats:
 ```

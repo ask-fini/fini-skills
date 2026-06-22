@@ -1,6 +1,6 @@
 ---
 name: fini-api-generate-answer
-description: Use when the user wants to send a message turn into a Fini agent through the public API, start or continue a Fini conversation, test bot behavior or golden-set questions, pass channel or user metadata/user attributes with a turn, preserve multi-turn runtime context, interpret the created public events returned by Generate Answer, or decide when to fetch the full conversation after sending a message.
+description: Use when the user wants to send a message turn into a Fini agent through the public API, start or continue a Fini conversation, test bot behavior or golden-set questions, validate prompt/rule/tag/knowledge changes, pass channel or user metadata/user attributes with a turn, preserve multi-turn runtime context, interpret the created public events returned by Generate Answer, or decide when to fetch the full conversation after sending a message.
 ---
 
 # Fini API Generate Answer
@@ -18,7 +18,8 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 5. Include channel and user metadata intentionally; do not invent CRM fields.
 6. Send the event only after the target agent/workspace is unambiguous.
 7. Interpret the returned created events.
-8. Fetch the full conversation afterward if the user needs wrapper state, historical context, or persisted evidence.
+8. Classify failures as configuration, knowledge, runtime metadata, or unsupported customer action before recommending follow-up work.
+9. Fetch the full conversation afterward if the user needs wrapper state, historical context, or persisted evidence.
 
 ## Defaults
 
@@ -27,6 +28,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - Keep metadata minimal and explicit.
 - Use stable `metadata.user_attributes` keys for golden-set and personalization tests.
 - Mark synthetic traffic in metadata when the caller is testing rather than serving a real user.
+- Use this as the proof step after prompt, rulebook, tag, source, or knowledge changes; do not make those changes from this skill.
 - Summarize returned events by role, type, message text, and evidence fields rather than dumping raw payloads.
 
 ## Gotchas

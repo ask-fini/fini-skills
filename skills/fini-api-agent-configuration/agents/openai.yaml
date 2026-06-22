@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fini Agent Configuration API"
+  short_description: "Configure prompts, rulebooks, and tags."
+  default_prompt: "Use $fini-api-agent-configuration to configure prompts, rulebooks, tags, and safe behavior changes for an existing Fini agent."

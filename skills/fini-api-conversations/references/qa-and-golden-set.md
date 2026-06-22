@@ -22,10 +22,11 @@ Use this reference when conversations are being exported for QA, golden-set crea
 Use this when the conversation shows a KB gap or stale answer:
 
 1. Extract the smallest useful evidence from the conversation.
-2. Decide whether this is missing knowledge, stale source content, bad assignment, or runtime metadata.
+2. Decide whether this is missing knowledge, stale source content, bad assignment, prompt/rule/tag behavior, or runtime metadata.
 3. Route missing/stale KB issues to `fini-api-knowledge`.
 4. Route stale source issues to `fini-api-sources` first.
-5. Retest with `fini-api-generate-answer` before publishing if the change affects live behavior.
+5. Route prompt, rulebook, routing, escalation, or tag classification issues to `fini-api-agent-configuration`.
+6. Retest with `fini-api-generate-answer` before publishing if the change affects live behavior.
 
 ## Golden Set Output Template
 
@@ -55,6 +56,7 @@ Conversation QA summary
 - Stale source candidates:
 - Assignment/visibility issues:
 - Metadata/user-attribute issues:
+- Prompt/rule/tag config issues:
 - Escalation/handoff signals:
 - Next workflow:
 ```

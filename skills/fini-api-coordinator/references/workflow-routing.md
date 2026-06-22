@@ -6,6 +6,11 @@ Use this reference when the user describes a Fini API goal and the agent needs t
 
 | Customer phrase | Likely intent | Skill | First docs lookup |
 | --- | --- | --- | --- |
+| "Configure/onboard this Slack agent" | Existing-agent behavior configuration | `fini-api-agent-configuration` then Sources/Knowledge/Test as needed | `llms.txt` -> Prompts, Rules, Tags |
+| "Update the bot prompt" | Prompt version workflow | `fini-api-agent-configuration` | `llms.txt` -> Get prompts + Update prompts |
+| "Show prompt history" | Prompt version audit | `fini-api-agent-configuration` | `llms.txt` -> Get prompt history |
+| "Create a rulebook/rule" | Draft or publish rule workflow | `fini-api-agent-configuration` | `llms.txt` -> Create rule draft + Publish rule draft |
+| "Create routing/outcome tags" | Tag group and tag workflow | `fini-api-agent-configuration` | `llms.txt` -> Tag groups + Tags |
 | "Export conversations from last week" | Conversation list/export | `fini-api-conversations` | `llms.txt` -> List conversations |
 | "Delete these conversations" | Destructive conversation cleanup | `fini-api-conversations` | `llms.txt` -> Delete/Bulk delete conversations |
 | "Send a message to my Fini bot" | Runtime answer generation | `fini-api-generate-answer` | `llms.txt` -> Generate Answer |
@@ -23,6 +28,16 @@ Use this reference when the user describes a Fini API goal and the agent needs t
 | "Refund a customer" / "change a subscription" / "update an account" | Customer-owned action API, not current bot/KB API workflow | Coordinator only | `llms.txt` -> verify whether a supported public route exists |
 
 ## Multi-Step Recipes
+
+### Configure An Existing Slack Or Support Agent
+
+1. `fini-api-agent-configuration`: resolve the agent and design tags/tag groups.
+2. `fini-api-agent-configuration`: create or refine draft rulebooks/rules.
+3. `fini-api-agent-configuration`: inspect/update prompts only after approval.
+4. `fini-api-sources`: import or refresh docs if content is missing.
+5. `fini-api-knowledge`: generate drafts, publish after review, and assign folders.
+6. `fini-api-generate-answer`: run targeted behavior tests.
+7. `fini-api-conversations`: inspect rollout conversations or build QA/golden-set evidence.
 
 ### First-Time Web Knowledge Import
 

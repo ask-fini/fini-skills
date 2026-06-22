@@ -26,6 +26,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - For refresh, generate knowledge only for sources that actually changed and already link to knowledge, unless the user explicitly wants broader behavior.
 - Do not promise answer changes until knowledge generation, publish/review, and assignment are verified.
 - Translate "train the bot" or "sync docs" into source processing plus a knowledge handoff; source import alone is not enough.
+- If the source content is current but the bot still routes, escalates, classifies, or speaks incorrectly, hand off to `fini-api-agent-configuration` instead of refreshing sources again.
 
 ## Gotchas
 

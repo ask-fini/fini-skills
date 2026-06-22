@@ -1,4 +1,4 @@
 interface:
   display_name: "Fini API Coordinator"
-  short_description: "Route bot and KB API workflows."
+  short_description: "Route bot, config, and KB workflows."
   default_prompt: "Use $fini-api-coordinator to choose the right Fini public API workflow for my task."

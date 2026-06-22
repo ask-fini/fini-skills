@@ -11,6 +11,7 @@ Before changing knowledge, decide which failure type applies:
 - Article exists but is not assigned to the target agent.
 - Article exists but is in the wrong folder.
 - Runtime metadata/user attributes were missing.
+- Prompt, rulebook, routing, escalation, or tag classification was wrong.
 - The expected answer should be handled by product, policy, or human escalation rather than KB.
 
 Route accordingly:
@@ -19,6 +20,7 @@ Route accordingly:
 - Stale source -> refresh source first, then generate draft updates.
 - Visibility issue -> folder/article assignment workflow.
 - Metadata issue -> Generate Answer runtime pattern.
+- Prompt/rule/tag behavior issue -> Agent Configuration workflow.
 - Out-of-scope business action -> do not create KB that promises unsupported actions.
 
 ## Draft Fix Workflow

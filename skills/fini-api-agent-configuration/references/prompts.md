@@ -1,0 +1,49 @@
+# Prompt Workflows
+
+Use this reference when the user wants to inspect, compare, or update an existing Fini agent's prompts.
+
+## Read Current Prompts
+
+1. Resolve `botId` with List agents if needed.
+2. Fetch current prompts for that agent.
+3. If the agent has no saved version, treat the returned content as a workspace-template fallback, not proof of an agent-specific saved prompt.
+4. Fetch prompt history when the user asks what changed, wants rollback context, or asks whether the agent has custom prompts.
+
+## Update Prompts
+
+Use this sequence for a write:
+
+1. Fetch current prompts.
+2. Make a minimal diff against the prompt arrays.
+3. Preserve all three full top-level arrays:
+   - `hcPlanningPrompt`
+   - `hcGuidelinePrompt`
+   - `hcChannelPrompt`
+4. Show a short plan with target agent, changed sections, and rollback/history note.
+5. Ask for explicit approval unless the caller already authorized the exact write.
+6. Save the new prompt version.
+7. Fetch prompts again to verify the merged read shape.
+8. Test with Generate Answer if behavior should change.
+
+## Gotchas
+
+- Prompt update saves a new version; it does not patch the current row in place.
+- Send full section arrays, not only the changed section.
+- Subsection helper fields from merged reads are not required in the write payload.
+- The write response is the stored version row. Fetch prompts after writing when the merged view matters.
+- Current docs say the write route uses `POST /v2/bots/{id}/hc-prompt` without `/public`. Verify before calling.
+- Read scope is enough for get/history; write scope is required for update.
+
+## Output Shape
+
+For a prompt change plan, report:
+
+```markdown
+Target agent: [name or botId]
+Current source: [saved version or workspace template fallback]
+Sections changing: [planning/guideline/channel]
+Write status: [not run / saved version ID / failed]
+Verification: [re-fetched / not checked]
+Runtime test: [not requested / passed / failed / needs review]
+Rollback context: [history checked / history not checked]
+```

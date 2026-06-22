@@ -1,6 +1,6 @@
 ---
 name: fini-api-conversations
-description: Use when the user wants to list, export, inspect, summarize, analyze, paginate, retrieve, delete, or bulk-delete Fini conversations through the public API; build QA, analytics, compliance, BI, RCA, golden-set, support-review, CSAT/feedback, or knowledge-improvement workflows from Fini conversation data; or understand conversation filters, cursors, evidence fields, used articles, user attributes, and deletion guardrails.
+description: Use when the user wants to list, export, inspect, summarize, analyze, paginate, retrieve, delete, or bulk-delete Fini conversations through the public API; build QA, analytics, compliance, BI, RCA, golden-set, support-review, CSAT/feedback, knowledge-improvement, or agent-configuration-improvement workflows from Fini conversation data; or understand conversation filters, cursors, evidence fields, used articles, user attributes, and deletion guardrails.
 ---
 
 # Fini API Conversations
@@ -17,7 +17,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 4. List conversations with the narrowest useful filters.
 5. Page newest to older using the documented cursor and direction semantics.
 6. For analytics/RCA, extract evidence fields and preserve source conversation IDs.
-7. For QA/golden-set work, preserve expected vs actual answer fields, used articles, user attributes, feedback, and next action.
+7. For QA/golden-set work, preserve expected vs actual answer fields, used articles, user attributes, feedback, failure type, and next action.
 8. For deletion, produce an exact deletion plan and wait for explicit confirmation before calling delete routes.
 
 ## Defaults
@@ -27,6 +27,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - Store or summarize cursor state when paging long exports.
 - Return counts, filters used, time window, and pagination status in summaries.
 - Preserve event IDs, used articles, user attributes, status/resolution, and feedback fields when the export is for quality improvement.
+- Route evidence by failure type: content gaps to Knowledge/Sources, behavior config issues to Agent Configuration, and runtime context issues to Generate Answer metadata.
 - Do not bulk delete unless the user explicitly confirms exact IDs.
 
 ## Gotchas

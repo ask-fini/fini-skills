@@ -17,6 +17,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 | Turn a PDF/file/raw text into a KB draft | Single Generate knowledge job with `candidateKnowledge`, `origin: "generated"`, `isDraft: true` |
 | Turn feedback or inbox evidence into knowledge | Single generation job with evidence linkage |
 | Fix a golden-set failure caused by missing or stale KB content | Draft improvement loop |
+| Fix wrong prompt, rulebook, routing, escalation, or tag behavior | Use `fini-api-agent-configuration`, not Knowledge |
 | Write exact article text manually | Direct article management |
 | Review before changing answers | Draft workflow |
 | Make existing knowledge visible to an agent | Tree/folder assignment |
@@ -52,6 +53,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - There is no need to memorize direct lookup paths; verify current article lookup docs before fetching by IDs.
 - Knowledge can be live but invisible to an agent until assigned through the folder tree.
 - A scoped tree for a `botId` can be empty because no folders are assigned, not because the workspace has no knowledge.
+- Wrong prompt/rule/tag behavior is an agent-configuration issue, not a reason to create more KB content by default.
 
 ## Proof Of Completion
 
