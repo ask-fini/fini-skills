@@ -27,6 +27,7 @@ npx skills add ask-fini/fini-skills --all
 | Skill | Use when |
 | --- | --- |
 | `fini-api-coordinator` | Choose the right Fini public API workflow, update/check skill freshness, and route customer-language jobs to focused skills. |
+| `fini-api-slack-onboarding` | Run a full Slack-led onboarding for a new Fini client or newly adopted support agent: bot behavior, sources, KB, prompts/rules/tags, tests, and go-live readiness. |
 | `fini-api-agent-configuration` | Configure existing Fini agents with prompts, prompt history, rulebooks/rules, rule drafts, tags, and tag groups. |
 | `fini-api-conversations` | Export, inspect, analyze, paginate, retrieve, delete, bulk-delete, and build QA/golden-set evidence from Fini conversations. |
 | `fini-api-generate-answer` | Send a message turn into a Fini agent, start/continue conversations, pass user attributes, test bot behavior, and interpret returned events. |
@@ -38,7 +39,7 @@ npx skills add ask-fini/fini-skills --all
 The coordinator skill tells agents to update only the Fini skills before endpoint-specific work. For project-scoped installs, run from the project root:
 
 ```bash
-npx skills update --project fini-api-coordinator fini-api-agent-configuration fini-api-conversations fini-api-generate-answer fini-api-sources fini-api-knowledge -y
+npx skills update --project fini-api-coordinator fini-api-slack-onboarding fini-api-agent-configuration fini-api-conversations fini-api-generate-answer fini-api-sources fini-api-knowledge -y
 ```
 
 For global installs, use `--global` instead of `--project`. If the install is not tracked by the CLI, re-run:
@@ -77,4 +78,4 @@ These skills intentionally avoid copying endpoint tables, request schemas, and l
 
 ## Current Shape
 
-The current package uses six skills. Knowledge generation, article/draft management, and tree/assignment workflows are grouped under `fini-api-knowledge`. Prompts, rulebooks/rules, and tags/tag groups are grouped under `fini-api-agent-configuration` because they compose into one existing-agent configuration workflow. These can be split later if customer usage shows either skill triggers too broadly.
+The current package uses seven skills. `fini-api-slack-onboarding` is intentionally narrow: it should trigger only for full new-client-style onboarding, then route into the focused skills. Knowledge generation, article/draft management, and tree/assignment workflows are grouped under `fini-api-knowledge`. Prompts, rulebooks/rules, and tags/tag groups are grouped under `fini-api-agent-configuration` because they compose into one existing-agent configuration workflow. These can be split later if customer usage shows either skill triggers too broadly.

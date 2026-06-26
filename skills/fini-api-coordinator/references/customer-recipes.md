@@ -34,6 +34,34 @@ Boundary:
 
 - This configures an existing Fini agent. Do not promise full workspace, Slack install, or new-agent provisioning unless the current public docs expose those routes.
 
+## Full Slack-Led Client Onboarding
+
+Customer phrases:
+
+- "Onboard us to Fini."
+- "Set up my Fini bot and KB."
+- "We connected Zendesk; help us get the bot ready from Slack."
+- "Build our support bot behavior, KB, and tests."
+
+Workflow:
+
+1. `fini-api-slack-onboarding`: verify workspace state first: agents, articles/drafts, folders, and sources.
+2. If fresh onboarding, offer all-at-once intake or step-by-step intake.
+3. Gather scope, boundaries, escalation, tone, sources, top questions, examples, and launch constraints.
+4. Use `fini-api-sources` for source discovery, crawl, register, ingest, refresh, and polling.
+5. Use `fini-api-knowledge` for draft knowledge, folder/tree setup, publish-after-review, and assignment.
+6. Use `fini-api-agent-configuration` for prompts, rule drafts, rule publish after approval, tags, and tag groups.
+7. Use `fini-api-generate-answer` for a 4-8 question onboarding test suite.
+8. Produce a readiness summary with blockers and approvals.
+
+Proof:
+
+- Fresh/expansion/targeted classification is explicit.
+- Target agent is resolved.
+- Client inputs are collected or marked missing.
+- Sources, KB, folders, config, and tests each have a status.
+- Live-impacting operations have explicit approvals.
+
 ## Train The Bot From Customer Docs
 
 Customer phrases:

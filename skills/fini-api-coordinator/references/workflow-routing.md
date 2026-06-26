@@ -8,6 +8,7 @@ If the request is broad, asks what the APIs can do, or mixes configuration/conte
 
 | Customer phrase | Likely intent | Skill | First docs lookup |
 | --- | --- | --- | --- |
+| "Onboard us to Fini" / "Set up my Fini bot and KB" | Possible fresh Slack-led onboarding | `fini-api-slack-onboarding` after workspace-state check | `llms.txt` -> Agents, Articles, Folders, Sources |
 | "Configure/onboard this Slack agent" | Existing-agent behavior configuration | `fini-api-agent-configuration` then Sources/Knowledge/Test as needed | `llms.txt` -> Prompts, Rules, Tags |
 | "Update the bot prompt" | Prompt version workflow | `fini-api-agent-configuration` | `llms.txt` -> Get prompts + Update prompts |
 | "Show prompt history" | Prompt version audit | `fini-api-agent-configuration` | `llms.txt` -> Get prompt history |
@@ -30,6 +31,18 @@ If the request is broad, asks what the APIs can do, or mixes configuration/conte
 | "Refund a customer" / "change a subscription" / "update an account" | Customer-owned action API, not current bot/KB API workflow | Coordinator only | `llms.txt` -> verify whether a supported public route exists |
 
 ## Multi-Step Recipes
+
+### Full Slack-Led Onboarding
+
+Use only when the client explicitly wants a new-client-style Fini onboarding, not a targeted update.
+
+1. `fini-api-slack-onboarding`: inspect workspace state and classify fresh onboarding vs expansion vs targeted update.
+2. `fini-api-slack-onboarding`: offer all-at-once intake or step-by-step intake.
+3. `fini-api-sources`: crawl/register/ingest source content.
+4. `fini-api-knowledge`: generate draft knowledge, organize folders, publish after approval, and assign folders.
+5. `fini-api-agent-configuration`: design tags, rules, and prompts.
+6. `fini-api-generate-answer`: run a mini onboarding test suite.
+7. `fini-api-conversations`: inspect real conversation evidence only if needed.
 
 ### Configure An Existing Slack Or Support Agent
 

@@ -1,6 +1,6 @@
 ---
 name: fini-api-coordinator
-description: Use when the user asks which Fini public API workflow or endpoint to use for Fini client bot/runtime, agent configuration, or knowledge-base management; wants to train a bot from help center, internal docs, websites, Notion, Zendesk, or Confluence; configure prompts, prompt history, rulebooks/rules, rule drafts, tags, or tag groups; refresh or sync changed knowledge sources; generate, review, publish, organize, or assign knowledge; export conversations for QA or golden-set work; send or test a message turn with metadata/user attributes; or choose between agent configuration, source-backed generation, direct article management, Generate Answer, and conversation APIs. Route to the narrower Fini API skill and verify current endpoint details through docs.usefini.com/llms.txt.
+description: Use when the user asks which Fini public API workflow or endpoint to use for Fini client bot/runtime, agent configuration, Slack-led onboarding, or knowledge-base management; wants to onboard a new Fini client/support bot, train a bot from help center, internal docs, websites, Notion, Zendesk, or Confluence; configure prompts, prompt history, rulebooks/rules, rule drafts, tags, or tag groups; refresh or sync changed knowledge sources; generate, review, publish, organize, or assign knowledge; export conversations for QA or golden-set work; send or test a message turn with metadata/user attributes; or choose between onboarding, agent configuration, source-backed generation, direct article management, Generate Answer, and conversation APIs. Route to the narrower Fini API skill and verify current endpoint details through docs.usefini.com/llms.txt.
 ---
 
 # Fini API Coordinator
@@ -16,7 +16,7 @@ When this skill comes from an installed Fini skills package, check whether the p
 For project-scoped installs, run from the project root:
 
 ```bash
-npx skills update --project fini-api-coordinator fini-api-agent-configuration fini-api-conversations fini-api-generate-answer fini-api-sources fini-api-knowledge -y
+npx skills update --project fini-api-coordinator fini-api-slack-onboarding fini-api-agent-configuration fini-api-conversations fini-api-generate-answer fini-api-sources fini-api-knowledge -y
 ```
 
 For global installs, use `--global` instead of `--project`. If the install is not tracked by the CLI, the update command is unavailable, or a newly released Fini skill is missing after update, re-run `npx skills add ask-fini/fini-skills --all --copy -y`, then continue. Always verify live endpoint details through `https://docs.usefini.com/llms.txt`.
@@ -25,8 +25,9 @@ For global installs, use `--global` instead of `--project`. If the install is no
 
 | User intent | Use |
 | --- | --- |
+| Full Slack-led onboarding for a new Fini client/support bot and KB | `fini-api-slack-onboarding` |
 | Configure prompts, prompt history, rulebooks/rules, rule drafts, tags, or tag groups | `fini-api-agent-configuration` |
-| Onboard/configure an existing Slack/support agent's behavior | `fini-api-agent-configuration` first, then Sources/Knowledge/Test as needed |
+| Onboard/configure an existing Slack/support agent's behavior without full new-client intake | `fini-api-agent-configuration` first, then Sources/Knowledge/Test as needed |
 | Export, inspect, analyze, or delete conversations | `fini-api-conversations` |
 | Build QA exports, golden-set candidates, or conversation evidence | `fini-api-conversations` |
 | Send a test/user turn into a Fini agent, continue a conversation, or pass user metadata | `fini-api-generate-answer` |
@@ -37,12 +38,13 @@ For global installs, use `--global` instead of `--project`. If the install is no
 
 If the request spans multiple areas, sequence skills in the product workflow order:
 
-1. Agent configuration: design tags, draft/publish rulebooks, and adjust prompts for existing agents.
-2. Sources: ingest or refresh raw content.
-3. Knowledge: generate drafts or live articles from processed sources.
-4. Knowledge: organize articles into folders and assign folders to agents.
-5. Generate Answer: test whether the intended agent behaves correctly.
-6. Conversations: export or inspect real conversations for QA, analytics, or evidence.
+1. Slack onboarding: only when the client explicitly wants full bot + KB onboarding.
+2. Agent configuration: design tags, draft/publish rulebooks, and adjust prompts for existing agents.
+3. Sources: ingest or refresh raw content.
+4. Knowledge: generate drafts or live articles from processed sources.
+5. Knowledge: organize articles into folders and assign folders to agents.
+6. Generate Answer: test whether the intended agent behaves correctly.
+7. Conversations: export or inspect real conversations for QA, analytics, or evidence.
 
 ## Default Behavior
 
@@ -56,6 +58,7 @@ If the request spans multiple areas, sequence skills in the product workflow ord
 - Do not ask the user to paste API keys into chat. Use environment variables or the caller's secure API flow when available.
 - Translate customer language into Fini concepts: "train/sync docs" usually means Sources plus Knowledge, while "make the bot use it" usually also needs folder assignment and a runtime test.
 - Translate "configure/onboard the agent" into prompts, rulebooks/rules, tags, knowledge, and runtime tests depending on the requested layer.
+- Treat "set up my Fini bot and KB" as ambiguous until workspace state proves it is a fresh onboarding; otherwise route to the narrower update skill.
 - Do not imply Fini public APIs can perform customer-owned business actions unless the live docs show a supported route.
 
 ## Pack Boundary
