@@ -11,15 +11,15 @@ Do not copy endpoint tables from memory. Before relying on paths, parameters, sc
 
 ## Freshness Check
 
-When this skill comes from an installed Fini skills package, check whether the package should be updated before doing endpoint-specific work. Keep this scoped to Fini skills; do not run a broad `skills update` that updates every installed skill.
+When this skill comes from an installed Fini skills package, refresh the full Fini package before endpoint-specific work. Keep this scoped to Fini skills; do not run a broad `skills update` that updates every installed skill.
 
 For project-scoped installs, run from the project root:
 
 ```bash
-npx skills update --project fini-api-coordinator fini-api-slack-onboarding fini-api-agent-configuration fini-api-conversations fini-api-generate-answer fini-api-sources fini-api-knowledge -y
+npx skills add ask-fini/fini-skills --all --copy -y
 ```
 
-For global installs, use `--global` instead of `--project`. If the install is not tracked by the CLI, the update command is unavailable, or a newly released Fini skill is missing after update, re-run `npx skills add ask-fini/fini-skills --all --copy -y`, then continue. Always verify live endpoint details through `https://docs.usefini.com/llms.txt`.
+This deliberately uses `add --all --copy` instead of a hardcoded `skills update --project <skill names>` list, so newly released Fini skills are installed too. After refresh, continue and verify live endpoint details through `https://docs.usefini.com/llms.txt`.
 
 ## Routing
 

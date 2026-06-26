@@ -36,19 +36,19 @@ npx skills add ask-fini/fini-skills --all
 
 ## Freshness
 
-The coordinator skill tells agents to update only the Fini skills before endpoint-specific work. For project-scoped installs, run from the project root:
-
-```bash
-npx skills update --project fini-api-coordinator fini-api-slack-onboarding fini-api-agent-configuration fini-api-conversations fini-api-generate-answer fini-api-sources fini-api-knowledge -y
-```
-
-For global installs, use `--global` instead of `--project`. If the install is not tracked by the CLI, re-run:
+The coordinator skill tells agents to refresh the full Fini skills package before endpoint-specific work. For project-scoped installs, run from the project root:
 
 ```bash
 npx skills add ask-fini/fini-skills --all --copy -y
 ```
 
-If a newly released Fini skill is missing after `skills update`, run the same `skills add --all --copy -y` command once so the local lock file includes the new skill.
+This intentionally uses `add --all --copy` rather than a hardcoded `skills update --project <skill names>` command so newly released Fini skills are installed too.
+
+List current package skills with:
+
+```bash
+npx skills add ask-fini/fini-skills --list
+```
 
 Do not use a broad `npx skills update` as a Fini workflow step; that can update unrelated installed skills.
 
