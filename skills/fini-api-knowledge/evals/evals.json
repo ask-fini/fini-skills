@@ -1,0 +1,35 @@
+{
+  "skill_name": "fini-api-knowledge",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "This workspace is new. Ingest our help center and turn it into draft Fini knowledge for the support bot.",
+      "expected_output": "A fresh-workspace workflow that verifies or creates a usable tree before source-backed generation and proves persisted draft IDs.",
+      "assertions": [
+        "Checks workspace KB and folder state before source-backed generation",
+        "Bootstraps or creates a usable tree when the KB is empty",
+        "Treats source ingestion as distinct from persisted knowledge",
+        "Requires article or draft IDs before reporting generation success"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "The knowledge job says COMPLETED but hcArticleId is null. Publish it and assign it to the bot.",
+      "expected_output": "Stops before publish or assignment and reports the completed-without-article state as a no-op or blocker.",
+      "assertions": [
+        "Does not treat COMPLETED alone as proof of created knowledge",
+        "Does not publish or assign without an article or draft ID",
+        "Investigates tree, source, operation, and reason state"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Change the bot's tone so it sounds warmer.",
+      "expected_output": "Routes to agent configuration rather than creating knowledge content.",
+      "assertions": [
+        "Does not create a KB article for a tone change",
+        "Routes to fini-api-agent-configuration"
+      ]
+    }
+  ]
+}

@@ -20,7 +20,7 @@ Use this reference for broad API architecture questions, bad-answer triage, and 
 | Change instructions/tone/planning | Prompt update on the target agent | Prompts re-fetched, then Generate Answer test. |
 | Change routing/escalation/workflow behavior | Rule draft/refine/publish or rule update | Rule re-fetched with target `botIds`, then Generate Answer test. |
 | Add routing or reporting categories | Custom tag group/tag design | Tags re-listed; if used by rules, rulebook availability is clear. |
-| Add new facts from docs | Sources -> Knowledge drafts -> publish -> assignment | Published article exists and scoped tree shows visibility. |
+| Add new facts from docs | Tree if empty -> Sources -> Knowledge drafts -> publish -> assignment | Article/draft ID exists, published article exists when approved, and scoped tree shows visibility. |
 | Update facts from changed docs | Refresh sources -> changed filter -> draft updates -> publish | Changed source IDs, job results, published article IDs. |
 | Prove a scenario works | Generate Answer | Created events, answer text, evidence/used articles, pass/fail. |
 | Build improvement backlog | Conversations export | Golden-set rows with failure type and recommended workflow. |
@@ -48,9 +48,10 @@ For an existing Fini agent, the API-backed onboarding sequence is:
 2. Design tags for routing, outcomes, and reporting.
 3. Draft/refine/publish rules for behavior and routing.
 4. Inspect/update prompts for global instructions.
-5. Ingest/refresh sources for customer content.
-6. Generate, review, publish, organize, and assign knowledge.
-7. Test with Generate Answer.
-8. Export conversations for QA and golden-set improvement.
+5. Create or verify a usable knowledge tree if this is the first KB setup.
+6. Ingest/refresh sources for customer content.
+7. Generate, verify article IDs, review, publish, organize, and assign knowledge.
+8. Test with Generate Answer.
+9. Export conversations for QA and golden-set improvement.
 
 Do not claim the public APIs create new workspaces, install Slack, or provision brand-new agents unless the current docs expose those routes.

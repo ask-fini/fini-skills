@@ -48,11 +48,12 @@ Workflow:
 1. `fini-api-slack-onboarding`: verify workspace state first: agents, articles/drafts, folders, and sources.
 2. If fresh onboarding, offer all-at-once intake or step-by-step intake.
 3. Gather scope, boundaries, escalation, tone, sources, top questions, examples, and launch constraints.
-4. Use `fini-api-sources` for source discovery, crawl, register, ingest, refresh, and polling.
-5. Use `fini-api-knowledge` for draft knowledge, folder/tree setup, publish-after-review, and assignment.
-6. Use `fini-api-agent-configuration` for prompts, rule drafts, rule publish after approval, tags, and tag groups.
-7. Use `fini-api-generate-answer` for a 4-8 question onboarding test suite.
-8. Produce a readiness summary with blockers and approvals.
+4. If articles/folders are empty or the folder snapshot looks stale, use `fini-api-knowledge` to create or initialize a starter tree before source-backed generation.
+5. Use `fini-api-sources` for source discovery, crawl, register, ingest, refresh, and polling.
+6. Use `fini-api-knowledge` for draft generation, article ID verification, publish-after-review, and assignment.
+7. Use `fini-api-agent-configuration` for prompts, rule drafts, rule publish after approval, tags, and tag groups.
+8. Use `fini-api-generate-answer` for a 4-8 question onboarding test suite.
+9. Produce a readiness summary with blockers and approvals.
 
 Proof:
 
@@ -60,6 +61,7 @@ Proof:
 - Target agent is resolved.
 - Client inputs are collected or marked missing.
 - Sources, KB, folders, config, and tests each have a status.
+- Knowledge jobs list article/draft IDs, or no-op/blocker status is explicit.
 - Live-impacting operations have explicit approvals.
 
 ## Train The Bot From Customer Docs
@@ -75,15 +77,17 @@ Workflow:
 
 1. `fini-api-sources`: discover/register/ingest or crawl/ingest the raw sources.
 2. Poll source status; do not treat queued ingestion as completion.
-3. `fini-api-knowledge`: bulk-generate draft knowledge from processed sources.
-4. Review/publish after approval.
-5. Assign the containing folder to the intended agent.
-6. `fini-api-generate-answer`: run a targeted behavior test if proof is needed.
+3. If this is the first KB setup, create or initialize a folder tree before generation.
+4. `fini-api-knowledge`: bulk-generate draft knowledge from processed sources.
+5. Poll jobs and require article/draft IDs before continuing.
+6. Review/publish after approval.
+7. Assign the containing folder to the intended agent.
+8. `fini-api-generate-answer`: run a targeted behavior test if proof is needed.
 
 Proof:
 
 - Source records processed.
-- Drafts or articles created.
+- Drafts or articles created and confirmed by article IDs.
 - Published state is explicit.
 - Folder assignment is visible in the scoped agent tree.
 - Test answer uses the intended knowledge when runtime proof is requested.

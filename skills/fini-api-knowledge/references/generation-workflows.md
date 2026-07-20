@@ -7,12 +7,13 @@ Use this reference for generating Fini knowledge from candidate text, inbox/conv
 Knowledge is the factual retrieval layer. A complete behavior-changing workflow usually needs:
 
 1. Candidate content or processed source IDs.
-2. Draft generation job.
-3. Job polling and result inspection.
-4. Review/publish decision.
-5. Folder placement.
-6. Agent folder assignment.
-7. Generate Answer proof.
+2. A usable folder tree when creating source-backed knowledge.
+3. Draft generation job.
+4. Job polling and result inspection.
+5. Review/publish decision.
+6. Folder placement.
+7. Agent folder assignment.
+8. Generate Answer proof.
 
 Drafts, unassigned folders, and unprocessed sources are not enough to change what an agent can answer.
 
@@ -29,12 +30,14 @@ Drafts, unassigned folders, and unprocessed sources are not enough to change wha
 ## Source-Backed Generation
 
 1. Confirm sources finished ingestion/refresh.
-2. Use only source IDs that should become knowledge.
-3. Default to draft.
-4. Use restricted operations when the caller wants to limit add/update/no-op behavior.
-5. Queue bulk generation.
-6. Poll jobs.
-7. Review result state before publish.
+2. Confirm there is a usable folder tree with a likely target folder. If the workspace is empty, create or initialize/persist folders first.
+3. Use only source IDs that should become knowledge.
+4. Default to draft.
+5. Use restricted operations when the caller wants to limit add/update/no-op behavior.
+6. Queue bulk generation.
+7. Poll jobs.
+8. Require article/draft IDs before treating generation as successful.
+9. Review result state before publish.
 
 ## Single Generation
 
@@ -75,6 +78,8 @@ Knowledge job status
 - Next action:
 ```
 
+If a job is `COMPLETED` but has no article/draft ID, do not proceed to publish or assignment. Treat it as blocked/no-op, inspect the source and tree state, and report the missing persistence proof.
+
 ## Validation
 
 Generation is not complete until one of these is true:
@@ -83,3 +88,9 @@ Generation is not complete until one of these is true:
 - Live article exists and is in the intended folder.
 - No-op/duplicate result is confirmed and acceptable.
 - Failure is reported with enough context to retry or debug.
+
+For source-backed generation, also verify one of:
+
+- The job status includes an article/draft ID and List articles can fetch it.
+- The source record now links to knowledge when the workflow is expected to sync source linkage.
+- A no-op is explicitly acceptable to the user.

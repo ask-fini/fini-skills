@@ -40,17 +40,19 @@ If the request spans multiple areas, sequence skills in the product workflow ord
 
 1. Slack onboarding: only when the client explicitly wants full bot + KB onboarding.
 2. Agent configuration: design tags, draft/publish rulebooks, and adjust prompts for existing agents.
-3. Sources: ingest or refresh raw content.
-4. Knowledge: generate drafts or live articles from processed sources.
-5. Knowledge: organize articles into folders and assign folders to agents.
-6. Generate Answer: test whether the intended agent behaves correctly.
-7. Conversations: export or inspect real conversations for QA, analytics, or evidence.
+3. Knowledge: for fresh/empty workspaces, create or initialize a usable folder tree before source-backed generation.
+4. Sources: ingest or refresh raw content.
+5. Knowledge: generate drafts or live articles from processed sources and verify article IDs.
+6. Knowledge: organize articles into folders and assign folders to agents.
+7. Generate Answer: test whether the intended agent behaves correctly.
+8. Conversations: export or inspect real conversations for QA, analytics, or evidence.
 
 ## Default Behavior
 
 - Prefer read-only discovery before write calls.
 - Prefer draft/review paths before live publish.
 - Prefer source-backed generation for imported content.
+- In fresh workspaces, verify or create the folder tree before source-backed generation.
 - Use direct article management only when the user wants exact manual control over the article body or lifecycle.
 - Prefer rule drafts before published rule creation when configuring behavior from natural-language instructions.
 - Treat prompt updates, rule publish/update/delete, tag delete, knowledge publish/delete, folder assignment, and production answer generation as live-impacting.
@@ -78,6 +80,8 @@ The docs already contain endpoint references. The skills add workflow judgment: 
 - Generate Answer returns created events, not the full conversation wrapper.
 - Public source APIs use `document*` wire names even though the product language is "sources".
 - For web ingestion, source inputs are URLs; for provider ingestion, inputs are registered source IDs.
+- A `COMPLETED` knowledge job with no article/draft ID is not success; treat it as blocked/no-op.
+- Folder reads are snapshots; if snapshot folders disagree with current agents/articles/sources, stop and flag stale workspace state.
 - Public APIs may expose bot/KB state but not the customer's own action APIs. Treat refund, subscription, payment, order, and account-update requests as integration discovery unless current Fini docs say otherwise.
 
 ## References

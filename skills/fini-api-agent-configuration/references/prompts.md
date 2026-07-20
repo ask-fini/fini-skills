@@ -35,12 +35,24 @@ Use this sequence for a write:
 5. Ask for explicit approval unless the caller already authorized the exact write.
 6. Save the new prompt version.
 7. Fetch prompts again to verify the merged read shape.
-8. Test with Generate Answer if behavior should change.
+8. Test with Generate Answer if behavior should change. Reuse the same questions and relevant metadata from the baseline test so the comparison is meaningful.
+
+## Diagnose, Edit, Retest
+
+Use this loop when the user supplies questions/answers, failing conversations, or a behavioral test set:
+
+1. Fetch the complete current prompt and history.
+2. Run a small baseline set with Generate Answer and preserve interaction/event IDs.
+3. Classify each failure as prompt behavior, rule behavior, missing knowledge, or runtime metadata before editing.
+4. For prompt failures, make the smallest diff to the full arrays and show it for approval.
+5. Save the complete arrays, re-fetch the stored version, and rerun the same cases.
+6. Report before/after behavior and any regressions; do not claim success from a saved version alone.
 
 ## Gotchas
 
 - Prompt update saves a new version; it does not patch the current row in place.
 - Send full section arrays, not only the changed section.
+- Never reconstruct a write payload from a compact preview. Fetch prompt content in full before editing.
 - Subsection helper fields from merged reads are not required in the write payload.
 - The write response is the stored version row. Fetch prompts after writing when the merged view matters.
 - Current docs say the write route uses `POST /v2/bots/{id}/hc-prompt` without `/public`. Verify before calling.

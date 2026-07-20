@@ -26,6 +26,8 @@ For ambiguous requests such as "set up my Fini bot and KB", inspect current work
 4. List sources to see whether web/provider content has already been ingested.
 5. If prompt/rule/tag APIs are relevant, inspect current prompts, rules, tag groups, and tags through current docs.
 
+Sanity-check the workspace state before trusting it. If agents, article counts, sources, and folder snapshots disagree, stop and report the inconsistency instead of continuing onboarding. A folder snapshot can be stale; it is not proof that articles/folders are usable for the current target agent.
+
 Classify the request:
 
 | Classification | Meaning | Next action |
@@ -49,21 +51,30 @@ Read [intake-and-state.md](references/intake-and-state.md) when collecting input
 2. Confirm provider/source access:
    - if provider OAuth is not done, tell the client to complete it in dashboard/UI;
    - if source URLs or files are provided, continue through API workflows.
-3. Use `fini-api-sources` to crawl, register, ingest, refresh, and poll sources.
-4. Use `fini-api-knowledge` to generate draft knowledge, propose or inspect folders, publish after approval, and assign folders to the target agent.
-5. Use `fini-api-agent-configuration` to design tags, draft/refine/publish rules, and inspect/update prompts.
-6. Use `fini-api-generate-answer` to run a mini onboarding test suite.
-7. Use `fini-api-conversations` only when real conversation evidence, QA exports, or golden-set candidates are needed.
+3. For a fresh or empty workspace, use `fini-api-knowledge` to create or initialize a usable folder tree before source-backed generation. Do not bulk-generate into an empty or stale tree.
+4. Use `fini-api-sources` to crawl, register, ingest, refresh, and poll sources.
+5. Use `fini-api-knowledge` to generate draft knowledge, verify article/draft IDs, publish after approval, and assign folders to the target agent.
+6. Use `fini-api-agent-configuration` to design tags, draft/refine/publish rules, and inspect/update prompts.
+7. Use `fini-api-generate-answer` to run a mini onboarding test suite.
+8. Use `fini-api-conversations` only when real conversation evidence, QA exports, or golden-set candidates are needed.
 
 ## Defaults
 
 - Prefer draft/review paths before live changes.
 - Prefer source-backed knowledge generation for imported docs and SOPs.
+- For fresh onboarding, require a real folder tree before source-backed generation.
 - Prefer rule drafts for natural-language behavior setup.
 - Read current state before writes.
 - Ask for explicit approval before publish, prompt update, rule publish, delete, or folder assignment that changes production retrieval.
 - Never ask clients to paste raw API keys into Slack or chat.
 - Keep behavior failures separate from knowledge failures.
+
+## Hard Gates
+
+- Empty tree gate: if there are no usable folders for the target workspace/agent, create or initialize/persist folders before calling source-backed generation.
+- Job-result gate: a knowledge job is not successful just because it is `COMPLETED`; require an article/draft ID and confirm it with List articles or source linkage.
+- Snapshot gate: if `get_knowledge_folders` returns a tree that does not match current agents/articles/sources, treat the tree as stale and block onboarding until the workspace state is corrected.
+- Visibility gate: do not mark knowledge ready until the containing folder is assigned to the target agent and a scoped tree or runtime test confirms visibility.
 
 ## Test Loop
 
@@ -96,8 +107,8 @@ End with a concise readiness report:
 Onboarding classification: [fresh / expansion / targeted update]
 Target agent: [name / botId]
 Sources: [not started / ingested / refreshed / blocked]
-Knowledge: [drafts generated / published / assigned / blocked]
-Folders: [tree proposed / persisted / assigned / blocked]
+Knowledge: [job IDs / article IDs / drafts generated / published / blocked]
+Folders: [tree proposed / persisted / created / assigned / stale snapshot / blocked]
 Prompts: [not changed / proposed / updated / verified]
 Rules/tags: [not changed / drafted / published / verified]
 Tests: [not run / pass / fail / needs review]

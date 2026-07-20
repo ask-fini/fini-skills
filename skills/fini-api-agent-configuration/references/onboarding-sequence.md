@@ -23,7 +23,8 @@ This sequence configures an existing Fini agent. Do not claim the public APIs ca
    - re-fetch after saving
 5. Add or refresh knowledge:
    - use `fini-api-sources` for raw/provider content
-   - use `fini-api-knowledge` for drafts, publish, folders, and assignment
+   - use `fini-api-knowledge` to create/verify a tree first if the KB is empty
+   - use `fini-api-knowledge` for drafts, article-ID verification, publish, folders, and assignment
 6. Run runtime tests:
    - use Generate Answer with explicit test metadata
    - preserve returned event IDs and evidence fields

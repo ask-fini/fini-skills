@@ -1,0 +1,35 @@
+{
+  "skill_name": "fini-api-conversations",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Export every Qogita Fini conversation from the last 30 days with messages and used articles. There are probably more than 100.",
+      "expected_output": "A cursor-based export plan or execution that uses pages of at most 100, continues until hasMore is false, preserves evidence, and reports completeness and a resume cursor.",
+      "assertions": [
+        "Treats 100 as the page-size ceiling rather than the total export ceiling",
+        "Uses nextCursor with direction=next until hasMore is false or an explicit bound is reached",
+        "Reports pages, total records, time window, and final cursor or timestamp",
+        "Does not fetch every conversation again when list results already contain the requested evidence"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Pull a quick sample of the latest 20 conversations for one bot and tell me which KB articles caused bad answers.",
+      "expected_output": "A bounded read-only QA workflow that resolves the bot, inspects events and used articles, and routes content versus configuration failures correctly.",
+      "assertions": [
+        "Uses a bounded recent window and the target botId",
+        "Preserves conversation IDs and used-article evidence",
+        "Separates knowledge gaps from prompt, rule, or metadata problems"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Send this customer question to the bot and show me its answer.",
+      "expected_output": "Routes to fini-api-generate-answer rather than treating the request as a conversation export.",
+      "assertions": [
+        "Does not use the conversation listing workflow to create a new turn",
+        "Routes the request to fini-api-generate-answer"
+      ]
+    }
+  ]
+}

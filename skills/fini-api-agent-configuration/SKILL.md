@@ -15,6 +15,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 | --- | --- |
 | "Show/update the bot prompt" | Prompt read/history/update workflow |
 | "Change how the agent behaves globally" | Prompt workflow, then Generate Answer test |
+| "Test answers, diagnose failures, and change the guidelines" | Baseline Generate Answer tests -> prompt diff -> update -> re-fetch -> repeat the same tests |
 | "Create a rulebook/rule from instructions" | Rule draft workflow |
 | "Refine this rulebook before launch" | Refine draft rule workflow |
 | "Publish this rulebook to one bot" | Publish rule draft with explicit agent IDs |
@@ -26,7 +27,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 1. Resolve the target agent with List agents when the user gives a name.
 2. Read current state before writing: prompts/history, rule list/get, tag groups/tags.
 3. Produce a short plan before live-impacting writes.
-4. Prefer draft or versioned paths: rule drafts for behavior instructions, prompt version update only after approval.
+4. Prefer draft or versioned paths: rule drafts for behavior instructions, prompt version update only after approval. For prompt changes, preserve and submit all three arrays even when only one section changes.
 5. Write only to workspace-owned custom tag groups/tags; treat Fini-managed defaults as read-only.
 6. Re-fetch after writes and report changed IDs, draft/live state, assigned `botIds`, and remaining review steps.
 7. Test with Generate Answer when the user expects behavior change.
@@ -36,6 +37,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 
 - Prefer `Create rule draft` for natural-language rulebook requests.
 - Prefer prompt read/history before prompt update; preserve full prompt section arrays.
+- For prompt improvement work, run the same small test set before and after the change so the behavioral effect is attributable.
 - Prefer custom tag groups for customer-specific classification.
 - Leave tag groups available to Rulebooks unless the user explicitly wants output-only reporting tags.
 - Treat prompt updates, published rule create/update/delete, rule publish, tag deletion, and tag-group deletion as live-impacting.
@@ -45,6 +47,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 
 - `Update prompts` creates a new saved version, not an in-place patch.
 - Prompt writes require full `hcPlanningPrompt`, `hcGuidelinePrompt`, and `hcChannelPrompt` arrays.
+- Do not fabricate a partial prompt payload from a summary or truncated preview. Fetch the complete prompt, apply the smallest intended diff, and submit the complete arrays.
 - The prompt write route currently does not use the `/public` suffix even though read routes do; verify the docs before calling it.
 - `Create rule` creates a published rule directly; do not use it as the default for natural-language setup.
 - `List rules` defaults to intent rules when `type` is omitted; ask for or send `type=business` when Business Rules are intended.
@@ -56,7 +59,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 
 ## Proof Of Completion
 
-- Prompts: prompt version saved, prompt re-fetched, changed sections summarized, rollback/history path identified.
+- Prompts: prompt version saved, prompt re-fetched, changed sections summarized, rollback/history path identified, and the same runtime cases rerun when behavior validation was requested.
 - Rule draft: draft rule exists with `isDraft`, no live assignment assumed, next review/refine/publish step clear.
 - Published rule: target `botIds` confirmed, rule re-fetched, and behavior tested if requested.
 - Tags: custom group/tag IDs returned and re-listed; output-vs-rulebook availability is explicit.

@@ -35,12 +35,27 @@ Knowledge being live is not always enough. If a customer expects an agent to use
 
 Use tree initialization/persist routes when setting up a workspace structure, not for ordinary small article moves.
 
+For fresh onboarding, do this before source-backed generation. Magic Articles/source-backed generation needs a real tree/folder target; an empty or stale tree can lead to completed jobs with no article created.
+
 Before persisting:
 
 - Review the generated or edited tree file.
 - Confirm folder names and intended hierarchy.
 - Confirm whether existing structure will be changed.
 - Plan article placement and assignments after import.
+
+If the current tool surface cannot call tree initialize/persist because it requires file download/upload, create a minimal starter tree through folder-create operations instead. Verify the created folders before generating knowledge.
+
+## Snapshot Sanity
+
+The public folder read returns a knowledge-tree snapshot. Before using it for onboarding, compare it with current agents, article counts, source state, and scoped `botId` visibility.
+
+Block instead of proceeding when:
+
+- The snapshot shows mature folders but List articles returns no articles.
+- The snapshot references bot IDs that do not appear in List agents.
+- The unscoped tree and `botId`-scoped tree tell incompatible stories.
+- Recent folder creation does not appear after re-fetching.
 
 ## Output Template
 
@@ -51,6 +66,7 @@ Knowledge visibility check
 - Article IDs:
 - Full tree contains folder:
 - Scoped tree contains folder:
+- Snapshot sanity:
 - Assignment action:
 - Verification:
 - Remaining risk:

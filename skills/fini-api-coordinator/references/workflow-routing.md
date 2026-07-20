@@ -24,7 +24,7 @@ If the request is broad, asks what the APIs can do, or mixes configuration/conte
 | "Sync Zendesk/Notion/Confluence" | Provider discovery, registration, ingestion | `fini-api-sources` | `llms.txt` -> Provider resources + Ingest sources |
 | "Refresh our existing docs" | Refresh sources, detect changed sources | `fini-api-sources` then `fini-api-knowledge` | `llms.txt` -> Refresh sources + Bulk generate knowledge |
 | "Train the bot from these docs" | Source import plus knowledge generation | `fini-api-sources` then `fini-api-knowledge` | `llms.txt` -> Sources + Knowledge |
-| "Turn these docs into KB articles" | Source-backed generation | `fini-api-knowledge` | `llms.txt` -> Knowledge + Bulk generate knowledge |
+| "Turn these docs into KB articles" | Source-backed generation, with tree bootstrap first if empty | `fini-api-knowledge` | `llms.txt` -> Knowledge + Bulk generate knowledge |
 | "Create a KB draft from this feedback" | Single knowledge generation | `fini-api-knowledge` | `llms.txt` -> Generate knowledge |
 | "Publish this draft" | Live knowledge change | `fini-api-knowledge` | `llms.txt` -> Publish article draft |
 | "Assign this folder to an agent" | Agent visibility / retrieval scope | `fini-api-knowledge` | `llms.txt` -> Assign knowledge to agents |
@@ -38,11 +38,12 @@ Use only when the client explicitly wants a new-client-style Fini onboarding, no
 
 1. `fini-api-slack-onboarding`: inspect workspace state and classify fresh onboarding vs expansion vs targeted update.
 2. `fini-api-slack-onboarding`: offer all-at-once intake or step-by-step intake.
-3. `fini-api-sources`: crawl/register/ingest source content.
-4. `fini-api-knowledge`: generate draft knowledge, organize folders, publish after approval, and assign folders.
-5. `fini-api-agent-configuration`: design tags, rules, and prompts.
-6. `fini-api-generate-answer`: run a mini onboarding test suite.
-7. `fini-api-conversations`: inspect real conversation evidence only if needed.
+3. `fini-api-knowledge`: create or initialize a starter tree if the workspace has no usable folders or the snapshot looks stale.
+4. `fini-api-sources`: crawl/register/ingest source content.
+5. `fini-api-knowledge`: generate drafts, require article IDs, publish after approval, and assign folders.
+6. `fini-api-agent-configuration`: design tags, rules, and prompts.
+7. `fini-api-generate-answer`: run a mini onboarding test suite.
+8. `fini-api-conversations`: inspect real conversation evidence only if needed.
 
 ### Configure An Existing Slack Or Support Agent
 
@@ -58,10 +59,11 @@ Use only when the client explicitly wants a new-client-style Fini onboarding, no
 
 1. `fini-api-sources`: optionally crawl seed URLs.
 2. `fini-api-sources`: ingest selected URLs and poll source completion.
-3. `fini-api-knowledge`: bulk-generate draft knowledge from source IDs.
-4. `fini-api-knowledge`: poll jobs and review/publish.
-5. `fini-api-knowledge`: organize into folders and assign to agents.
-6. `fini-api-generate-answer`: test the intended agent if behavioral proof is needed.
+3. `fini-api-knowledge`: create or initialize a folder tree first if this is a new/empty KB.
+4. `fini-api-knowledge`: bulk-generate draft knowledge from source IDs.
+5. `fini-api-knowledge`: poll jobs, require article/draft IDs, and review/publish.
+6. `fini-api-knowledge`: organize into folders and assign to agents.
+7. `fini-api-generate-answer`: test the intended agent if behavioral proof is needed.
 
 ### Refresh Existing Knowledge From Changed Sources
 

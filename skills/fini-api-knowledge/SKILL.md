@@ -18,6 +18,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 | Turn feedback or inbox evidence into knowledge | Single generation job with evidence linkage |
 | Fix a golden-set failure caused by missing or stale KB content | Draft improvement loop |
 | Fix wrong prompt, rulebook, routing, escalation, or tag behavior | Use `fini-api-agent-configuration`, not Knowledge |
+| First KB setup in an empty workspace | Create or initialize/persist a folder tree before source-backed generation |
 | Write exact article text manually | Direct article management |
 | Review before changing answers | Draft workflow |
 | Make existing knowledge visible to an agent | Tree/folder assignment |
@@ -26,20 +27,22 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 ## Workflow Gates
 
 1. Resolve the target: source IDs, extracted candidate text, article IDs, folder IDs, or `botId`.
-2. For raw PDF/file/text payloads, extract supportable facts and call Generate knowledge as a draft by default: `candidateKnowledge`, `origin: "generated"`, optional `botId`, `isDraft: true`.
-3. Choose draft vs live. Default to draft when quality or assignment is uncertain.
-4. Queue generation or article operation.
-5. Poll async jobs when the route queues work.
-6. Inspect result state: draft, live, no-op, failed, or duplicate.
-7. Publish only after explicit confirmation if the request did not already authorize live change.
-8. Verify folder placement and agent assignment when the user expects answers to change.
-9. Test with Generate Answer only if the user wants behavioral proof.
+2. For source-backed generation, verify a usable folder tree exists first. If articles/folders are empty or the snapshot looks stale, bootstrap folders before generating.
+3. For raw PDF/file/text payloads, extract supportable facts and call Generate knowledge as a draft by default: `candidateKnowledge`, `origin: "generated"`, optional `botId`, `isDraft: true`.
+4. Choose draft vs live. Default to draft when quality or assignment is uncertain.
+5. Queue generation or article operation.
+6. Poll async jobs when the route queues work.
+7. Inspect result state: draft, live, no-op, failed, or duplicate. `COMPLETED` with no article/draft ID is blocked/no-op, not success.
+8. Publish only after explicit confirmation if the request did not already authorize live change.
+9. Verify folder placement and agent assignment when the user expects answers to change.
+10. Test with Generate Answer only if the user wants behavioral proof.
 
 ## Defaults
 
 - Prefer source-backed generation for imported source content.
 - Prefer Generate knowledge over direct article writes when transforming raw text, PDFs/files, feedback, or other evidence into a KB entry.
 - Prefer drafts for newly generated or refreshed knowledge; set `isDraft: true` explicitly even if current docs default it.
+- For fresh workspaces, create or initialize a folder tree before source-backed generation.
 - Prefer a draft improvement loop for golden-set failures and conversation evidence.
 - Use `restrictedOps` when the user wants to prevent unexpected creates, updates, or duplicates.
 - Treat publish, delete, folder delete, move, and assignment as live-impacting.
@@ -48,16 +51,19 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 
 - Generation defaults can leave content as draft; draft content does not change live answers.
 - Source-backed generation depends on processed sources, not raw queued ingestion.
+- Source-backed generation also needs a usable tree/folder target; empty or stale trees can produce no-op jobs.
+- A completed generation job with `hcArticleId: null` did not create or update knowledge.
 - `DO_NOTHING` can still produce reviewable output in draft mode.
 - Direct article management is the manual/advanced path, not the default for source content.
 - There is no need to memorize direct lookup paths; verify current article lookup docs before fetching by IDs.
 - Knowledge can be live but invisible to an agent until assigned through the folder tree.
 - A scoped tree for a `botId` can be empty because no folders are assigned, not because the workspace has no knowledge.
+- Folder reads are snapshot-style reads in the public API; if snapshots disagree with current agents/articles/sources, stop and flag stale state.
 - Wrong prompt/rule/tag behavior is an agent-configuration issue, not a reason to create more KB content by default.
 
 ## Proof Of Completion
 
-- Generation: job completed and produced the expected article/draft/no-op state.
+- Generation: job reached terminal state and produced the expected article/draft ID, or a no-op/duplicate was explicitly accepted.
 - Draft review: draft exists, links back to original article or source evidence when applicable, and is not assumed live.
 - Publish: live article exists after publish and draft state is resolved.
 - Direct update: article fields changed as intended after re-fetch/list.

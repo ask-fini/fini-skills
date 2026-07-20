@@ -1,0 +1,36 @@
+{
+  "skill_name": "fini-api-agent-configuration",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Run these five questions against our Fini bot, adjust one guideline to fix the failures, and retest them.",
+      "expected_output": "A baseline-test, classify, minimal prompt diff, approval, full-array update, re-fetch, and same-case retest workflow.",
+      "assertions": [
+        "Fetches the complete current prompt before editing",
+        "Classifies failures before deciding the prompt is responsible",
+        "Preserves all three prompt arrays in the write",
+        "Requires approval for the prompt update",
+        "Re-fetches the saved version and reruns the same questions"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Create an escalation rule from these instructions, but do not make it live yet.",
+      "expected_output": "Uses a rule draft, inspects the resulting flow, and leaves bot assignment and publishing for later approval.",
+      "assertions": [
+        "Uses the rule-draft workflow rather than creating a published rule",
+        "Does not assume draft botIds imply live assignment",
+        "Reports the review and publish steps still required"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Import these Zendesk articles into our knowledge base.",
+      "expected_output": "Routes to sources and knowledge workflows rather than treating ingestion as agent prompt configuration.",
+      "assertions": [
+        "Does not use prompt, rule, or tag updates for a source-ingestion request",
+        "Routes to fini-api-sources and fini-api-knowledge"
+      ]
+    }
+  ]
+}

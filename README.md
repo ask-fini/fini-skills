@@ -76,6 +76,14 @@ These skills intentionally avoid copying endpoint tables, request schemas, and l
 - destructive-action confirmation rules
 - proof-of-completion templates
 
+## Hard Workflow Guardrails
+
+- Fresh or empty KB onboarding needs a usable folder tree before source-backed knowledge generation.
+- Source ingestion is not KB, and source processing does not mean answers changed.
+- A completed knowledge job is only successful when it produces an article/draft ID, or the no-op/duplicate result is explicitly accepted.
+- Folder reads are snapshot-backed; if snapshots disagree with current agents/articles/sources, stop and flag stale workspace state.
+- Knowledge is ready only after article/draft verification, publish/review decision, folder assignment, and runtime proof when needed.
+
 ## Current Shape
 
 The current package uses seven skills. `fini-api-slack-onboarding` is intentionally narrow: it should trigger only for full new-client-style onboarding, then route into the focused skills. Knowledge generation, article/draft management, and tree/assignment workflows are grouped under `fini-api-knowledge`. Prompts, rulebooks/rules, and tags/tag groups are grouped under `fini-api-agent-configuration` because they compose into one existing-agent configuration workflow. These can be split later if customer usage shows either skill triggers too broadly.

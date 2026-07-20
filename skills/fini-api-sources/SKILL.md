@@ -16,13 +16,15 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 3. For provider imports, list provider resources, register chosen resources, then ingest returned source IDs.
 4. Poll source status after ingestion or refresh.
 5. For refresh workflows, filter to changed linked sources before generating knowledge.
-6. Hand off processed source IDs to `fini-api-knowledge` for generation, drafts, publishing, and assignment.
-7. For delete, produce an exact source/article impact plan and require confirmation.
+6. For a fresh or empty workspace, verify a usable folder tree exists before source-backed generation.
+7. Hand off processed source IDs to `fini-api-knowledge` for generation, drafts, publishing, and assignment.
+8. For delete, produce an exact source/article impact plan and require confirmation.
 
 ## Defaults
 
 - Treat ingestion and refresh as async.
 - Prefer reviewable generated drafts after source import or refresh.
+- Do not bulk-generate from sources in an empty workspace until `fini-api-knowledge` has created or initialized folders.
 - For refresh, generate knowledge only for sources that actually changed and already link to knowledge, unless the user explicitly wants broader behavior.
 - Do not promise answer changes until knowledge generation, publish/review, and assignment are verified.
 - Translate "train the bot" or "sync docs" into source processing plus a knowledge handoff; source import alone is not enough.
@@ -35,6 +37,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - For providers, values are source IDs returned after registration.
 - A queued ingestion response is not completion.
 - Completed source processing does not mean live agent answers changed.
+- Completed source processing also does not mean knowledge generation can succeed; fresh workspaces need a usable folder tree first.
 - Provider discovery may exclude already-imported resources.
 - Provider discovery requires the provider to be connected in the workspace first.
 - Discovery is for new importable provider content; list sources for content already imported into Fini.
