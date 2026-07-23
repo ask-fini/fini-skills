@@ -1,6 +1,6 @@
 {
   "name": "@ask-fini/fini-skills",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Fini public API workflow skills for AI coding agents",
   "keywords": [
     "agent-skills",

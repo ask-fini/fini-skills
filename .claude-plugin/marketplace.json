@@ -1,0 +1,29 @@
+{
+  "name": "fini",
+  "description": "Official Fini plugins for managing support agents through Claude.",
+  "owner": {
+    "name": "Fini"
+  },
+  "plugins": [
+    {
+      "name": "fini",
+      "source": {
+        "source": "github",
+        "repo": "ask-fini/fini-skills"
+      },
+      "description": "Fini workflow expertise and authenticated MCP tools for onboarding, knowledge, configuration, conversations, and testing.",
+      "author": {
+        "name": "Fini"
+      },
+      "homepage": "https://docs.usefini.com",
+      "repository": "https://github.com/ask-fini/fini-skills",
+      "category": "Productivity",
+      "tags": [
+        "customer-support",
+        "knowledge-base",
+        "ai-agents",
+        "mcp"
+      ]
+    }
+  ]
+}

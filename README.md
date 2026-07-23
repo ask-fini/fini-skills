@@ -4,7 +4,35 @@ Workflow skills for AI coding agents using the Fini public API for Fini client b
 
 These skills do not replace the Fini API docs. They teach an agent how to choose the right workflow, sequence API calls, handle async polling, avoid draft/live and source/knowledge mistakes, configure existing agents through prompts/rules/tags, translate customer phrases like "train the bot" or "run a golden set" into API workflows, and verify that an API workflow actually worked.
 
-## Install
+## Install In Claude
+
+The Fini Claude plugin installs all seven workflow skills and connects the
+authenticated Fini MCP toolset in one package.
+
+In Claude:
+
+1. Open **Settings → Plugins**.
+2. Select **Add → Add marketplace**.
+3. Enter `ask-fini/fini-skills` and select **Sync**.
+4. Install the **Fini** plugin.
+5. Connect Fini, sign in, and approve access to the intended workspace.
+
+The OAuth flow uses the public client `fini-claude-mcp`. No Fini API key,
+OAuth secret, or workspace credential is stored in this repository.
+
+If standalone Fini skills or the standalone Fini connector are already
+installed, remove them before installing the plugin to avoid duplicate skills
+or connector entries.
+
+Marketplace updates come from this GitHub repository. Refresh the marketplace
+to pick up new skill releases. MCP tool changes are delivered by the hosted
+service and appear after Claude reconnects to it.
+
+For maintainers: bump the version in `.claude-plugin/plugin.json` and
+`package.json` whenever releasing plugin or skill changes so synced Claude
+marketplaces recognize the new release.
+
+## Install In Coding Agents
 
 ```bash
 npx skills add ask-fini/fini-skills

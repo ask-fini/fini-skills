@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "fini": {
+      "type": "http",
+      "url": "https://mcp.usefini.com/mcp",
+      "oauth": {
+        "clientId": "fini-claude-mcp",
+        "scopes": "read write"
+      }
+    }
+  }
+}
