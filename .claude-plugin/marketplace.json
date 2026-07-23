@@ -7,10 +7,7 @@
   "plugins": [
     {
       "name": "fini",
-      "source": {
-        "source": "github",
-        "repo": "ask-fini/fini-skills"
-      },
+      "source": "./",
       "description": "Fini workflow expertise and authenticated MCP tools for onboarding, knowledge, configuration, conversations, and testing.",
       "author": {
         "name": "Fini"
