@@ -16,9 +16,10 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 | "Show/update the bot prompt" | Prompt read/history/update workflow |
 | "Change how the agent behaves globally" | Prompt workflow, then Generate Answer test |
 | "Test answers, diagnose failures, and change the guidelines" | Baseline Generate Answer tests -> prompt diff -> update -> re-fetch -> repeat the same tests |
-| "Create a rulebook/rule from instructions" | Rule draft workflow |
-| "Refine this rulebook before launch" | Refine draft rule workflow |
-| "Publish this rulebook to one bot" | Publish rule draft with explicit agent IDs |
+| "Create a rulebook/rule from instructions" | Generate preview -> persist intent draft |
+| "Refine this rulebook before launch" | Refine the same intent rule as a new draft version |
+| "Publish this rulebook to one bot" | Publish the exact reviewed draft version with explicit agent IDs |
+| "Inspect or restore an older rule version" | Rule version history -> restore as draft |
 | "Create routing or outcome tags" | Tag group and tag workflow |
 | "Configure a Slack/support agent" | Tags -> rule drafts -> prompts -> tests, then Sources/Knowledge if content is missing |
 
@@ -27,7 +28,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 1. Resolve the target agent with List agents when the user gives a name.
 2. Read current state before writing: prompts/history, rule list/get, tag groups/tags.
 3. Produce a short plan before live-impacting writes.
-4. Prefer draft or versioned paths: rule drafts for behavior instructions, prompt version update only after approval. For prompt changes, preserve and submit all three arrays even when only one section changes.
+4. Prefer draft or versioned paths. For intent rules, generate a preview, persist it as `DRAFT`, refine the same rule, and publish the exact reviewed draft version. For prompt changes, preserve and submit all three arrays even when only one section changes.
 5. Write only to workspace-owned custom tag groups/tags; treat Fini-managed defaults as read-only.
 6. Re-fetch after writes and report changed IDs, draft/live state, assigned `botIds`, and remaining review steps.
 7. Test with Generate Answer when the user expects behavior change.
@@ -35,7 +36,8 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 
 ## Defaults
 
-- Prefer `Create rule draft` for natural-language rulebook requests.
+- Prefer intent-rule preview -> persisted `DRAFT` for natural-language rulebook requests.
+- Read rule field context before authoring a flow tree. Use default Business Rule templates when the request matches one.
 - Prefer prompt read/history before prompt update; preserve full prompt section arrays.
 - For prompt improvement work, run the same small test set before and after the change so the behavioral effect is attributable.
 - Prefer custom tag groups for customer-specific classification.
@@ -51,8 +53,12 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - The prompt write route currently does not use the `/public` suffix even though read routes do; verify the docs before calling it.
 - `Create rule` creates a published rule directly; do not use it as the default for natural-language setup.
 - `List rules` defaults to intent rules when `type` is omitted; ask for or send `type=business` when Business Rules are intended.
+- Intent rules are versioned. Filter by version status, refine the same rule in place, and publish the exact reviewed `draftVersionId`.
+- Generating an intent-rule preview does not persist a rule. Persist the preview as `DRAFT` before claiming a draft exists.
+- Do not duplicate a rule as a prerequisite for refinement. Duplication is only for an intentional independent copy.
+- Business Rules are not versioned and do not use the intent draft/publish lifecycle.
 - Rule list summaries omit `flowConfig`; use Get rule before explaining or editing the tree.
-- Draft rules return empty `botIds`; publish requires non-empty target agent IDs.
+- Draft intent rules return empty `botIds`; publishing requires non-empty target agent IDs.
 - `isOutputTagGroup=true` makes a tag group unavailable in Rulebooks, including intent rules.
 - Tag update/delete path IDs are tag IDs, not tag group IDs.
 - Some invalid tag/group IDs may return `500` or `null`; verify by listing known groups/tags first.
@@ -60,8 +66,8 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 ## Proof Of Completion
 
 - Prompts: prompt version saved, prompt re-fetched, changed sections summarized, rollback/history path identified, and the same runtime cases rerun when behavior validation was requested.
-- Rule draft: draft rule exists with `isDraft`, no live assignment assumed, next review/refine/publish step clear.
-- Published rule: target `botIds` confirmed, rule re-fetched, and behavior tested if requested.
+- Rule draft: persisted rule ID and draft version ID exist, status is `DRAFT`, no live assignment is assumed, and the next review/refine/publish step is clear.
+- Published rule: exact reviewed draft version and target `botIds` are confirmed, the rule is re-fetched, and behavior is tested if requested.
 - Tags: custom group/tag IDs returned and re-listed; output-vs-rulebook availability is explicit.
 - Onboarding/configuration: tags, rules, prompts, knowledge gaps, runtime test, and QA evidence are separated.
 

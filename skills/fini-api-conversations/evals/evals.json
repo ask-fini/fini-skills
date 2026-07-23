@@ -30,6 +30,17 @@
         "Does not use the conversation listing workflow to create a new turn",
         "Routes the request to fini-api-generate-answer"
       ]
+    },
+    {
+      "id": 4,
+      "prompt": "This Fini answer was wrong. Run fix review on the answer, show me the proposed correction, and update the bot automatically.",
+      "expected_output": "Runs fix review on the exact answer event, reports the replay and recommendations, but does not claim the recommendations were applied automatically.",
+      "assertions": [
+        "Identifies the exact conversation and assistant event",
+        "Compares the original and replay answers",
+        "Treats fix-review recommendations as proposals rather than applied configuration",
+        "Routes an accepted change to the owning skill and its approval gate"
+      ]
     }
   ]
 }

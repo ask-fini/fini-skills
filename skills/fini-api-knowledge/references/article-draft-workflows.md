@@ -16,12 +16,13 @@ Do not use direct article create as the default way to convert sources or messy 
 ## Draft Workflow
 
 1. Fetch or list relevant articles.
-2. Create a draft from an existing live article, or create a new draft article.
-3. Make changes.
-4. Re-read/list to verify draft state.
-5. Present diff or summary for approval.
-6. Publish only after explicit confirmation.
-7. Verify live article after publish.
+2. Resolve the target folder. A draft created from a live article should inherit that article's `parentFolderId` unless the user explicitly wants to move it.
+3. Create a draft from the existing live article, or create a new draft article with an explicit target folder.
+4. Make changes.
+5. Re-read/list to verify draft state and folder.
+6. Present diff or summary for approval.
+7. Publish only after explicit confirmation.
+8. Verify live article after publish.
 
 ## Update Workflow
 
@@ -42,6 +43,12 @@ Deletion is destructive. Before deleting:
 - Wait for explicit confirmation.
 
 After deleting, report response evidence and whether follow-up source cleanup or assignment checks are needed.
+
+## Gotchas
+
+- `parentFolderId` is required when creating an article draft. Do not call the route with an empty folder.
+- Preserve the source article's folder by default. Moving knowledge is a separate decision because folder assignment controls agent visibility.
+- A persisted draft does not affect live answers until it is published and visible to the target agent.
 
 ## Publish Confirmation Template
 

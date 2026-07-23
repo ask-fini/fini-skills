@@ -8,9 +8,10 @@ Prompts are versioned configuration for one existing agent:
 
 1. Read the merged prompt view.
 2. Check history to understand saved agent-specific versions.
-3. Edit the full prompt arrays offline.
-4. Save a new version after approval.
-5. Re-fetch and test behavior with Generate Answer.
+3. Fetch an exact historical version when the user wants a precise comparison or rollback source.
+4. Edit the full prompt arrays offline.
+5. Save a new version after approval.
+6. Re-fetch and test behavior with Generate Answer.
 
 Use prompts for instruction, tone, planning, channel behavior, and general handling policy. Do not use prompts as a substitute for missing factual knowledge, source ingestion, or customer-owned action APIs.
 
@@ -20,6 +21,7 @@ Use prompts for instruction, tone, planning, channel behavior, and general handl
 2. Fetch current prompts for that agent.
 3. If the agent has no saved version, treat the returned content as a workspace-template fallback, not proof of an agent-specific saved prompt.
 4. Fetch prompt history when the user asks what changed, wants rollback context, or asks whether the agent has custom prompts.
+5. Fetch the exact version by prompt ID before using historical content as a restore or comparison source.
 
 ## Update Prompts
 

@@ -30,6 +30,17 @@
         "Does not create a KB article for a tone change",
         "Routes to fini-api-agent-configuration"
       ]
+    },
+    {
+      "id": 4,
+      "prompt": "Create a draft of this existing live article with the revised wording, but keep it in the same folder and do not publish it.",
+      "expected_output": "Fetches the source article, preserves its parent folder, creates a draft, verifies the draft ID and folder, and stops before publish.",
+      "assertions": [
+        "Fetches the existing article before creating the draft",
+        "Uses the existing parentFolderId unless the user explicitly requests a move",
+        "Verifies the persisted draft ID and folder",
+        "Does not publish the draft"
+      ]
     }
   ]
 }

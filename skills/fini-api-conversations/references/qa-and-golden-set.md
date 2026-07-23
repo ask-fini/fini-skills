@@ -38,6 +38,19 @@ Use this when the conversation shows a KB gap or stale answer:
 5. Route prompt, rulebook, routing, escalation, or tag classification issues to `fini-api-agent-configuration`.
 6. Retest with `fini-api-generate-answer` before publishing if the change affects live behavior.
 
+## Fix-Review Iteration
+
+Use fix review when one specific Fini answer needs a grounded proposed correction:
+
+1. Fetch the conversation and identify the exact assistant event.
+2. Create a fix-review iteration with concise feedback describing the observed failure and desired behavior.
+3. Read the active or exact session and compare the original answer, replay answer, and recommendations.
+4. Classify each recommendation as Knowledge, Sources, Prompt, Rule, Tag, or runtime metadata work.
+5. Treat recommendations as proposals only. They do not update or publish Fini configuration.
+6. Route the accepted recommendation to the owning skill, apply it through its normal approval gate, and rerun the same case.
+
+Approving or rejecting the conversation event is a separate QA-state write. Require explicit confirmation and do not confuse event approval with applying the recommended fix.
+
 ## Golden Set Output Template
 
 ```text

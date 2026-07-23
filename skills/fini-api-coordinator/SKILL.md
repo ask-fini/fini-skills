@@ -30,6 +30,7 @@ This deliberately uses `add --all --copy` instead of a hardcoded `skills update 
 | Onboard/configure an existing Slack/support agent's behavior without full new-client intake | `fini-api-agent-configuration` first, then Sources/Knowledge/Test as needed |
 | Export, inspect, analyze, or delete conversations | `fini-api-conversations` |
 | Build QA exports, golden-set candidates, or conversation evidence | `fini-api-conversations` |
+| Run fix review on a specific bad answer or approve/reject a reviewed event | `fini-api-conversations`, then route accepted fixes to the owning skill |
 | Send a test/user turn into a Fini agent, continue a conversation, or pass user metadata | `fini-api-generate-answer` |
 | Import web/provider content, crawl links, refresh sources, poll source status, or detect changed sources | `fini-api-sources` |
 | Generate knowledge, manage articles/drafts, publish, move articles, inspect the tree, or assign folders to agents | `fini-api-knowledge` |

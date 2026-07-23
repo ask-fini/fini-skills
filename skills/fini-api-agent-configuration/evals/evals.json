@@ -18,8 +18,9 @@
       "prompt": "Create an escalation rule from these instructions, but do not make it live yet.",
       "expected_output": "Uses a rule draft, inspects the resulting flow, and leaves bot assignment and publishing for later approval.",
       "assertions": [
-        "Uses the rule-draft workflow rather than creating a published rule",
+        "Generates and inspects a preview, then persists it as an intent DRAFT",
         "Does not assume draft botIds imply live assignment",
+        "Reports the persisted rule ID and draft version ID",
         "Reports the review and publish steps still required"
       ]
     },
@@ -30,6 +31,17 @@
       "assertions": [
         "Does not use prompt, rule, or tag updates for a source-ingestion request",
         "Routes to fini-api-sources and fini-api-knowledge"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Refine this escalation rule, then publish the version I just approved to one bot.",
+      "expected_output": "Refines the same intent rule as a draft version, avoids an orphan duplicate, and publishes the exact reviewed draftVersionId after confirmation.",
+      "assertions": [
+        "Reads the full rule and field context before changing the flow",
+        "Updates the same intent rule as DRAFT instead of duplicating it",
+        "Identifies the exact reviewed draftVersionId",
+        "Requires explicit target botIds and publish approval"
       ]
     }
   ]
