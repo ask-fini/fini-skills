@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "fini",
   "displayName": "Fini",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Fini public API workflow skills and authenticated MCP tools for onboarding, agent configuration, knowledge management, QA, and runtime testing.",
   "author": {
     "name": "Fini",

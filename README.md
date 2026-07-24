@@ -17,8 +17,9 @@ In Claude:
 4. Install the **Fini** plugin.
 5. Connect Fini, sign in, and approve access to the intended workspace.
 
-The OAuth flow uses the public client `fini-claude-mcp`. No Fini API key,
-OAuth secret, or workspace credential is stored in this repository.
+Claude registers the public OAuth client automatically when you click
+**Connect**. No OAuth client ID, Fini API key, OAuth secret, or workspace
+credential needs to be entered or stored in this repository.
 
 If standalone Fini skills or the standalone Fini connector are already
 installed, remove them before installing the plugin to avoid duplicate skills
