@@ -1,0 +1,63 @@
+{
+  "skill_name": "fini-api-agents",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a Fini agent named Billing Support and get it ready for configuration.",
+      "expected_output": "A duplicate-safe bare-agent creation workflow that captures and verifies the exact botId, then routes configuration work without claiming the agent is production-ready.",
+      "assertions": [
+        "Lists existing agents and checks the intended name before creating",
+        "Captures the returned agent ID and verifies it appears in List agents",
+        "States that agent creation does not provision a workspace, Slack, channels, or finished configuration",
+        "Routes prompts, knowledge, Actions or Attributes, unpublished draft validation, and persistent live-agent regression to their owning skills"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Delete our old Returns Bot. Its exact ID is 4f5ef695-d03b-4d56-8fef-7f2bd5c17ef3.",
+      "expected_output": "An exact-resource deletion workflow that reviews agent-linked configuration and usage, deletes only the supplied ID, and verifies its absence without inventing cascade behavior.",
+      "assertions": [
+        "Re-lists and binds the operation to the exact ID and current name",
+        "Inventories prompts, knowledge assignments, Action or Attribute assignments, rules, and relevant usage before deletion",
+        "Does not expand the request into automatic cleanup of related resources",
+        "Verifies the ID is absent from List agents after deletion",
+        "Does not claim undocumented cascade, restoration, or retention behavior"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Show only escalation analytics for the Support Agent for July 2026 in Europe/Amsterdam, filtered to chat and CSAT 1 or 2.",
+      "expected_output": "A reproducible sectioned analytics query for the exact agent and calendar window with millisecond epochs, timezone, channel, and valid CSAT filters.",
+      "assertions": [
+        "Resolves the exact botId before requesting analytics",
+        "Uses the escalations section rather than the full payload",
+        "Converts the explicit July window to startEpoch and endEpoch in milliseconds using Europe/Amsterdam",
+        "Applies channel=chat and csatRatings values 1 and 2",
+        "Reports filters and avoids claiming aggregate correlation proves root cause"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Create a new Fini workspace for Acme, install its Slack bot, and connect Zendesk.",
+      "expected_output": "A clear capability boundary: this skill cannot claim workspace, Slack, or provider authorization provisioning; it only creates a bare agent in an existing authenticated workspace and routes supported follow-up work.",
+      "assertions": [
+        "Does not claim the agent endpoint creates a Fini workspace",
+        "Does not claim it installs Slack or completes Zendesk authorization",
+        "Explains that bare-agent creation requires an existing authenticated workspace",
+        "Routes supported agent configuration, sources, knowledge, and testing separately"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Compare this agent's rule performance before and after our launch.",
+      "expected_output": "Two comparable rules-section analytics queries with explicit equal windows, stable timezone and filters, followed by conversation-level evidence when causality is requested.",
+      "assertions": [
+        "Uses the rules analytics section",
+        "Defines explicit comparable before and after windows",
+        "Keeps the timezone and filters consistent across both queries",
+        "Distinguishes metric change from proof that the launch caused it",
+        "Routes causal investigation to conversation evidence and uses a persistent Test Set against current published live-agent behavior for regression proof"
+      ]
+    }
+  ]
+}

@@ -1,118 +1,160 @@
 ---
 name: fini-api-slack-onboarding
-description: "Use only when the user or client explicitly wants a full Slack-led Fini onboarding for an existing Fini workspace or agent: setting up a new Fini support bot and knowledge base, onboarding to Fini from Slack, configuring bot behavior plus sources/knowledge/prompts/rulebooks/tags, running tests, and preparing go-live readiness. First verify whether this is a fresh onboarding by inspecting workspace state; if it is only a targeted KB import, prompt edit, rule change, source refresh, or answer test, route to the narrower Fini API skill instead."
+description: "Use only when the user explicitly wants full Slack-led onboarding inside an existing authenticated Fini workspace: resolve or create a bare agent, configure behavior, ingest and assign knowledge, optionally add Actions and Attributes, validate review drafts, publish approved configuration, run a persistent Test Set against live-agent behavior as the go-live gate, and report readiness. First inspect workspace state; route one-off agent, source, knowledge, prompt, Rulebook, integration, analytics, conversation, or testing requests to the narrower Fini skill."
 ---
 
 # Fini API Slack Onboarding
 
-Use this skill as the conductor for Slack-guided onboarding of a new Fini client or a newly adopted Fini support agent. It coordinates the narrower Fini API skills; it does not replace them.
+Conduct a complete Slack-guided onboarding by coordinating the narrower Fini API skills. Do not replace their domain workflows or duplicate endpoint schemas here.
 
-Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the relevant docs pages. Do not copy endpoint schemas into the answer.
+Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the relevant linked docs. Treat the current public docs as route, field, enum, limit, and response-shape truth.
 
 ## Boundary
 
-- This flow assumes the client already has, or can authenticate into, an existing Fini workspace.
-- Dashboard/UI is only for provider OAuth or connector setup when the public APIs do not expose that step.
-- Do not promise workspace creation, Slack installation, provider OAuth, or brand-new agent provisioning unless current docs expose those routes.
-- Do not use this skill for one-off tasks like "import this URL", "update this article", "test this prompt", or "export conversations". Route those to the focused skills.
+- Work inside an existing authenticated Fini workspace.
+- Create a bare agent through `fini-api-agents` when the onboarding needs one and no suitable agent exists.
+- Keep bare-agent creation separate from workspace creation, Slack/channel installation, provider OAuth, prompts, knowledge, and integrations. Those are not implied by the returned agent ID.
+- Use dashboard or user-owned setup for Slack installation and provider OAuth when the live public docs expose no route.
+- Route targeted changes such as one source import, prompt edit, analytics query, Action update, or replay to the focused skill instead.
 
-## Fresh Onboarding Check
+## Classify Workspace State
 
-For ambiguous requests such as "set up my Fini bot and KB", inspect current workspace state before starting the full onboarding interview:
+For an ambiguous request such as "set up my Fini bot and KB," inspect before interviewing:
 
-1. List agents to see how many bots exist and identify the likely target.
-2. List articles and drafts to estimate existing KB volume.
-3. Get knowledge folders, optionally scoped to the target bot, to see whether a tree and assignment already exist.
-4. List sources to see whether web/provider content has already been ingested.
-5. If prompt/rule/tag APIs are relevant, inspect current prompts, rules, tag groups, and tags through current docs.
+1. List agents and identify likely targets.
+2. Inspect articles/drafts, knowledge folders, and sources.
+3. Inspect current prompts, rules, tags, Actions, Attributes, and assignments when relevant to the requested use case.
+4. Sanity-check whether agent, article, source, folder, and assignment state agree.
 
-Sanity-check the workspace state before trusting it. If agents, article counts, sources, and folder snapshots disagree, stop and report the inconsistency instead of continuing onboarding. A folder snapshot can be stale; it is not proof that articles/folders are usable for the current target agent.
+Classify:
 
-Classify the request:
-
-| Classification | Meaning | Next action |
+| Classification | Meaning | Next step |
 | --- | --- | --- |
-| Fresh onboarding | Minimal sources/KB/config or a newly adopted agent | Continue this skill |
-| Existing client expansion | Meaningful KB/config already exists | Ask whether they want full onboarding or a targeted update |
-| Targeted update | User wants one specific operation | Route to `fini-api-sources`, `fini-api-knowledge`, `fini-api-agent-configuration`, or `fini-api-generate-answer` |
+| Fresh onboarding | No suitable agent or minimal content/configuration | Continue this skill; create a bare agent if needed |
+| Existing-client expansion | Meaningful setup exists but the launch scope is broad | Confirm the target and continue only with missing stages |
+| Targeted update | One focused outcome | Route to the owning skill |
 
-## Intake Modes
+Treat a stale or contradictory folder snapshot as a blocker to knowledge work, not as proof that the target agent can use the KB.
 
-Offer two modes, then follow the client preference:
+## Collect Intake
 
-- All at once: ask the client to drop a Markdown/PDF/doc bundle, help center URL, SOPs, behavior notes, test questions, and examples in one message.
-- Step by step: ask one section at a time and keep an explicit onboarding state.
+Offer:
 
-Read [intake-and-state.md](references/intake-and-state.md) when collecting inputs, tracking progress, or producing the final readiness summary.
+- All at once: accept a Markdown/PDF/doc bundle, help center, SOPs, behavior notes, automation requirements, required customer context, test questions, examples, and launch constraints.
+- Step by step: collect one short section at a time and maintain onboarding state.
+
+Read [intake-and-state.md](references/intake-and-state.md) for the intake order, state record, and completion format.
 
 ## Core Workflow
 
-1. Resolve the target agent with `fini-api-coordinator` or the List agents docs.
-2. Confirm provider/source access:
-   - if provider OAuth is not done, tell the client to complete it in dashboard/UI;
-   - if source URLs or files are provided, continue through API workflows.
-3. For a fresh or empty workspace, use `fini-api-knowledge` to create or initialize a usable folder tree before source-backed generation. Do not bulk-generate into an empty or stale tree.
-4. Use `fini-api-sources` to crawl, register, ingest, refresh, and poll sources.
-5. Use `fini-api-knowledge` to generate draft knowledge, verify article/draft IDs, publish after approval, and assign folders to the target agent.
-6. Use `fini-api-agent-configuration` to design tags, draft/refine/publish rules, and inspect/update prompts.
-7. Use `fini-api-generate-answer` to run a mini onboarding test suite.
-8. Use `fini-api-conversations` only when real conversation evidence, QA exports, or golden-set candidates are needed.
+1. **Agent**
+   - Use `fini-api-agents` to resolve an existing target.
+   - If none exists, create a bare agent with the exact requested name and preserve its returned ID.
+   - Record Slack/channel-installation status separately.
+2. **Prerequisites**
+   - Confirm provider OAuth, source access, customer API ownership, and other user-managed prerequisites.
+3. **Knowledge tree**
+   - Use `fini-api-knowledge` to verify a usable tree and create or initialize one when absent before source-backed knowledge generation.
+4. **Sources**
+   - Use `fini-api-sources` to crawl, register, ingest, refresh, inspect, and poll source records.
+5. **Knowledge**
+   - Generate drafts, require persisted article/draft IDs, review, publish, organize, and assign folders to the target agent.
+6. **Behavior**
+   - Use `fini-api-agent-configuration` for tags, prompt drafts, and intent Rulebook drafts; publish only explicitly reviewed exact version IDs. Never infer a current/latest rule draft during publish. Treat Business Rules as immediate-live and non-versioned.
+7. **Optional customer context and operations**
+   - Use `fini-api-actions-attributes` only when requirements need them.
+   - Use Attributes for context fetched automatically before eligible message generations for assigned agents/channels.
+   - Use Actions for operations invoked through a published Rulebook Tool node.
+   - Configure ordered external API calls and keep stored secrets masked.
+8. **Draft validation and publish**
+   - Use `fini-api-draft-validation` for an artifact-free baseline, one-dimension-at-a-time exact draft candidates, and an intentional combined candidate when pre-publish proof is required.
+   - Publish only separately approved exact prompt, knowledge, and intent-rule versions through their owning skills.
+9. **Targeted active smoke**
+   - Use `fini-api-generate-answer` with `markAsTest: true` for a small controlled proof of active behavior after publication.
+10. **Go-live regression gate**
+   - Use `fini-api-testing` to create or update a persistent Test Set, attach criteria, run it against current published live-agent behavior, poll to a terminal result, and classify every blocking failure.
+   - Preflight Action, Attribute, and external-API effects because the Test Set run can invoke them.
+11. **Rollout evidence**
+   - Use `fini-api-conversations` for exact transcript/feedback evidence and `fini-api-agents` for aggregate analytics.
 
-## Defaults
+## Mutation Guidance
 
-- Prefer draft/review paths before live changes.
-- Prefer source-backed knowledge generation for imported docs and SOPs.
-- For fresh onboarding, require a real folder tree before source-backed generation.
-- Prefer rule drafts for natural-language behavior setup.
-- Read current state before writes.
-- Ask for explicit approval before publish, prompt update, rule publish, delete, or folder assignment that changes production retrieval.
-- Never ask clients to paste raw API keys into Slack or chat.
-- Keep behavior failures separate from knowledge failures.
+- Read exact current state and dependencies before changing or deleting resources.
+- Prefer reviewable prompt, Rulebook, and knowledge drafts when a draft path exists.
+- If the user already provided explicit execution intent and exact targets, proceed without asking for duplicate approval.
+- If the target or intended live effect remains ambiguous, state the effect and ask one concise question.
+- Treat Action/external-call tests, rule evaluation, Replay, Generate Answer, and Test Set runs as executions when they can reach customer APIs. Use inputs and targets where the resulting real effect is acceptable.
+- For historical replays, remember that `until` can regenerate multiple user turns through the target event, while `single` regenerates only the target response against preserved prior history.
+- By default, replay reuses original Attribute outputs and seeded Rulebook results unless exact prompt or rule artifacts cause the Rulebook to rerun.
+- Never expose, reconstruct, or log stored Action/Attribute secrets. Preserve a masked value only when the public contract defines it as retaining the stored secret.
 
 ## Hard Gates
 
-- Empty tree gate: if there are no usable folders for the target workspace/agent, create or initialize/persist folders before calling source-backed generation.
-- Job-result gate: a knowledge job is not successful just because it is `COMPLETED`; require an article/draft ID and confirm it with List articles or source linkage.
-- Snapshot gate: if `get_knowledge_folders` returns a tree that does not match current agents/articles/sources, treat the tree as stale and block onboarding until the workspace state is corrected.
-- Visibility gate: do not mark knowledge ready until the containing folder is assigned to the target agent and a scoped tree or runtime test confirms visibility.
+- **Agent gate:** do not continue with agent-scoped configuration until the exact `botId` is resolved or created.
+- **Usable-tree gate:** as an operational empty-workspace safeguard, verify usable folders and create or initialize them when absent before source-backed knowledge generation. Raw source import may happen first.
+- **Job-result gate:** require an article/draft ID; `COMPLETED` without one is a no-op or blocker.
+- **Snapshot gate:** stop when the folder snapshot contradicts current agent/article/source state.
+- **Visibility gate:** require exact folder-agent assignment and agent-scoped visibility proof.
+- **Action reachability gate:** require a reviewed published Rulebook Tool node and the explicit exact `draftVersionId` used to publish it; Action assignment alone is insufficient.
+- **Attribute assignment gate:** verify the exact agent/channel and eligible-message behavior before relying on the Attribute.
+- **Draft-validation gate:** when review drafts need behavioral proof, require persisted exact IDs, an artifact-free baseline, isolated candidates, and an explicit no-publish conclusion.
+- **Test Set gate:** do not mark a full onboarding ready without a terminal persistent regression run against current published live-agent behavior and a disposition for blocking failures.
+- **Integration-effect gate:** before Generate Answer, rule evaluation, Replay, integration tests, or Test Set runs, verify that real external effects and repeat counts are acceptable.
 
-## Test Loop
+## Build The Go-Live Test Set
 
-Build a mini test suite from the intake:
+Define 4-8 representative cases:
 
-- top customer questions
-- expected answers or success criteria
-- out-of-scope questions
-- escalation cases
-- tone/personality checks
-- one or two edge cases from past tickets or bad-answer examples
+- common support questions
+- source-specific factual questions
+- out-of-scope or escalation behavior
+- tone/personality
+- caller metadata or Attribute-driven personalization when applicable
+- Action success, denial, failure, and escalation cases when applicable
+- edge cases from historical bad answers
 
-For each failure:
+After the intended prompt, Rulebook, knowledge, Attribute, and Action configuration is published:
 
-| Failure type | Fix path |
+1. Select eligible representative conversations/cases and verify the target agent, inputs, and expected behavior.
+2. Create or update the persistent Test Set and add deterministic and/or judge criteria that express launch requirements.
+3. Re-fetch current published configuration and inspect every case for reachable Actions, configured Attributes, external calls, and repeated-effect risk.
+4. Use controlled accounts and acceptable targets for Action-bearing cases.
+5. Start one live-agent run and poll until completed or failed.
+6. Inspect per-case, per-criterion, generated-behavior, and Action/external-effect evidence.
+7. Route each failure to the owning skill, make the smallest draft change, validate it before publish when needed, publish exactly, then rerun the same stable Test Set.
+
+The Test Set evaluates current published live-agent behavior and may invoke Actions or customer APIs. It does not accept the request-scoped unpublished artifact overrides used by `fini-api-draft-validation`.
+
+## Failure Routing
+
+| Failure | Fix owner |
 | --- | --- |
-| Missing or stale facts | Sources -> Knowledge draft -> review/publish/assign |
-| Correct facts, wrong style | Prompt update plan |
-| Wrong escalation/routing/workflow | Rule draft/refine/publish |
-| Wrong category/reporting output | Tag group/tag design, then rules if needed |
-| Needs caller/account context | Generate Answer metadata/user attributes |
-
-Retest changed cases before marking onboarding ready.
+| Missing/stale facts | Sources -> Knowledge |
+| Correct facts, wrong style/instructions | Agent Configuration prompt draft |
+| Wrong routing/escalation | Agent Configuration Rulebook |
+| Action never reached | Agent Configuration Tool-node wiring, then Actions/Attributes |
+| Action/Attribute input, external call, or mapping failure | Actions/Attributes |
+| Missing eligible-message customer context | Actions/Attributes Attribute workflow |
+| Missing caller-owned one-turn context | Generate Answer metadata |
+| Wrong category/reporting output | Agent Configuration tags and rules |
 
 ## Completion Proof
 
-End with a concise readiness report:
+End with:
 
 ```markdown
-Onboarding classification: [fresh / expansion / targeted update]
-Target agent: [name / botId]
-Sources: [not started / ingested / refreshed / blocked]
-Knowledge: [job IDs / article IDs / drafts generated / published / blocked]
-Folders: [tree proposed / persisted / created / assigned / stale snapshot / blocked]
-Prompts: [not changed / proposed / updated / verified]
-Rules/tags: [not changed / drafted / published / verified]
-Tests: [not run / pass / fail / needs review]
-Approvals pending: [publish / prompt / rule / assignment / none]
-Go-live blockers: [list]
+Onboarding classification: [fresh / expansion / targeted]
+Workspace/auth: [ready / blocked]
+Agent: [existing / created] [name / botId]
+Slack/channel installation: [ready / user action / blocked]
+Sources: [status and IDs]
+Knowledge: [draft/live IDs, folders, assignment]
+Prompts: [draft/reviewed/published version]
+Rules/tags: [draft/published/verified IDs]
+Attributes: [not needed / IDs, assignments, proof]
+Actions: [not needed / IDs, Rulebook reachability, proof]
+Test Set: [ID, run ID, terminal status, blocking results]
+Analytics/rollout evidence: [not checked / summary]
+Go-live blockers: [list / none]
 Next action: [one concrete step]
 ```

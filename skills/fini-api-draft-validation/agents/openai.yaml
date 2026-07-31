@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fini Draft Validation"
+  short_description: "Validate unpublished Fini behavior safely."
+  default_prompt: "Use $fini-api-draft-validation to compare active Fini behavior with exact unpublished artifact candidates."

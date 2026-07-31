@@ -1,6 +1,8 @@
 .DS_Store
 node_modules/
 *.log
+.env
+local-notion-audit/
 
 # Local planning notes, not part of the public skill package.
 cx-public-api-workflow-discovery.md

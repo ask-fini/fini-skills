@@ -1,4 +1,4 @@
 interface:
   display_name: "Fini Generate Answer API"
-  short_description: "Test Fini agent replies with metadata."
-  default_prompt: "Use $fini-api-generate-answer to test a Fini agent reply with user attributes."
+  short_description: "Send one exact Fini runtime turn safely."
+  default_prompt: "Use $fini-api-generate-answer to send one marked Fini agent turn with the selected runtime configuration and metadata."

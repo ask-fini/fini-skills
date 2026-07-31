@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fini Slack Onboarding"
+  short_description: "Onboard and regression-gate a Fini bot."
+  default_prompt: "Use $fini-api-slack-onboarding to onboard this support bot and prove it is ready to launch."

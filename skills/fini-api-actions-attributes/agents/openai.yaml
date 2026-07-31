@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fini Actions and Attributes"
+  short_description: "Configure Fini API calls and runtime context."
+  default_prompt: "Use $fini-api-actions-attributes to configure and verify a Fini Action, Attribute, or external API call."

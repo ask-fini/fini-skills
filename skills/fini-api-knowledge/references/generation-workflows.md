@@ -10,10 +10,11 @@ Knowledge is the factual retrieval layer. A complete behavior-changing workflow 
 2. A usable folder tree when creating source-backed knowledge.
 3. Draft generation job.
 4. Job polling and result inspection.
-5. Review/publish decision.
-6. Folder placement.
-7. Agent folder assignment.
-8. Generate Answer proof.
+5. Review and exact-ID proof through `fini-api-draft-validation` when behavior validation is required.
+6. Publish decision.
+7. Folder placement.
+8. Agent folder assignment.
+9. Active Generate Answer proof without draft artifacts.
 
 Drafts, unassigned folders, and unprocessed sources are not enough to change what an agent can answer.
 
@@ -37,7 +38,8 @@ Drafts, unassigned folders, and unprocessed sources are not enough to change wha
 6. Queue bulk generation.
 7. Poll jobs.
 8. Require article/draft IDs before treating generation as successful.
-9. Review result state before publish.
+9. Review result state and test exact draft IDs through `fini-api-draft-validation` when behavioral proof is required.
+10. Publish only after review, then rerun the same case without draft artifacts.
 
 ## Single Generation
 
@@ -48,6 +50,7 @@ Drafts, unassigned folders, and unprocessed sources are not enough to change wha
 5. Queue job.
 6. Poll.
 7. Inspect generated article/draft/no-op result.
+8. When behavioral proof is required, test the exact persisted draft through `fini-api-draft-validation` before publish and rerun marked active behavior afterward.
 
 ## Draft vs Live
 

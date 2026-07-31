@@ -1,94 +1,108 @@
 ---
 name: fini-api-coordinator
-description: Use when the user asks which Fini public API workflow or endpoint to use for Fini client bot/runtime, agent configuration, Slack-led onboarding, or knowledge-base management; wants to onboard a new Fini client/support bot, train a bot from help center, internal docs, websites, Notion, Zendesk, or Confluence; configure prompts, prompt history, rulebooks/rules, rule drafts, tags, or tag groups; refresh or sync changed knowledge sources; generate, review, publish, organize, or assign knowledge; export conversations for QA or golden-set work; send or test a message turn with metadata/user attributes; or choose between onboarding, agent configuration, source-backed generation, direct article management, Generate Answer, and conversation APIs. Route to the narrower Fini API skill and verify current endpoint details through docs.usefini.com/llms.txt.
+description: Use when the user asks which Fini public API workflow or skill to use; wants to create, inspect, delete, configure, or analyze an agent; validate unpublished prompt, knowledge, snapshot, or eligible intent-rule candidates; onboard a Fini support bot from Slack; configure Actions, Attributes, or external API calls; manage prompts, Rulebooks, tags, sources, or knowledge; send or inspect conversations; run analytics, replays, rule evaluations, Test Sets, or regression testing; or sequence several Fini API domains end to end. Route to the narrowest Fini skill and verify current endpoint contracts through docs.usefini.com/llms.txt.
 ---
 
 # Fini API Coordinator
 
-Use this as the front door for Fini public API work. Route the user's intent to the smallest focused Fini API skill, then let that skill handle the workflow.
+Use this skill as the front door for cross-domain Fini public API work. Route the request to the smallest focused skill, then let that skill own execution and proof.
 
-Do not copy endpoint tables from memory. Before relying on paths, parameters, scopes, response fields, or enum values, fetch `https://docs.usefini.com/llms.txt` and then the relevant `.md` docs page.
+Before relying on a route, field, enum, scope, response shape, or limit, fetch `https://docs.usefini.com/llms.txt` and the relevant linked Markdown page. Treat those public docs as endpoint truth; keep endpoint tables out of this skill pack.
 
-## Freshness Check
+## Package Freshness
 
-When this skill comes from an installed Fini skills package, refresh the full Fini package before endpoint-specific work. Keep this scoped to Fini skills; do not run a broad `skills update` that updates every installed skill.
-
-For project-scoped installs, run from the project root:
+For read-only questions, inspect and report the installed Fini skill-pack version without silently changing it. If the user asks to install or refresh the project-scoped pack, run from the project root:
 
 ```bash
 npx skills add ask-fini/fini-skills --all --copy -y
 ```
 
-This deliberately uses `add --all --copy` instead of a hardcoded `skills update --project <skill names>` list, so newly released Fini skills are installed too. After refresh, continue and verify live endpoint details through `https://docs.usefini.com/llms.txt`.
+Use the scoped `add --all --copy` flow so newly released Fini skills are included. A refreshed skill pack still does not replace the live docs check.
 
-## Routing
+## Route By Intent
 
-| User intent | Use |
+| User intent | Owning skill |
 | --- | --- |
-| Full Slack-led onboarding for a new Fini client/support bot and KB | `fini-api-slack-onboarding` |
-| Configure prompts, prompt history, rulebooks/rules, rule drafts, tags, or tag groups | `fini-api-agent-configuration` |
-| Onboard/configure an existing Slack/support agent's behavior without full new-client intake | `fini-api-agent-configuration` first, then Sources/Knowledge/Test as needed |
-| Export, inspect, analyze, or delete conversations | `fini-api-conversations` |
-| Build QA exports, golden-set candidates, or conversation evidence | `fini-api-conversations` |
-| Run fix review on a specific bad answer or approve/reject a reviewed event | `fini-api-conversations`, then route accepted fixes to the owning skill |
-| Send a test/user turn into a Fini agent, continue a conversation, or pass user metadata | `fini-api-generate-answer` |
-| Import web/provider content, crawl links, refresh sources, poll source status, or detect changed sources | `fini-api-sources` |
-| Generate knowledge, manage articles/drafts, publish, move articles, inspect the tree, or assign folders to agents | `fini-api-knowledge` |
-| "Train the bot", "sync docs", "update the KB", or "make this visible to one agent" | Sequence Sources -> Knowledge -> assignment -> Generate Answer proof |
-| Customer-owned business actions such as refunds, account updates, payment retries, or subscription changes | Out of scope unless current Fini docs expose a public route; gather requirements and state the gap |
+| List, resolve, create, or delete agents; inspect full or sectioned agent analytics | `fini-api-agents` |
+| Configure Actions, Attributes for eligible messages, their agent assignments, or ordered external API calls | `fini-api-actions-attributes` |
+| Configure prompt drafts/history/publishing, Rulebooks/rules/versions, tags, or tag groups | `fini-api-agent-configuration` |
+| Compare active behavior with exact unpublished prompt, knowledge, snapshot, or eligible intent-rule version IDs before publishing | `fini-api-draft-validation` |
+| Run Test Sets, criteria, asynchronous regression runs, replays, or rule diagnostics/evaluations | `fini-api-testing` |
+| Run a full Slack-led onboarding inside an authenticated Fini workspace | `fini-api-slack-onboarding` |
+| List, inspect, export, annotate, resolve, analyze, or delete conversations | `fini-api-conversations` |
+| Send or continue one runtime turn when the configuration choice is already known | `fini-api-generate-answer` |
+| Crawl, register, ingest, refresh, inspect, or delete raw sources | `fini-api-sources` |
+| Generate or manage knowledge, article drafts/history/rollback, folders, and agent visibility | `fini-api-knowledge` |
+| Inspect one exact article or saved article version | `fini-api-knowledge`, not Conversations |
 
-If the request spans multiple areas, sequence skills in the product workflow order:
+Use these distinctions when requests sound similar:
 
-1. Slack onboarding: only when the client explicitly wants full bot + KB onboarding.
-2. Agent configuration: design tags, draft/publish rulebooks, and adjust prompts for existing agents.
-3. Knowledge: for fresh/empty workspaces, create or initialize a usable folder tree before source-backed generation.
-4. Sources: ingest or refresh raw content.
-5. Knowledge: generate drafts or live articles from processed sources and verify article IDs.
-6. Knowledge: organize articles into folders and assign folders to agents.
-7. Generate Answer: test whether the intended agent behaves correctly.
-8. Conversations: export or inspect real conversations for QA, analytics, or evidence.
+- Use `fini-api-draft-validation` for an active baseline, isolated exact-ID candidates, and a combined unpublished candidate.
+- Use `fini-api-generate-answer` for one controlled turn when no candidate-comparison methodology is needed.
+- Use `fini-api-conversations` for stored conversation evidence and QA state.
+- Use `fini-api-testing` for Replay, rule diagnosis, or persistent live-agent regression. A Test Set does not accept unpublished draft artifact overrides and may invoke Actions or external APIs.
+- Use `fini-api-agents` for aggregate analytics rather than rebuilding dashboard metrics from raw exports.
+- Use `fini-api-actions-attributes` for a supported business-action integration. The customer still owns the target API, credentials, permissions, idempotency, and business rules.
 
-## Default Behavior
+## Sequence Cross-Domain Work
 
-- Prefer read-only discovery before write calls.
-- Prefer draft/review paths before live publish.
-- Prefer source-backed generation for imported content.
-- In fresh workspaces, verify or create the folder tree before source-backed generation.
-- Use direct article management only when the user wants exact manual control over the article body or lifecycle.
-- Prefer rule drafts before published rule creation when configuring behavior from natural-language instructions.
-- Treat prompt updates, rule publish/update/delete, tag delete, knowledge publish/delete, folder assignment, and production answer generation as live-impacting.
-- Produce a dry-run style plan before live-impacting actions unless the user already gave exact IDs and explicit execution intent.
-- Do not ask the user to paste API keys into chat. Use environment variables or the caller's secure API flow when available.
-- Translate customer language into Fini concepts: "train/sync docs" usually means Sources plus Knowledge, while "make the bot use it" usually also needs folder assignment and a runtime test.
-- Translate "configure/onboard the agent" into prompts, rulebooks/rules, tags, knowledge, and runtime tests depending on the requested layer.
-- Treat "set up my Fini bot and KB" as ambiguous until workspace state proves it is a fresh onboarding; otherwise route to the narrower update skill.
-- Do not imply Fini public APIs can perform customer-owned business actions unless the live docs show a supported route.
+For a full bot workflow, use only the stages the request needs:
 
-## Pack Boundary
+1. Use `fini-api-agents` to resolve an existing agent or create a bare agent when none exists.
+2. Use `fini-api-agent-configuration` for prompt drafts, tags, and intent Rulebook drafts; keep Business Rules on their immediate-live, non-versioned lifecycle.
+3. Use `fini-api-knowledge` to verify a usable folder tree and create or initialize one when absent before source-backed knowledge generation. This is an operational empty-workspace safeguard, not a prerequisite for importing or polling raw sources.
+4. Use `fini-api-sources` to ingest or refresh raw content.
+5. Use `fini-api-knowledge` to generate, review, organize, and assign knowledge drafts.
+6. Use `fini-api-actions-attributes` when the bot needs live customer context or business operations.
+7. Use `fini-api-agent-configuration` to wire Actions into intent Rulebook draft Tool nodes.
+8. When unpublished behavior needs proof, use `fini-api-draft-validation` to run an artifact-free baseline, isolated exact-ID candidates, and then an intentional combined candidate.
+9. Publish only the separately approved exact prompt, knowledge, and intent-rule versions through their owning skills, then use `fini-api-generate-answer` for active-behavior proof.
+10. Use `fini-api-testing` for Replay diagnostics and persistent Test Set regression against current published live-agent behavior.
+11. Use `fini-api-conversations` for rollout evidence and improvement inputs.
 
-The docs already contain endpoint references. The skills add workflow judgment: which path to choose, which response determines the next step, where review/polling is required, and what proof shows the workflow worked.
+## Operating Rules
+
+- Read current state before changing it.
+- Prefer a reviewable draft when a draft lifecycle exists. Use an immediate-live route when the user explicitly requests it.
+- Do not ask for duplicate confirmation when the user has already given clear execution intent and exact targets. If intent or target is ambiguous, explain the live effect and ask one concise question.
+- Preserve documented backend limits and return rich structured results; do not invent smaller wrapper limits.
+- Treat deletions, article rollback, prompt/rule publish, agent assignment, and external execution as real mutations, not as read-only checks.
+- Treat Action, Attribute, external-call, rule-evaluation, replay, Generate Answer, and Test Set execution as potentially side-effecting when Tool nodes or customer APIs are involved. A live Test Set run can invoke Actions.
+- For synthetic Generate Answer candidate traffic, use `markAsTest: true`; this marks traffic but does not suppress configured Attributes, Actions, external effects, or stored events.
+- Persist candidate content through its owning API and pass only exact stored IDs in Generate Answer `artifacts`. Never inline prompt, knowledge, or rule content there.
+- Never ask for or repeat raw secrets in chat. Preserve a documented masked value only when the API defines that as the way to keep an existing stored secret.
+- Translate customer language into Fini concepts:
+  - "train/sync docs" means Sources -> Knowledge -> visibility -> proof;
+  - "use account context" may mean configured Attributes for eligible messages, not only caller-supplied runtime metadata;
+  - "refund/cancel/update an account" can mean a Fini Action backed by a customer-owned API;
+  - "prove we did not regress" means a persistent Test Set run against current published live-agent behavior, with external effects preflighted.
+
+## Boundaries
+
+- Agent creation creates a bare agent inside an existing authenticated workspace. It does not create a Fini workspace, install Slack, authorize a provider, configure prompts, add knowledge, or wire Actions.
+- Provider OAuth and Slack/channel installation may still require dashboard or user-owned setup when the live public docs expose no route.
+- An Attribute assigned to an agent runs before eligible message generations for its assigned agent/channel. Active Action behavior requires a published Rulebook Tool node; a request-scoped exact draft override can execute only when its owning rule is already published and assigned. An Action assignment record alone is not runtime reachability.
+- A completed asynchronous job or run is not sufficient proof. Require the expected persisted IDs or terminal result and re-read the resulting state.
 
 ## High-Value Gotchas
 
-- Agent configuration APIs are for existing Fini agents; do not promise full agent/workspace/Slack provisioning unless current docs expose those routes.
-- Prompt updates save a new version and require the full prompt section arrays.
-- Natural-language rulebook creation should default to a draft rule, not direct published rule creation.
-- Tag groups marked as output-only are not available to Rulebooks.
-- Source ingestion is not live knowledge.
-- Generated drafts do not affect answers until reviewed/published and visible to the agent.
-- Knowledge can exist but still be invisible to an agent if folder assignment is wrong.
-- Conversation and source list pagination is newest-first, so `direction=next` moves older.
-- Generate Answer returns created events, not the full conversation wrapper.
-- Public source APIs use `document*` wire names even though the product language is "sources".
-- For web ingestion, source inputs are URLs; for provider ingestion, inputs are registered source IDs.
-- A `COMPLETED` knowledge job with no article/draft ID is not success; treat it as blocked/no-op.
-- Folder reads are snapshots; if snapshot folders disagree with current agents/articles/sources, stop and flag stale workspace state.
-- Public APIs may expose bot/KB state but not the customer's own action APIs. Treat refund, subscription, payment, order, and account-update requests as integration discovery unless current Fini docs say otherwise.
+- Prompt changes should normally follow create draft -> fetch exact version -> review -> publish exact version. Handle stale-draft conflicts by re-reading current prompts.
+- Natural-language intent Rulebook work should normally create or refine a draft before publishing its explicit exact reviewed `draftVersionId`; never resolve a current/latest draft implicitly. Business Rules are immediate-live and non-versioned.
+- Rule duplication is live-impacting for every kind. Route it through exact source-kind inspection, exact confirmation, and re-fetch of the independent copy.
+- Tag groups marked output-only are unavailable to Rulebooks.
+- Source ingestion is not live knowledge, and published knowledge can still be invisible when folder assignment is wrong.
+- Public source APIs use `document*` wire names even though product language says "sources."
+- Conversation/source pagination is newest-first; follow the cursor contract from the current docs.
+- Generate Answer creates events; it is not a conversation-list response.
+- Draft validation does not publish. Test one artifact dimension at a time before a combined candidate, and keep every comparison like-for-like.
+- Test Set runs asynchronously evaluate persistent cases against current published live-agent behavior and may invoke configured Actions or external APIs.
+- Action/Attribute tests and individual external-call tests execute outbound HTTP; the word "test" does not imply a dry run.
+- Analytics requires an explicit agent and time window; use sectioned analytics when the user only needs one view.
 
 ## References
 
-Read [api-mental-model.md](references/api-mental-model.md) when the user asks what the Fini public APIs can do, how the API areas fit together, how to triage a bad answer, or how to configure/onboard an existing agent end to end.
+Read [api-mental-model.md](references/api-mental-model.md) for architecture, behavior-change layers, triage, or end-to-end agent setup.
 
-Read [workflow-routing.md](references/workflow-routing.md) when the user needs a multi-step plan, a skill routing table, or a customer-facing explanation of which Fini API workflow to use.
+Read [workflow-routing.md](references/workflow-routing.md) for a multi-step plan or detailed skill selection.
 
-Read [customer-recipes.md](references/customer-recipes.md) when the user describes a customer job such as training a bot from docs, refreshing changed sources, proving quality with golden sets, using user attributes, or making knowledge visible to one agent.
+Read [customer-recipes.md](references/customer-recipes.md) when the request is phrased as a customer job rather than an API domain.

@@ -23,7 +23,9 @@ Route accordingly:
 - Visibility issue -> folder/article assignment workflow.
 - Metadata issue -> Generate Answer runtime pattern.
 - Prompt/rule/tag behavior issue -> Agent Configuration workflow.
-- Out-of-scope business action -> do not create KB that promises unsupported actions.
+- Configured Attribute, Data Step, or Action failure -> `fini-api-actions-attributes`.
+- Action not reached -> Agent Configuration Tool-node and rule assignment, then `fini-api-actions-attributes`.
+- Requested business operation with no configured/documented Action path -> do not create KB that promises the operation; assess it through `fini-api-actions-attributes`.
 
 ## Draft Fix Workflow
 
@@ -32,9 +34,10 @@ Route accordingly:
 3. Generate draft knowledge by default.
 4. Poll the job and inspect draft/no-op/failure state.
 5. Review the draft content and folder placement.
-6. Publish only after explicit approval or prior authorization.
-7. Verify the article is in a folder visible to the intended agent.
-8. Retest the failed question with Generate Answer.
+6. Retest through `fini-api-draft-validation`: preserve the active baseline, fetch the exact draft ID, and use it in `artifacts.knowledgeArticleDraftIds` with `markAsTest: true`.
+7. Publish only after explicit approval or prior authorization and a satisfactory draft result.
+8. Verify the article is in a folder visible to the intended agent.
+9. Rerun the same question without draft artifacts to prove active behavior.
 
 ## Output Template
 
@@ -44,9 +47,10 @@ Knowledge improvement
 - Failure type:
 - Evidence source:
 - Draft/article IDs:
+- Draft-artifact retest:
 - Folder:
 - Agent visibility:
-- Retest result:
+- Active retest result:
 - Publish decision:
 - Remaining risk:
 ```
@@ -55,5 +59,5 @@ Knowledge improvement
 
 - Do not publish directly from ambiguous evidence.
 - Do not update live knowledge when the expected answer is not confirmed.
-- Do not create KB entries that claim Fini can perform customer-owned business actions unless the customer and current public API support that workflow.
+- Do not create KB entries that claim a customer-owned business operation will run unless a configured and tested Fini Action/Rulebook workflow supports it.
 - Do not treat a passing retest as proof that every related question is fixed; summarize the scope tested.

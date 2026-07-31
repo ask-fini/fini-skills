@@ -1,202 +1,247 @@
 # Customer Recipes
 
-Use this reference when the user describes a customer job rather than an endpoint name. Keep endpoint details in the live docs; use this file to choose the workflow and proof.
+Use this reference when the user describes a customer job rather than an endpoint. Keep route schemas in the live docs; use these recipes for selection, sequencing, and proof.
 
-## Configure Or Onboard An Existing Agent
+## Contents
+
+- [Create And Configure A Support Agent](#create-and-configure-a-support-agent)
+- [Full Slack-Led Client Onboarding](#full-slack-led-client-onboarding)
+- [Add An Action Backed By A Customer API](#add-an-action-backed-by-a-customer-api)
+- [Add An Attribute](#add-an-attribute)
+- [Train The Bot From Customer Docs](#train-the-bot-from-customer-docs)
+- [Refresh Changed Docs](#refresh-changed-docs)
+- [Diagnose And Fix A Bad Answer](#diagnose-and-fix-a-bad-answer)
+- [Prove Quality With A Test Set](#prove-quality-with-a-test-set)
+- [Use Caller Metadata Or Configured Attributes](#use-caller-metadata-or-configured-attributes)
+- [Make Knowledge Visible To One Agent](#make-knowledge-visible-to-one-agent)
+
+## Create And Configure A Support Agent
 
 Customer phrases:
 
-- "Set up this Slack agent."
-- "Configure the bot behavior."
-- "Add rulebooks and tags."
-- "Update the prompt for this agent."
+- "Create a support bot."
+- "Set up a new billing agent."
+- "Configure this agent's prompts and Rulebooks."
 
 Workflow:
 
-1. `fini-api-agent-configuration`: resolve the target agent.
-2. Design routing or output tag groups before rules that depend on them.
-3. Create/refine rule drafts from behavior instructions; publish only after review and explicit target agents.
-4. Read prompt history/current prompts; update a new prompt version only after approval.
-5. Use `fini-api-sources` and `fini-api-knowledge` if the behavior gap is missing content rather than configuration.
-6. Use `fini-api-generate-answer` for targeted runtime tests.
-7. Use `fini-api-conversations` for rollout QA or golden-set evidence.
+1. Inspect the existing agent list and resolve duplicate names.
+2. Use `fini-api-agents` to create a bare agent only when the requested agent does not already exist.
+3. Make the boundary explicit: creation does not install Slack, authorize providers, create knowledge, configure prompts, or wire integrations.
+4. Use `fini-api-agent-configuration` for prompt drafts, tags, and intent Rulebook drafts; keep Business Rules on their immediate-live, non-versioned lifecycle.
+5. Use Sources/Knowledge when the agent needs customer content.
+6. Use Actions/Attributes only when the use case needs live context or customer-system operations.
+7. Validate unpublished candidates through `fini-api-draft-validation` when pre-publish behavioral proof is required.
+8. After approved versions are published, use marked Generate Answer for focused active smoke.
+9. Use `fini-api-testing` for a persistent live-agent Test Set go-live gate and preflight possible Action/external effects.
 
 Proof:
 
-- Agent ID resolved.
-- Tags/tag groups listed or created and Rulebook availability is clear.
-- Rules are draft or published with target `botIds` explicit.
-- Prompt version status is explicit.
-- Knowledge changes are separated from configuration changes.
-- Runtime tests or conversation evidence show whether behavior changed.
-
-Boundary:
-
-- This configures an existing Fini agent. Do not promise full workspace, Slack install, or new-agent provisioning unless the current public docs expose those routes.
+- Exact agent name and ID.
+- Existing versus newly created status.
+- Configuration, knowledge, integration, and channel-installation status kept separate.
+- Terminal Test Set run and unresolved blockers.
 
 ## Full Slack-Led Client Onboarding
 
 Customer phrases:
 
-- "Onboard us to Fini."
-- "Set up my Fini bot and KB."
-- "We connected Zendesk; help us get the bot ready from Slack."
-- "Build our support bot behavior, KB, and tests."
+- "Onboard us to Fini from Slack."
+- "Set up our Fini bot and KB."
+- "Build our support bot behavior, integrations, knowledge, and tests."
 
 Workflow:
 
-1. `fini-api-slack-onboarding`: verify workspace state first: agents, articles/drafts, folders, and sources.
-2. If fresh onboarding, offer all-at-once intake or step-by-step intake.
-3. Gather scope, boundaries, escalation, tone, sources, top questions, examples, and launch constraints.
-4. If articles/folders are empty or the folder snapshot looks stale, use `fini-api-knowledge` to create or initialize a starter tree before source-backed generation.
-5. Use `fini-api-sources` for source discovery, crawl, register, ingest, refresh, and polling.
-6. Use `fini-api-knowledge` for draft generation, article ID verification, publish-after-review, and assignment.
-7. Use `fini-api-agent-configuration` for prompts, rule drafts, rule publish after approval, tags, and tag groups.
-8. Use `fini-api-generate-answer` for a 4-8 question onboarding test suite.
-9. Produce a readiness summary with blockers and approvals.
+1. `fini-api-slack-onboarding`: inspect workspace state and classify fresh onboarding, expansion, or targeted update.
+2. Gather scope, boundaries, escalation, voice, content sources, automation needs, required customer context, examples, and launch constraints.
+3. Resolve the target agent or create a bare one.
+4. Confirm user-owned Slack installation, provider OAuth, and other prerequisites not covered by public routes.
+5. Verify a usable folder tree and create or initialize one when absent before source-backed knowledge generation.
+6. Use Sources and Knowledge for ingestion, draft generation, review, publish, organization, and assignment.
+7. Use Agent Configuration for prompt drafts, tags, and Rulebooks.
+8. Add optional Attributes and Actions when requirements call for them.
+9. Validate review drafts through `fini-api-draft-validation` before publishing when pre-launch candidate proof is required.
+10. After publication, use marked Generate Answer for focused active smoke.
+11. Run the persistent Test Set against current published live-agent behavior, poll to terminal state, inspect external effects, and use its results as the go-live gate.
 
 Proof:
 
-- Fresh/expansion/targeted classification is explicit.
-- Target agent is resolved.
-- Client inputs are collected or marked missing.
-- Sources, KB, folders, config, and tests each have a status.
-- Knowledge jobs list article/draft IDs, or no-op/blocker status is explicit.
-- Live-impacting operations have explicit approvals.
+- Onboarding classification and target agent.
+- Each user-owned prerequisite marked ready or blocked.
+- Persisted source, knowledge, configuration, and integration IDs.
+- Test Set/run IDs, pass/fail summary, and go-live blockers.
+
+## Add An Action Backed By A Customer API
+
+Customer phrases:
+
+- "Let the bot refund an order."
+- "Allow customers to cancel subscriptions."
+- "Update an account through our API."
+
+Workflow:
+
+1. Confirm the customer-owned endpoint, operation, auth source, required identifiers, business permissions, idempotency behavior, and audit expectations.
+2. Use `fini-api-actions-attributes` to create a typed Action and its ordered external API steps.
+3. Map only the fields required by later steps and the final Action output.
+4. Keep stored secret values masked and out of reports.
+5. Test only when the supplied inputs and target make the real external effect acceptable.
+6. Use `fini-api-agent-configuration` to add a Tool node to the intended intent Rulebook draft and record its exact reviewed `draftVersionId`.
+7. Publish the explicitly reviewed exact Rulebook `draftVersionId`; never omit it or resolve a current/latest draft after approval.
+8. Use marked Generate Answer with acceptable targets for a focused active smoke. Use Replay separately for historical diagnosis.
+9. Run persistent success, denial, failure, and escalation Test Set cases against the live agent. Use controlled targets because the Test Set can invoke and repeat the Action.
+
+Proof:
+
+- Action and external-call IDs.
+- Input/output contracts and step order.
+- Exact Rulebook/Tool-node reachability.
+- Test outcome without raw headers, secrets, or sensitive external bodies.
+
+Remember: Action assignment metadata alone does not make the Action runnable. Published Rulebook reachability does.
+
+## Add An Attribute
+
+Customer phrases:
+
+- "Fetch the user's plan before every answer."
+- "Give the bot order or account context automatically."
+- "Expose this API field to our rules."
+
+Workflow:
+
+1. Identify the minimum required fields for eligible messages and where each should be visible: model, Rulebook, or downstream call.
+2. Create the Attribute and ordered external calls.
+3. Verify response mappings and masking.
+4. Run one controlled lookup.
+5. Assign the Attribute to the exact agent/channel.
+6. Use marked Generate Answer to verify one focused eligible-message behavior, latency, and missing-data case.
+7. Run persistent Attribute cases through a live Test Set and account for repeated external lookups.
+
+Proof:
+
+- Attribute and step IDs.
+- Exact assignment.
+- Expected fields present without unnecessary customer data.
+- Runtime and regression results.
+
+Attribute assignment changes eligible-message behavior. Treat it differently from Action assignment.
 
 ## Train The Bot From Customer Docs
 
 Customer phrases:
 
 - "Train the bot on our help center."
-- "Import these internal docs."
-- "Use our website pages as knowledge."
+- "Import our internal docs."
 - "Sync Notion, Zendesk, or Confluence."
 
 Workflow:
 
-1. `fini-api-sources`: discover/register/ingest or crawl/ingest the raw sources.
-2. Poll source status; do not treat queued ingestion as completion.
-3. If this is the first KB setup, create or initialize a folder tree before generation.
-4. `fini-api-knowledge`: bulk-generate draft knowledge from processed sources.
-5. Poll jobs and require article/draft IDs before continuing.
-6. Review/publish after approval.
-7. Assign the containing folder to the intended agent.
-8. `fini-api-generate-answer`: run a targeted behavior test if proof is needed.
+1. Verify a usable knowledge tree and create or initialize one when absent before source-backed generation.
+2. `fini-api-sources`: discover/register/ingest or crawl/ingest the raw sources.
+3. Poll source status; queued ingestion is not completion.
+4. `fini-api-knowledge`: bulk-generate draft knowledge from processed source IDs.
+5. Poll jobs and require persisted article/draft IDs.
+6. Review, publish, organize, and assign to the intended agent.
+7. Use marked Generate Answer for a focused active retrieval smoke, then run the go-live Test Set against current published behavior.
 
 Proof:
 
-- Source records processed.
-- Drafts or articles created and confirmed by article IDs.
-- Published state is explicit.
-- Folder assignment is visible in the scoped agent tree.
-- Test answer uses the intended knowledge when runtime proof is requested.
+- Processed source IDs.
+- Persisted article or draft IDs.
+- Published state and agent-scoped visibility.
+- Test Set results for source-specific questions.
 
-## Refresh Changed Docs Safely
+## Refresh Changed Docs
 
 Customer phrases:
 
 - "Our docs changed."
-- "Sync only changed articles."
-- "Update the KB without breaking live answers."
+- "Sync only changed sources."
+- "Update the KB without losing the live version."
 
 Workflow:
 
-1. Refresh existing source IDs.
-2. Poll source completion.
-3. List changed sources and keep the ones linked to knowledge.
-4. Bulk-generate drafts by default.
-5. Review, publish, and verify assignment.
-6. Test the intended agent if the customer expects answer behavior to change.
+1. Refresh existing source IDs and poll completion.
+2. Select changed sources linked to knowledge.
+3. Generate updates as drafts.
+4. Review against the current article and its history.
+5. Publish and verify assignment.
+6. Rerun the same persistent Test Set against current published behavior and compare with its prior live run.
 
 Proof:
 
 - Changed source IDs.
-- Draft/live result.
+- Previous and new article versions.
 - Published article IDs.
-- Assignment verification.
-- Remaining unchanged or failed sources.
+- Regression comparison.
 
-## Prove Bot Quality With A Golden Set
+## Diagnose And Fix A Bad Answer
+
+Customer phrases:
+
+- "Why was this answer wrong?"
+- "Replay it against the draft."
+- "Fix this and prove nothing else regressed."
+
+Workflow:
+
+1. Use `fini-api-conversations` to preserve the exact conversation and event evidence.
+2. Classify the owner: Knowledge, Prompt, Rulebook, Attribute, Action, or caller metadata.
+3. Use `fini-api-testing` for replay or rule evaluation when it isolates the cause.
+4. Create the smallest reviewable change in the owning skill.
+5. Use `fini-api-draft-validation` for exact unpublished artifacts when supported.
+6. Publish the reviewed version.
+7. Rerun the persistent Test Set against current live-agent behavior and compare with baseline.
+8. Update feedback/resolution state only after the evidence supports it.
+
+Proof:
+
+- Original event and root-cause evidence.
+- Exact changed artifact/version.
+- Replay or controlled-turn result.
+- Test Set regression result.
+
+## Prove Quality With A Test Set
 
 Customer phrases:
 
 - "Run our golden set."
-- "Check expected answers."
-- "Compare against expected knowledge references."
-- "Make sure the bot does not regress."
+- "Set up a regression gate."
+- "Check the release against past conversations."
 
 Workflow:
 
-1. Treat each row as `question`, `expected answer`, and optional `expected knowledge reference`.
-2. Use Generate Answer against the intended agent with test metadata.
-3. Capture actual answer, used articles, event IDs, pass/fail, and reviewer notes.
-4. For KB-driven failures, generate draft knowledge updates or identify stale sources.
-5. Retest failures before publishing.
+1. Select or create eligible persistent cases with stable inputs and expected outcomes.
+2. Create or update the Test Set and its deterministic and/or judge criteria.
+3. Re-fetch the target agent's current published configuration.
+4. Inspect cases for reachable Actions, Attributes, external calls, and repeated-effect risk; use controlled targets.
+5. Start one live-agent run and poll until completed or failed.
+6. Inspect per-case, per-criterion, generated-behavior, and external-effect evidence.
+7. Classify failures and route fixes to owning skills. Validate drafts separately, publish exactly, then rerun the same stable Test Set.
 
 Proof:
 
-- Total tests, passed, failed, skipped.
-- Failed row reasons.
-- Used article mismatch when relevant.
-- Draft/publish next action.
+- Test Set, criterion, and run IDs.
+- Terminal status, totals, and blocking failures.
+- Baseline-versus-candidate comparison.
+- Clear go-live decision.
 
-## Use User Attributes Or Metadata
+Test Set runs evaluate current published live-agent behavior and may invoke Actions or customer APIs. They do not accept unpublished draft artifact overrides. Replay may diagnose a historical case but produces an ineligible Test Set source.
 
-Customer phrases:
+## Use Caller Metadata Or Configured Attributes
 
-- "Use account status in answers."
-- "Pass plan, locale, user ID, tags, or segment."
-- "Personalize the bot response."
-
-Workflow:
-
-1. Confirm the exact attributes the caller already knows.
-2. Send them through `metadata.user_attributes` on Generate Answer.
-3. Keep keys stable and values minimal.
-4. Mark synthetic tests clearly.
-5. Inspect returned events and used articles.
-
-Rules:
-
+- Use Generate Answer `metadata.user_attributes` when the caller already knows and supplies the context for one turn.
+- Use a configured Attribute when Fini should fetch context automatically for eligible messages.
 - Do not invent CRM, billing, or helpdesk fields.
-- Do not ask users to paste secrets into chat.
-- Do not include sensitive fields unless the customer confirms they are safe for the Fini context.
+- Send or expose only the minimum customer data required for the workflow.
+- Keep keys stable across tests so regression evidence is comparable.
 
 ## Make Knowledge Visible To One Agent
 
-Customer phrases:
-
-- "Assign this KB to one bot."
-- "Make these articles visible to the billing agent."
-- "Why can the agent not use this article?"
-
-Workflow:
-
-1. List agents and resolve `botId`.
-2. Fetch the knowledge folders/tree.
-3. Confirm the target article lives in the intended folder.
+1. Resolve the exact agent.
+2. Fetch the knowledge tree.
+3. Confirm the article lives in the intended folder.
 4. Add or remove the folder-agent assignment.
-5. Re-fetch the scoped tree for that `botId`.
-6. Test behavior if needed.
-
-## Recognize Out-Of-Scope Customer Actions
-
-Customer phrases:
-
-- "Refund this user."
-- "Cancel or change a subscription."
-- "Retry payment."
-- "Update the customer's account."
-
-These are customer-owned business actions. The current bot/KB skills should not promise that Fini public APIs can execute them. First check `https://docs.usefini.com/llms.txt`. If no supported public route exists, gather requirements and state that this needs a separate customer integration or future public action API.
-
-Collect:
-
-- Business action and risk level.
-- Read-only vs write.
-- Required user/account identifiers.
-- Auth method and token lifetime.
-- Confirmation and idempotency requirements.
-- Success/error response shape.
-- Audit trail expected by the customer.
+5. Re-fetch the agent-scoped tree.
+6. Use marked Generate Answer for one focused active retrieval smoke, then run the relevant persistent Test Set criterion against current live-agent behavior when broader proof is needed.

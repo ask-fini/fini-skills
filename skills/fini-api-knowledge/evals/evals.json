@@ -41,6 +41,55 @@
         "Verifies the persisted draft ID and folder",
         "Does not publish the draft"
       ]
+    },
+    {
+      "id": 5,
+      "prompt": "Show me exactly what this live article contained at version 3. Do not change anything.",
+      "expected_output": "Lists history, fetches numeric version 3 through the read-scoped exact-version operation, compares it with current live content, and stops without a write.",
+      "assertions": [
+        "Fetches the current live article and available history before selecting the version",
+        "Uses the exact numeric version rather than inferring from versionId or timestamp",
+        "Treats the exact-version POST as a read-scoped operation",
+        "Does not call revert, update, publish, or another live write"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Roll this article back to version 3 and prove the rollback worked.",
+      "expected_output": "Captures current content, fetches and compares exact version 3, reverts that numeric version, then verifies live content and visibility.",
+      "assertions": [
+        "Captures the current live article before reverting",
+        "Fetches exact numeric version 3 and presents the material differences",
+        "Calls the live revert only for the exact article and version requested",
+        "Re-fetches the article and compares it with the target historical snapshot",
+        "Verifies folder placement and target-agent visibility after rollback"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "This draft fixes our 30-day refund answer. Prove the draft first, then publish the exact draft I approved and prove the live bot uses it.",
+      "expected_output": "Uses Draft Validation for an artifact-free baseline and exact knowledgeArticleDraftIds candidate before publication, publishes only the approved draft, verifies live placement and visibility, then reruns the same marked case without draft artifacts.",
+      "assertions": [
+        "Routes the pre-publish comparison to fini-api-draft-validation",
+        "Runs an artifact-free baseline and uses the exact persisted draft ID in artifacts.knowledgeArticleDraftIds",
+        "Sets markAsTest true and preserves separate baseline/candidate interaction and event IDs",
+        "Records the draft-artifact answer without claiming the draft is live",
+        "Publishes only the exact approved draft",
+        "Verifies the live article and target-agent visibility",
+        "Reruns the same question without draft artifacts to prove active behavior"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Delete article 33333333-3333-4333-8333-333333333333. That exact article is obsolete and I confirm permanent deletion.",
+      "expected_output": "Uses the caller's exact-target authorization, checks the article and its dependencies, deletes only that article, and verifies the destructive result without asking for duplicate confirmation.",
+      "assertions": [
+        "Fetches the exact article and reports whether it is live or draft",
+        "Checks folder visibility and linked-source impact before deletion",
+        "Does not ask for duplicate confirmation",
+        "Deletes only the exact supplied article ID",
+        "Reports API response evidence and any remaining source or assignment cleanup"
+      ]
     }
   ]
 }

@@ -1,0 +1,105 @@
+{
+  "skill_name": "fini-api-draft-validation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Try this new guideline wording on our support bot before publishing it and compare the answer with what users get now.",
+      "expected_output": "Creates and fetches an exact complete prompt draft, captures an artifact-free active baseline, then runs a separate like-for-like candidate with artifacts.promptVersionId and markAsTest without publishing.",
+      "assertions": [
+        "Runs the active baseline first with no artifacts",
+        "Persists the complete prompt draft through agent configuration and fetches its exact non-truncated version",
+        "Passes only the exact version ID through artifacts.promptVersionId rather than inline prompt text",
+        "Uses a fresh equivalent candidate conversation with markAsTest true",
+        "Captures baseline and candidate interaction and event IDs",
+        "Does not publish or imply that the candidate became active"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Our new refund article job says COMPLETED but returned no article ID. Put its wording inline and test it against the bot anyway.",
+      "expected_output": "Refuses the inline or missing-ID shortcut, treats completion without a persisted draft ID as a blocker, and waits for a concrete fetched draft before using knowledgeArticleDraftIds.",
+      "assertions": [
+        "Does not treat COMPLETED without a persisted knowledge ID as usable candidate evidence",
+        "Does not put raw article text in Generate Answer artifacts",
+        "Requires a concrete persisted draft ID and exact draft fetch",
+        "Uses artifacts.knowledgeArticleDraftIds only after the draft exists",
+        "Keeps publication separate from candidate validation"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "We have prompt draft pv_42, knowledge drafts kd_7 and kd_8, snapshot ks_3, and eligible refund rule version rv_17. Test the whole candidate before launch.",
+      "expected_output": "Runs a controlled active baseline, tests each candidate dimension separately with exact IDs, then runs one combined candidate only after isolated results are understood.",
+      "assertions": [
+        "Verifies every artifact ID belongs to the intended workspace and agent context",
+        "Uses separate prompt-only, knowledge-only, snapshot-only, and eligible-rule-only conversations before combining",
+        "Keeps message, role, metadata, user attributes, channel, and controlled identity equivalent",
+        "Uses markAsTest true and fresh interaction IDs for every variant",
+        "Records the exact artifact set and event evidence per run",
+        "Verifies documented snapshot and draft-article composition semantics before combining",
+        "Does not publish any candidate"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Test brand-new unassigned intent Rulebook draft rv_new through ruleVersionIds before we publish or assign its rule.",
+      "expected_output": "Blocks the unsupported runtime override, explains that the owning rule must already be published and assigned, and routes the new draft to structural field/flow review instead of pretending Generate Answer executed it.",
+      "assertions": [
+        "Fetches and verifies the actual rule kind and version",
+        "Does not pass a brand-new unassigned draft through artifacts.ruleVersionIds",
+        "Explains the published-and-assigned owning-rule eligibility requirement",
+        "Uses structural preview or review rather than full runtime proof",
+        "Does not publish or assign merely to satisfy the test request"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Run our Test Set against this unpublished prompt draft so we know how the live regression suite performs.",
+      "expected_output": "Explains that a Test Set cannot apply the unpublished draft, uses exact-ID Generate Answer candidate validation first, and keeps the later live-agent regression run plus its possible Action effects separate.",
+      "assertions": [
+        "Does not claim a Test Set can apply promptVersionId",
+        "Uses Generate Answer with the persisted exact prompt draft for candidate behavior",
+        "States that Generate Answer creates the candidate conversations and events",
+        "Routes persistent cases and asynchronous live-agent regression to fini-api-testing after publication",
+        "States that the Test Set run may invoke Actions or external APIs",
+        "Does not call the live Test Set run proof that the unpublished draft was tested"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Tell me whether yesterday's exact failed response would change with pv_42 while preserving that historical thread.",
+      "expected_output": "Routes the historical-context regeneration to Replay with the exact prompt artifact rather than substituting a new clean-turn draft validation.",
+      "assertions": [
+        "Chooses Replay because the exact stored historical context must be preserved",
+        "Keeps the original conversation unchanged",
+        "Uses the exact prompt artifact ID rather than inline draft text",
+        "Does not mislabel a replay as an active baseline and fresh candidate comparison",
+        "Routes replay event alignment and reuse semantics to fini-api-testing"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Use markAsTest on our production cancellation agent so the draft check cannot actually cancel anything.",
+      "expected_output": "Rejects the false safety premise, inspects reachable Actions, and requires a controlled workspace/account/input because markAsTest labels traffic but does not suppress external effects.",
+      "assertions": [
+        "States that markAsTest is not a dry-run or Action-suppression flag",
+        "Inspects active and overridden Rulebooks for reachable Action Tool nodes",
+        "Uses a controlled workspace, agent, customer identity, and input before executing",
+        "Treats Generate Answer as a write that creates conversation and events",
+        "Records any Attribute or Action effects separately from answer quality"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Use whichever knowledge snapshot is latest for the candidate test; I do not have its ID.",
+      "expected_output": "Does not infer a latest snapshot, resolves and verifies one exact workspace-owned knowledgeSnapshotId first, or omits/blocks that dimension when no exact ID is available.",
+      "assertions": [
+        "Does not invent or infer knowledgeSnapshotId from article state or recency language",
+        "Uses the owning knowledge workflow to obtain an exact workspace-owned snapshot ID",
+        "Records the exact snapshot ID before Generate Answer",
+        "Tests the snapshot as its own candidate dimension before combination",
+        "Blocks or omits the snapshot override if exact identification is unavailable"
+      ]
+    }
+  ]
+}

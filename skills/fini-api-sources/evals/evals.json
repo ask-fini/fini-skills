@@ -1,0 +1,76 @@
+{
+  "skill_name": "fini-api-sources",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Check whether source 5d9f67a8-d853-4af4-b7ce-23ebba1245e5 finished processing and tell me whether it is ready for knowledge generation.",
+      "expected_output": "Uses the exact-source read, interprets job state, success, error, linkage, operation, and changed metadata together, and avoids scanning all sources.",
+      "assertions": [
+        "Uses Get source because the exact source ID is known",
+        "Does not treat linkedJobStatus=COMPLETED alone as readiness",
+        "Reports success, error, linked knowledge, operation or reason, and changed state",
+        "Does not dump large paragraph payloads unless required for diagnosis"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Export every Notion source in this workspace. There may be more than one page.",
+      "expected_output": "Pins or reports the selected source sort order, then uses ID-boundary cursor pagination until hasMore is false, with no invented nextCursor.",
+      "assertions": [
+        "Filters List sources to the requested source type",
+        "Pins order=desc before saying that next moves older",
+        "Uses the last returned source ID with direction=next to move older",
+        "Does not expect a nextCursor field in the response",
+        "Reports page count, source count, hasMore, and the final boundary ID"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Refresh these twelve existing source IDs and update knowledge only where the upstream content changed.",
+      "expected_output": "Refreshes the exact set, polls each source, preserves the changed cohort, and hands only changed linked source IDs to draft knowledge generation.",
+      "assertions": [
+        "Preserves the twelve targeted source IDs and polls their exact records",
+        "Interprets terminal status together with success and error",
+        "Excludes unchanged and unlinked sources unless broader behavior is explicitly requested",
+        "Records changed IDs before generation can clear the changed flag",
+        "Hands the selected IDs to fini-api-knowledge as a separate workflow"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Show me every Zendesk article already imported into Fini, then import one new Zendesk article.",
+      "expected_output": "Uses List sources for already imported Zendesk content, then provider discovery, registration, ingestion, and exact-source polling for the new resource.",
+      "assertions": [
+        "Does not use provider discovery to audit already imported content",
+        "Uses List sources with a Zendesk source filter for existing records",
+        "Registers the selected provider resource before ingesting its returned Fini source ID",
+        "Routes addedDocumentIds to documentIdsToAdd and updatedDocumentIds to documentIdsToRefresh",
+        "Polls the exact new source and does not claim ingestion alone changed live answers"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Refresh these existing sources: one web source ID, one Notion source ID, and one raw-file source ID.",
+      "expected_output": "Fetches all three exact records, sends only refreshable Fini source IDs through the dedicated documentIds route, and isolates the raw file for a separately authorized delete/re-upload workflow.",
+      "assertions": [
+        "Uses existing Fini source IDs rather than web URLs with the dedicated Refresh Sources route",
+        "Preflights source types before queueing the mixed request",
+        "Does not send the raw-file source to Refresh Sources",
+        "Does not silently delete or re-upload the raw file",
+        "Polls each accepted refreshable source independently"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Delete source 44444444-4444-4444-8444-444444444444 but keep its linked article. I confirm that exact deletion.",
+      "expected_output": "Uses the exact source ID and deleteArticles=false, preserves the linked article, executes without duplicate confirmation, and verifies the source deletion separately from knowledge state.",
+      "assertions": [
+        "Fetches the exact source and linked article impact first",
+        "Uses deleteArticles=false",
+        "Does not ask for duplicate confirmation",
+        "Deletes only the exact source ID",
+        "Verifies that source removal and linked-article preservation are separate outcomes"
+      ]
+    }
+  ]
+}

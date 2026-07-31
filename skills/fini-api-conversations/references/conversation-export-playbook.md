@@ -2,10 +2,19 @@
 
 Use this reference for conversation export, analysis, and deletion planning. Fetch current docs first for exact parameters and response fields.
 
+## Contents
+
+- [Export Procedure](#export-procedure)
+- [Pagination Rules To Remember](#pagination-rules-to-remember)
+- [Choose Export Or Analytics](#choose-export-or-analytics)
+- [Analysis Output Template](#analysis-output-template)
+- [RCA Evidence Template](#rca-evidence-template)
+- [Deletion Planning](#deletion-planning)
+
 ## Export Procedure
 
 1. Define purpose: QA, analytics, BI, compliance, support review, billing, or RCA.
-2. Define scope: workspace, agent, source/channel, customer attributes, and time window.
+2. Define scope: workspace, agent, source/channel, CSAT filter, customer attributes, and time window.
 3. Resolve `botId` if the scope uses agent names.
 4. Start with a small sample query to verify filters and fields.
 5. Request at most 100 records per page. Treat that as a page-size ceiling, not a total-result ceiling.
@@ -23,6 +32,14 @@ For QA exports, also preserve:
 - Event role, type, message, and timestamp.
 - Source/channel filters and bot ID.
 
+Keep these event quality signals separate:
+
+- `approved`: thumbs up (`true`), thumbs down (`false`), or unrated (`null`).
+- `feedback`: qualitative teammate note, which may be empty or absent independently of the rating.
+- event `resolved`: whether that event's negative feedback has been handled.
+- conversation `resolved`: aggregate state recalculated from negatively rated Fini events.
+- `csatRating`: channel-provided numeric CSAT; do not assume `0` means missing.
+
 ## Pagination Rules To Remember
 
 - Results are newest-first.
@@ -32,6 +49,12 @@ For QA exports, also preserve:
 - The documented throttle is 100 requests per 60 seconds. If a request returns `429`, retry the same cursor with bounded backoff rather than skipping a page.
 - Avoid per-conversation follow-up reads when the list payload already contains the evidence required by the task.
 - For long exports, record the final cursor and the last conversation timestamp.
+
+## Choose Export Or Analytics
+
+Use conversation export when the task needs transcripts, event evidence, user attributes, article usage, or a review cohort.
+
+Use `fini-api-agents` analytics when the task asks for aggregate performance summaries, trends, knowledge usage, rule performance, escalation reasons, response time, resolution rate, or CSAT over a time window. Preserve the analytics filters and then return to conversation export only for representative or diagnostic evidence.
 
 ## Analysis Output Template
 
@@ -63,7 +86,8 @@ Conversation evidence
 - Relevant assistant turns:
 - Used articles or cited knowledge:
 - User attributes:
-- Resolution/feedback:
+- Rating / note / event resolution / conversation resolution:
+- CSAT:
 - Tags/outcome:
 - Interpretation:
 - Confidence:

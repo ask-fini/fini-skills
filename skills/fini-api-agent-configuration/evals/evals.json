@@ -3,14 +3,18 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Run these five questions against our Fini bot, adjust one guideline to fix the failures, and retest them.",
-      "expected_output": "A baseline-test, classify, minimal prompt diff, approval, full-array update, re-fetch, and same-case retest workflow.",
+      "prompt": "Run these five questions against our Fini bot, stage one guideline change to fix the failures, let me review it, then publish and retest.",
+      "expected_output": "An active baseline, classification, minimal full-array prompt draft, exact-ID draft validation, exact publish, re-fetch, and marked active retest workflow.",
       "assertions": [
         "Fetches the complete current prompt before editing",
         "Classifies failures before deciding the prompt is responsible",
-        "Preserves all three prompt arrays in the write",
-        "Requires approval for the prompt update",
-        "Re-fetches the saved version and reruns the same questions"
+        "Preserves all three prompt arrays in the draft",
+        "Fetches and reviews the exact draft version ID",
+        "Requires a complete non-truncated exact-version payload before publication",
+        "Routes baseline-versus-draft behavior proof through fini-api-draft-validation with markAsTest true",
+        "Passes only the persisted promptVersionId and keeps baseline/candidate cases like-for-like",
+        "Publishes only the exact reviewed version",
+        "Re-fetches active prompts and reruns the same questions"
       ]
     },
     {
@@ -41,7 +45,118 @@
         "Reads the full rule and field context before changing the flow",
         "Updates the same intent rule as DRAFT instead of duplicating it",
         "Identifies the exact reviewed draftVersionId",
-        "Requires explicit target botIds and publish approval"
+        "Requires explicit target botIds and publish approval",
+        "Passes the explicitly reviewed draftVersionId and never resolves a current or latest draft implicitly"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Publish prompt draft pv_older now. Someone else may have updated this agent since I drafted it.",
+      "expected_output": "Fetches the exact stale draft, its exact parent, and the exact latest active lifecycle version, then performs a conflict-aware three-way rebase into a newly reviewable draft instead of retrying the old version.",
+      "assertions": [
+        "Fetches the exact stale draft, its exact parent, and the exact latest active lifecycle version before publication",
+        "Uses parentVersionId or the stale publish response to identify staleness",
+        "Does not retry or force-publish the stale version ID",
+        "Fetches the exact parent lifecycle version and derives draft-versus-parent changes",
+        "Detects conflicts between the exact parent and exact latest active prompt before creating a new draft",
+        "Requires review of the replacement draft ID before publishing it"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "This is an emergency and I explicitly want these complete prompt arrays live immediately, without a draft review step.",
+      "expected_output": "Uses the documented direct Update prompts alternative, verifies the new saved version, and does not misdescribe it as an in-place patch.",
+      "assertions": [
+        "Recognizes the caller explicitly chose the direct-live path",
+        "Uses complete planning, guideline, and channel arrays",
+        "Uses the documented public prompt update route",
+        "Re-fetches current prompts and history after the write",
+        "Explains that direct update still saves a new version"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "We created a Cancel Subscription Action. Assign it to our support agent so it runs when customers ask to cancel.",
+      "expected_output": "Wires the exact Action ID into a Rulebook Tool node under the cancellation flow and publishes the reviewed rule to the support agent; it does not rely on Action assignment junctions.",
+      "assertions": [
+        "Fetches the Action input and output contract",
+        "Adds a Tool node that references the exact Action ID",
+        "Binds required inputs and downstream outputs",
+        "Uses the rule's bot assignment to control agent reachability",
+        "States that Action assignment junctions are not runtime gates"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Evaluate our refund Rulebook with a sample conversation and tell me which path it takes.",
+      "expected_output": "Inspects required test fields and the full rule before evaluation, identifies Tool nodes, uses controlled input context, and reports node results plus any external effects.",
+      "assertions": [
+        "Fetches the rule test fields before building input context",
+        "Inspects the flow for Action Tool nodes",
+        "Does not call the evaluation read-only when an Action can run",
+        "Uses explicit controlled test inputs",
+        "Reports path, node results, Action calls, and remaining regression coverage"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "We just created a brand-new unassigned cancellation Rulebook draft. Run that exact draft against the bot before publishing it.",
+      "expected_output": "Explains that a brand-new unassigned rule draft is not available to the bot for a ruleVersionIds runtime override; previews its fields and flow structurally, then offers a supported review/publish path without pretending it executed.",
+      "assertions": [
+        "Does not claim Generate Answer can execute a brand-new unassigned rule draft",
+        "Uses Preview rule test fields only for structural input discovery",
+        "Does not call the published-rule evaluation route for the draft",
+        "Explains that a draft override is supported only when the owning rule is already published and assigned to the target bot",
+        "Keeps any Action Tool-node side effects explicit for a later supported execution"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Delete custom tag group 55555555-5555-4555-8555-555555555555. I confirm that exact group is obsolete.",
+      "expected_output": "Uses the existing exact-target authorization, verifies the group is workspace-owned, inventories its tags and Rulebook/reporting dependencies, deletes only that group, and re-lists to verify absence.",
+      "assertions": [
+        "Lists and resolves the exact tag group before deletion",
+        "Verifies it is workspace-owned rather than a Fini-managed default",
+        "Inventories contained tags plus Rulebook and reporting dependencies",
+        "Does not ask for duplicate confirmation",
+        "Deletes only the exact supplied tag group ID",
+        "Re-lists groups and reports the absence check and remaining dependency risk"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "Duplicate rule rule_refunds so I can experiment with the copy.",
+      "expected_output": "Fetches the exact source and its actual kind, explains that the independent copy can be live or assigned, and waits for exact-source confirmation before duplicating and re-fetching the copy.",
+      "assertions": [
+        "Fetches rule_refunds and uses the returned type rather than a caller-supplied or default type",
+        "Treats duplication as live-impacting for both intent and Business Rules",
+        "Explains that the copy may be published or assigned and does not promise a harmless draft",
+        "Requires exact confirmation bound to rule_refunds before calling Duplicate rule",
+        "Re-fetches the returned copy and reports its actual ID, state, kind, assignments, and Action reachability"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "Publish the current escalation rule draft to bot_support. I do not have the draft version ID.",
+      "expected_output": "Does not auto-resolve a current or latest draft after approval; lists versions, fetches one exact complete candidate for review, and requires approval bound to its explicit draftVersionId before publishing.",
+      "assertions": [
+        "Refuses to call Publish rule draft without an explicit draftVersionId",
+        "Lists versions and fetches the exact candidate rather than silently selecting current or latest",
+        "Requires complete review of the candidate version",
+        "Binds publish approval to that exact draftVersionId and explicit bot_support target",
+        "Does not substitute a rule ID, version number, or inferred latest draft for draftVersionId"
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "Refine Business Rule rule_vip as a draft and publish it after review.",
+      "expected_output": "Fetches the exact rule, identifies it as a Business Rule, refuses the cross-kind draft/refine/publish workflow, and explains that any update is immediate-live and needs an exact reviewed diff plus live-write confirmation.",
+      "assertions": [
+        "Fetches rule_vip and verifies its actual returned kind before choosing a lifecycle",
+        "Does not call intent refine, version-history, restore, or publish routes for a Business Rule",
+        "Explains that Business Rules are immediate-live and non-versioned",
+        "Does not coerce the rule by passing type intent or status DRAFT",
+        "Offers a full re-fetch, exact diff review, confirmation, immediate update, and post-write verification path"
       ]
     }
   ]

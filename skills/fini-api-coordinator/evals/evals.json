@@ -1,0 +1,92 @@
+{
+  "skill_name": "fini-api-coordinator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We have a Fini workspace but no agent yet. Set up a new Slack support bot with our docs and prove it is ready to launch.",
+      "expected_output": "Routes bare-agent creation, onboarding, exact-ID draft validation, approved publication, and a persistent live-agent Test Set gate without claiming that agent creation installs Slack or creates a workspace.",
+      "assertions": [
+        "Routes agent discovery and bare-agent creation to fini-api-agents",
+        "Routes the full workflow through fini-api-slack-onboarding",
+        "Separates Slack installation and provider OAuth from bare-agent creation",
+        "Routes unpublished candidate proof to fini-api-draft-validation when needed",
+        "Uses a terminal Test Set run against current published live-agent behavior as the go-live gate",
+        "Preflights Test Set Action and external-API effects"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Let our support agent refund an order through our API after it confirms the order ID.",
+      "expected_output": "Routes to a typed Action plus customer-owned API integration and then to Rulebook wiring, rather than rejecting the request as categorically unsupported.",
+      "assertions": [
+        "Routes the integration to fini-api-actions-attributes",
+        "Keeps the customer endpoint, credentials, permissions, and idempotency customer-owned",
+        "Explains that a published Rulebook Tool node makes the Action reachable",
+        "Requires the explicit exact reviewed draftVersionId when publishing the intent Rulebook",
+        "Does not claim that an Action assignment alone makes the Action run"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Show me this agent's escalation and knowledge analytics for last month, then export the five conversations behind one anomaly.",
+      "expected_output": "Uses agent analytics for aggregate metrics and Conversations only for the requested underlying evidence.",
+      "assertions": [
+        "Routes aggregate metrics to fini-api-agents",
+        "Requires an explicit agent and bounded time window",
+        "Routes the narrow evidence export to fini-api-conversations",
+        "Does not rebuild dashboard metrics from all raw conversations"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Replay this bad response against the prompt draft and then run our 80-conversation regression suite.",
+      "expected_output": "Routes the historical exact-draft comparison to Replay, explains that the persistent Test Set cannot accept the unpublished draft, and runs the suite only against current published live-agent behavior with external effects preflighted.",
+      "assertions": [
+        "Routes replay and Test Set work to fini-api-testing",
+        "Keeps the original conversation separate from the replay",
+        "Uses the exact prompt draft artifact in Replay when supported",
+        "Chooses single versus until replay deliberately and accounts for the number of regenerated user turns",
+        "Accounts for default reuse of original Attribute outputs and seeded Rulebook results unless exact artifacts trigger a Rulebook rerun",
+        "Does not claim the Test Set accepts unpublished draft artifacts",
+        "States that the Test Set run evaluates current published behavior and may invoke Actions or external APIs",
+        "Polls the exact Test Set run to a terminal result only when the intended live configuration is in scope"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Pass plan and locale on this one test message. We do not want Fini calling our account API on every turn.",
+      "expected_output": "Routes caller-supplied per-turn context to Generate Answer rather than creating an Attribute for eligible messages.",
+      "assertions": [
+        "Routes the request to fini-api-generate-answer",
+        "Uses caller-supplied metadata or user attributes",
+        "Does not configure an Attribute for a one-turn caller-owned value",
+        "Keeps configured eligible-message Attributes distinct from runtime metadata"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Show me exactly what article kb_42 contained at version 3, then plan a rollback if it is the version I want.",
+      "expected_output": "Routes the exact article, saved-version inspection, comparison, and rollback plan to fini-api-knowledge rather than treating article evidence as a Conversations workflow.",
+      "assertions": [
+        "Routes current article, history, and exact-version reads to fini-api-knowledge",
+        "Does not route article content or version history to fini-api-conversations",
+        "Keeps exact-version inspection read-only",
+        "Treats rollback as a separate live mutation against the exact article and numeric version"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Compare our current support bot with unpublished prompt pv_42, KB drafts kd_7 and kd_8, snapshot ks_3, and eligible Rulebook version rv_17 before we publish anything.",
+      "expected_output": "Routes the request to fini-api-draft-validation for an artifact-free baseline, isolated exact-ID candidates, and an intentional combined candidate with no publication implied.",
+      "assertions": [
+        "Routes the active-versus-unpublished comparison to fini-api-draft-validation",
+        "Persists and fetches exact candidate IDs through their owning skills",
+        "Tests prompt, knowledge drafts, snapshot, and eligible rule version one dimension at a time",
+        "Uses markAsTest true and like-for-like fresh conversations",
+        "Keeps a Test Set separate as post-publish persistent live-agent regression",
+        "States that Generate Answer may invoke Actions and creates conversation events",
+        "Does not publish any candidate"
+      ]
+    }
+  ]
+}

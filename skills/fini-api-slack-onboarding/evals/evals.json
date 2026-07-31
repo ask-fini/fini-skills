@@ -1,0 +1,80 @@
+{
+  "skill_name": "fini-api-slack-onboarding",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We have an empty Fini workspace and want a new Slack support agent called Atlas trained on our help center. Take us through launch readiness.",
+      "expected_output": "A full onboarding flow that creates a bare agent, separates Slack installation, validates drafts when needed, publishes approved configuration, and ends with a persistent Test Set run against live-agent behavior.",
+      "assertions": [
+        "Inspects workspace state before classifying the onboarding",
+        "Creates or resolves a bare agent and records its exact botId",
+        "Does not claim bare-agent creation installs Slack or creates a workspace",
+        "Verifies a usable knowledge tree and creates or initializes one when absent before source-backed generation",
+        "Uses exact-ID draft validation before publication when candidate proof is needed",
+        "Uses a terminal live-agent Test Set run as the go-live gate",
+        "Preflights any Action or external-API effects in the Test Set cases"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Our existing support bot needs the customer's plan before every reply and should be able to cancel an order through our API. Include this in onboarding.",
+      "expected_output": "Adds an Attribute and an Action as optional onboarding layers, keeps their execution models distinct, and wires the Action through a reviewed intent Rulebook draft published by explicit exact draftVersionId.",
+      "assertions": [
+        "Uses an Attribute for automatically fetched plan context on eligible messages",
+        "Uses an Action for the Rulebook-invoked cancellation operation",
+        "Does not treat Action assignment as runtime reachability",
+        "Publishes the reviewed intent Rulebook only with its explicit exact draftVersionId",
+        "Keeps customer API auth, permissions, and idempotency as explicit prerequisites",
+        "Uses controlled accounts and acceptable targets for Action-bearing Test Set cases",
+        "States that the live Test Set run can invoke the Action and accounts for repeated effects"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Just import this one new help-center URL into the already configured bot. No other onboarding work.",
+      "expected_output": "Classifies the request as targeted and routes it to Sources and Knowledge instead of running the full onboarding interview.",
+      "assertions": [
+        "Does not start full Slack-led intake",
+        "Routes ingestion to fini-api-sources",
+        "Routes persisted answerable content to fini-api-knowledge",
+        "Preserves the Sources versus Knowledge boundary"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Our onboarding Test Set includes a cancellation case. Run it against production now; calling the cancellation API is intended.",
+      "expected_output": "Treats the Test Set as a live-agent run that can invoke the cancellation API, binds execution to controlled targets and expected multiplicity, then polls the exact run to terminal status.",
+      "assertions": [
+        "States that the Test Set run evaluates current published agent behavior and can invoke the cancellation Action",
+        "Uses the user's explicit execution intent without asking twice",
+        "Preflights exact cases, controlled targets, and possible repeated cancellations",
+        "Polls the same Test Set run to completed or failed",
+        "Does not expose stored headers, tokens, or raw secrets",
+        "Reports per-case failures and go-live disposition"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Create the agent and connect our Slack workspace and Zendesk OAuth entirely through the public API.",
+      "expected_output": "Creates only the bare agent through the supported lifecycle and identifies Slack/provider authorization as separate user-owned steps unless current live docs expose routes.",
+      "assertions": [
+        "Verifies current public docs before claiming support",
+        "Distinguishes bare-agent creation from workspace and channel provisioning",
+        "Does not claim to complete provider OAuth without a documented public route",
+        "Returns a readiness state with the user-owned prerequisites marked explicitly"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Our onboarding Test Set only contains conversations from before the final prompt and knowledge changes. Can that be our go-live proof?",
+      "expected_output": "Treats eligible old conversations as persistent case seeds, verifies they still represent launch requirements, and runs the Test Set against current published live-agent behavior before declaring readiness.",
+      "assertions": [
+        "Does not treat old stored answers themselves as proof of current behavior",
+        "Verifies source-case eligibility, target agent, inputs, and expected outcomes",
+        "Uses the persistent cases to run the current published live agent",
+        "Uses controlled acceptable targets for every Action-bearing case",
+        "States that the Test Set run may invoke Actions or external APIs"
+      ]
+    }
+  ]
+}

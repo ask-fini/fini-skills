@@ -36,10 +36,81 @@
       "prompt": "This Fini answer was wrong. Run fix review on the answer, show me the proposed correction, and update the bot automatically.",
       "expected_output": "Runs fix review on the exact answer event, reports the replay and recommendations, but does not claim the recommendations were applied automatically.",
       "assertions": [
-        "Identifies the exact conversation and assistant event",
+        "Identifies the exact conversation and Fini response event with role=finibot",
         "Compares the original and replay answers",
         "Treats fix-review recommendations as proposals rather than applied configuration",
         "Routes an accepted change to the owning skill and its approval gate"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Thumb this Fini answer down, add the note that it missed the 30-day exception, and mark it resolved.",
+      "expected_output": "Targets the exact conversation and Fini response event, treats rating, note, and resolution as separate writes, and verifies each resulting signal.",
+      "assertions": [
+        "Uses approved=false for the thumbs-down rating rather than calling it configuration approval",
+        "Uses the feedback-note workflow for the qualitative note",
+        "Uses the resolution workflow separately and does not imply that it clears the rating or note",
+        "Re-reads or reports event rating, note, event resolution, and conversation resolution separately"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Why did this agent's CSAT and resolution rate fall last month? Show the trend and a few conversations that explain it.",
+      "expected_output": "Routes aggregate performance analysis to agent analytics with an explicit period and filters, then uses bounded conversation evidence for diagnosis.",
+      "assertions": [
+        "Uses fini-api-agents for aggregate CSAT and resolution trends",
+        "Does not infer workspace-wide trends from an arbitrary conversation sample",
+        "Returns to a bounded conversation export for representative evidence",
+        "Keeps event CSAT, thumbs rating, notes, and resolution fields distinct"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Replay this bad Fini response with the proposed fix and make it a permanent regression test.",
+      "expected_output": "Preserves the exact source conversation and Fini response event for Replay diagnosis, validates an unpublished exact-ID fix separately, then reruns a persistent Test Set against the published live agent.",
+      "assertions": [
+        "Requires the exact Fini response event and checks for a linked user event",
+        "Keeps the source conversation and replay conversation IDs distinct",
+        "Routes replay creation and comparison to fini-api-testing",
+        "Does not claim that creating a replay automatically adds a Test Set case",
+        "Uses fini-api-draft-validation when the proposed fix is still unpublished",
+        "Uses an eligible source conversation as a persistent case only after verifying its inputs and expected behavior",
+        "States that the post-publish Test Set run evaluates live behavior and may invoke Actions or external APIs"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Reopen the previously resolved issue on this exact negatively rated Fini response, but keep its thumbs-down rating and teammate note.",
+      "expected_output": "Uses resolved=false on the exact conversation and finibot event, keeps the rating and note unchanged, and verifies event plus conversation resolution.",
+      "assertions": [
+        "Uses resolved=false to mark the issue unresolved or reopened",
+        "Does not clear or rewrite the thumbs-down rating",
+        "Does not clear or rewrite the teammate note",
+        "Re-reads or reports event and conversation resolution after the writes"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Delete conversations 11111111-1111-4111-8111-111111111111 and 22222222-2222-4222-8222-222222222222. Those are the exact two IDs and I confirm the deletion.",
+      "expected_output": "Uses the caller's explicit exact-target authorization, warns that bulk deletion is non-atomic, deletes only those two IDs, and verifies the response without asking for duplicate confirmation.",
+      "assertions": [
+        "Uses only the two exact supplied conversation IDs",
+        "Does not ask for duplicate confirmation",
+        "Treats the operation as destructive and explains non-atomic partial-effect behavior",
+        "Reports which IDs were attempted and the API response evidence",
+        "Does not expand deletion to related conversations or resources"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Clear the thumbs rating and teammate note on this exact Fini response. Do not change anything else.",
+      "expected_output": "Uses approved=null and an empty feedback value as separate writes on the exact finibot event, leaves resolution untouched, and verifies the resulting signals.",
+      "assertions": [
+        "Uses approved=null to clear the thumbs rating",
+        "Uses an empty feedback value to clear only the teammate note",
+        "Does not write the resolved field",
+        "Does not imply that clearing one field clears the other",
+        "Re-reads or reports rating, note, and aggregate conversation resolution"
       ]
     }
   ]

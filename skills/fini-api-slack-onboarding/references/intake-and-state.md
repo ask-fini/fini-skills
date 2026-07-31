@@ -1,108 +1,138 @@
 # Intake And State
 
-Use this reference when running Slack-led onboarding. Keep the conversation easy for a client: offer a single upload/drop mode first, then a step-by-step alternative.
+Use this reference while running Slack-led onboarding. Keep the client interaction simple while preserving enough state to resume safely.
 
-## Intake Prompt
+## Contents
+
+- [Intake Mode](#intake-mode)
+- [All-At-Once Inputs](#all-at-once-inputs)
+- [Step-By-Step Order](#step-by-step-order)
+- [Onboarding State](#onboarding-state)
+- [Mutation Language](#mutation-language)
+- [Representative Cases](#representative-cases)
+
+## Intake Mode
 
 Ask:
 
 ```markdown
 I can do this two ways:
 
-1. Drop everything at once: a Markdown/PDF/doc bundle, help center URL, SOPs, behavior notes, top questions, examples, and launch constraints.
-2. Step by step: I will ask one short section at a time and keep track of what is complete.
+1. Drop everything at once: docs, help center, SOPs, behavior notes, automation and customer-context needs, example tickets, tests, and launch constraints.
+2. Step by step: I will ask one short section at a time and track what is complete.
 
 Which do you prefer?
 ```
 
-## All-At-Once Request
+## All-At-Once Inputs
 
-Ask the client to include as much as they have:
+Accept whatever the client has:
 
-- what the bot should handle
-- what the bot should never handle
+- what the bot should and should not handle
 - escalation and handoff rules
-- tone, persona, and support style
-- help center URL
-- connected sources already authorized in Fini
-- SOPs, PDFs, docs, or Markdown files
+- tone, persona, and response format
+- existing or desired agent name
+- Slack/channel installation status
+- help center, SOPs, PDFs, Markdown, provider content, and URLs
 - existing prompt or behavior notes
-- top customer questions
-- bad-answer examples or past ticket examples
-- launch date, review owner, and go-live constraints
+- customer context needed before replies
+- customer-system operations the bot should perform
+- customer API ownership, auth readiness, idempotency, and safe test targets
+- top questions and expected answers
+- bad-answer examples and historical conversations
+- launch date, approval owner, regression requirements, and go-live constraints
 
-Do not block if they have only a subset. Start from available inputs and mark missing pieces as open questions.
+Do not block because inputs are incomplete. Start from what exists and record missing prerequisites.
 
-## Step-By-Step Sections
-
-Ask in this order:
+## Step-By-Step Order
 
 1. Scope: what should the bot handle?
 2. Boundaries: what should it never handle?
-3. Escalation: when should it hand off?
-4. Voice: tone, personality, and formatting preferences.
-5. Sources: help center, SOPs, provider docs, PDFs, Markdown, or URLs.
-6. Questions: top real customer questions and expected answers.
-7. Evidence: bad answers, past tickets, known risk areas.
-8. Launch: approval owner, test expectations, go-live constraints.
+3. Agent and channel: existing agent or desired name; Slack installation status.
+4. Escalation: when and how should it hand off?
+5. Voice: tone, personality, and formatting.
+6. Sources: help center, providers, SOPs, PDFs, Markdown, and URLs.
+7. Context: what customer/account fields should be fetched automatically for eligible messages?
+8. Operations: what customer-system Actions should the bot perform?
+9. Questions: top cases and expected outcomes.
+10. Evidence: bad answers, conversations, known risks, and regressions.
+11. Launch: owner, test criteria, safe integration-test targets, and go-live constraints.
 
 ## Onboarding State
 
-Maintain this lightweight state in the conversation:
+Maintain:
 
 ```markdown
 State:
 - workspace/auth: [confirmed / missing / blocked]
-- target agent: [unknown / resolved name / botId]
+- agent: [unknown / existing name+botId / create requested / created name+botId]
+- Slack/channel installation: [ready / user action / blocked]
 - onboarding type: [fresh / expansion / targeted]
 - intake mode: [all-at-once / step-by-step]
-- scope collected: [yes / no]
-- boundaries collected: [yes / no]
-- escalation collected: [yes / no]
-- voice collected: [yes / no]
-- sources collected: [yes / no]
-- questions collected: [yes / no]
-- evidence collected: [yes / no]
-- launch constraints collected: [yes / no]
-- sources processed: [not started / queued / complete / failed]
-- knowledge status: [not started / drafts / published / assigned]
-- config status: [not started / proposed / changed / verified]
-- tests status: [not started / running / pass / fail]
-- approvals pending: [list]
+- scope/boundaries/escalation/voice: [complete / missing items]
+- sources: [collected / processing / complete / failed]
+- knowledge: [not started / drafts / published / assigned / blocked]
+- configuration: [not started / draft / published / verified]
+- Attributes: [not needed / requirements / configured / assigned / verified]
+- Actions: [not needed / requirements / configured / Rulebook-wired / verified]
+- customer API prerequisites: [not needed / ready / user action / blocked]
+- draft validation: [not needed / baseline / isolated candidates / combined candidate / blocked]
+- active smoke: [not started / marked test interaction+event IDs / passed / failed]
+- Test Set: [not started / cases ready / criteria ready / live run ID+status]
+- blocking failures: [list / none]
+- approvals or user actions pending: [list / none]
 ```
 
-Update state after each phase. If the conversation is interrupted, resume from the first incomplete state item.
+Resume from the first incomplete dependency, not merely the next numbered phase.
 
-## Approval Language
+## Mutation Language
 
-Use plain approval gates:
+Use plain, target-specific language when intent is not yet clear:
 
-- "I can prepare this as a draft now."
-- "Creating drafts in Fini is a write. Should I proceed?"
-- "Publishing affects live bot answers. Please confirm before I publish."
-- "Prompt and rule updates can change production behavior. Please confirm the target agent and change."
+- "I can create a bare Fini agent named X; Slack installation remains separate."
+- "I can save this as a reviewable draft or publish it immediately. Which do you want?"
+- "Assigning this Attribute makes it run for eligible message generations for agent/channel X."
+- "This Action test sends a real request to Y with operation Z."
+- "This marked Generate Answer check and the later live Test Set run can both invoke Action Y; I will use controlled targets and account for repeated effects."
+- "Deleting or rolling back this exact resource changes live workspace state."
 
-Do not bundle draft creation, publishing, prompt updates, and rule publishing into one approval.
+Do not repeat an approval question when the client already gave explicit intent and an exact target.
 
-## Minimal Test Suite
+## Representative Cases
 
-Create 4-8 tests:
+Define 4-8 cases covering the relevant subset:
 
-- 2 common support questions
-- 1 out-of-scope or escalation case
-- 1 tone/personality case
-- 1 source-specific factual question
-- 1 edge case from past tickets or bad-answer examples when available
-- 1 metadata/user-attribute case only if runtime personalization is part of onboarding
+- two common support questions
+- one source-specific factual question
+- one out-of-scope or escalation case
+- one tone/personality case
+- one caller-metadata or eligible-message Attribute case
+- Action success and denial/failure cases
+- one historical edge case
 
-For each test, track:
+Use exact draft validation before publication when needed. After publication, preserve representative cases for a persistent Test Set. A live Test Set run can invoke reachable Actions, so use controlled inputs and acceptable targets. For each case, track:
 
 ```markdown
-Question:
+Case:
 Expected behavior:
-Actual answer:
-Evidence/events:
-Pass/fail:
-Failure type:
-Next fix:
+Source conversation/case ID:
+Live-run generated result:
+Criteria and execution evidence:
+Action/external effects:
+Pass/fail/error:
+Failure owner:
 ```
+
+Then create/update the Test Set, add launch criteria, preflight external effects, start the live-agent run, and record:
+
+```markdown
+Test Set ID:
+Criterion IDs:
+Run ID:
+Terminal status:
+Blocking failures:
+Baseline or prior run:
+Go-live disposition:
+```
+
+The Test Set evaluates current published live-agent behavior and may rerun Actions or external calls. It does not accept unpublished draft artifact overrides. If historical Replay is used for diagnosis, `until` can regenerate multiple user turns through the target event, while `single` regenerates only the target response against preserved history. Select acceptable inputs and targets for Generate Answer, Replay, rule evaluation, Test Set runs, and integration tests because all can be effectful.

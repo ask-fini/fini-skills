@@ -1,4 +1,4 @@
 interface:
   display_name: "Fini Knowledge API"
-  short_description: "Manage knowledge, drafts, and assignment."
-  default_prompt: "Use $fini-api-knowledge to generate draft knowledge and verify agent visibility."
+  short_description: "Manage knowledge, versions, and safe rollbacks."
+  default_prompt: "Use $fini-api-knowledge to inspect an article's history and safely apply or verify the intended knowledge change."

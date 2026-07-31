@@ -1,0 +1,93 @@
+{
+  "skill_name": "fini-api-testing",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We changed a prompt draft for our refund bot. Re-run this one previously bad conversation and tell me whether the answer improved.",
+      "expected_output": "Uses one replay tied to the exact original response event and exact prompt draft version, preserves the original, and compares aligned evidence without claiming that default replay refreshes Rulebook or Attribute execution.",
+      "assertions": [
+        "Chooses Replay instead of a broad Test Set or analytics query",
+        "Captures the original conversation ID, target response event ID, answer, and exact promptVersionId",
+        "Passes the promptVersionId in replay artifacts rather than testing the current published prompt",
+        "Chooses single mode when only the selected response should be regenerated and explains that until can regenerate multiple turns and effects",
+        "Explains which Rulebook and Attribute evidence is reused versus re-evaluated",
+        "Checks whether artifact-backed rule evaluation can invoke Actions and obtains explicit intent if external effects are possible",
+        "Fetches replay events and aligns the candidate response using originalEventId",
+        "Reports the replay ID, comparison evidence, and that the original was not overwritten"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Run our refund regression suite after the Rulebook change. Some cases can trigger the cancel-order action.",
+      "expected_output": "Verifies the Rulebook change is published, preflights the persistent Test Set's live cancel-order effects, runs the suite against current agent behavior, and reports traceable case, criterion, and Action evidence.",
+      "assertions": [
+        "Verifies the intended Rulebook version is current, published, and assigned to the target agent",
+        "Routes an unpublished Rulebook candidate to fini-api-draft-validation instead of pretending the Test Set accepts ruleVersionIds",
+        "Re-fetches the exact persistent cases and criteria before running",
+        "Names the potential cancel-order calls, multiplicity, controlled targets, and repeated-effect risk",
+        "States that the live Test Set run can invoke the cancel-order Action",
+        "Starts one run and polls the same run ID until completed or failed",
+        "Separates run failure, behavioral failure, and errored conversations",
+        "Reports per-case criterion reasoning plus Action and external-effect evidence instead of only an aggregate pass rate"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Before saving this Rulebook draft, tell me which fields it needs and generate some candidate tests. Do not execute the rule.",
+      "expected_output": "Uses unsaved-flow field preview and generated-test suggestions without evaluating the rule or running a Test Set.",
+      "assertions": [
+        "Uses Preview rule test fields for the unsaved flowConfig",
+        "Treats generated Rulebook tests as reviewable suggestions",
+        "Does not call synthetic evaluation, conversation evaluation, Generate Answer, Replay, or Start run",
+        "Does not claim generated suggestions were persisted"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Did resolution and escalation performance improve this month compared with last month?",
+      "expected_output": "Uses bounded, equivalently filtered analytics windows and labels the result observational rather than causal.",
+      "assertions": [
+        "Chooses agent analytics rather than executing conversations",
+        "Uses explicit agent ID, start/end epochs, timezone, and equivalent filters for both windows",
+        "Reports the compared metrics and filters",
+        "Does not claim analytics alone proves a configuration change caused the result"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Ask our bot this brand-new shipping question, then ask a follow-up in the same conversation.",
+      "expected_output": "Uses Generate Answer for a new multi-turn runtime probe and preserves the returned interaction ID for the follow-up.",
+      "assertions": [
+        "Chooses Generate Answer rather than Replay",
+        "Starts with the exact target agent and records the returned interactionId",
+        "Uses that interactionId for the follow-up",
+        "Captures both created events and any runtime Action effects"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "The migration test set is finished. Delete criterion crit-9 and test set set-3, but keep all source conversations.",
+      "expected_output": "Preserves a reconstruction and audit snapshot, performs exact requested cleanup only after confirming no active run, keeps source conversations, and verifies the criterion and set are absent.",
+      "assertions": [
+        "Checks the exact Test Set, criterion, and run state before deletion",
+        "Preserves set metadata, conversation IDs, criterion definitions, run IDs, and retained results",
+        "Does not delete any source conversation",
+        "Waits for an active run to become terminal before deleting the Test Set",
+        "Deletes only crit-9 and set-3",
+        "Uses list/get checks to verify absence and reports the evidence"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Run our persistent Test Set against unpublished prompt draft pv_42 before we decide whether to publish it.",
+      "expected_output": "Explains that Test Sets use current published live-agent behavior and do not accept prompt draft artifacts, then routes the exact draft comparison to fini-api-draft-validation.",
+      "assertions": [
+        "Does not pass promptVersionId to the Test Set run",
+        "Routes active-baseline versus exact unpublished draft proof to fini-api-draft-validation",
+        "Uses markAsTest true for the Generate Answer candidate traffic",
+        "Keeps publication a separate decision",
+        "Explains that a later Test Set run evaluates the published live agent and may invoke Actions or external APIs"
+      ]
+    }
+  ]
+}

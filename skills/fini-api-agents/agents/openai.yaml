@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fini Agents and Analytics"
+  short_description: "Manage agents and inspect their performance"
+  default_prompt: "Use $fini-api-agents to manage an exact Fini agent or analyze its performance."

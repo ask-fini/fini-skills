@@ -1,7 +1,13 @@
 {
   "name": "@ask-fini/fini-skills",
-  "version": "0.5.1",
-  "description": "Fini public API workflow skills for AI coding agents",
+  "version": "0.6.0",
+  "description": "Fini public API workflow skills for agent operations, exact draft validation, and live regression testing",
+  "files": [
+    ".claude-plugin",
+    ".mcp.json",
+    "README.md",
+    "skills"
+  ],
   "keywords": [
     "agent-skills",
     "fini",
@@ -10,6 +16,11 @@
     "knowledge",
     "prompts",
     "rulebooks",
+    "actions",
+    "analytics",
+    "testing",
+    "draft-validation",
+    "candidate-testing",
     "tags",
     "onboarding",
     "support"
