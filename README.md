@@ -57,10 +57,10 @@ npx skills add ask-fini/fini-skills --all
 | --- | --- |
 | `fini-api-coordinator` | Route cross-domain Fini work across agent lifecycle, configuration, Actions/Attributes, knowledge, runtime, analytics, conversations, and quality. |
 | `fini-api-slack-onboarding` | Run full Slack-led onboarding, validate unpublished candidates when needed, and use a controlled live Test Set run as the go-live gate. |
-| `fini-api-agent-configuration` | Draft, review, and publish versioned prompts and intent Rulebooks; safely manage immediate-live Business Rules, tags, and tag groups. |
+| `fini-api-agent-configuration` | Draft, review, and publish versioned prompts and intent Rulebooks; safely manage immediate-live Business Rules, tags, and tag groups; audit workspace Reply Rules. |
 | `fini-api-agents` | Create, inspect, delete, and analyze Fini agents, then route them into configuration, knowledge, Actions/Attributes, and testing workflows. |
 | `fini-api-actions-attributes` | Configure Actions, eligible-message Attributes, external API steps, assignments, Rulebook wiring, testing, and cleanup. |
-| `fini-api-conversations` | Export, inspect, annotate, rate, resolve, replay-route, analyze, and delete Fini conversation evidence. |
+| `fini-api-conversations` | Export, inspect, annotate, rate, resolve, replay-route, analyze, and delete Fini conversation evidence, including exact-event execution traces. |
 | `fini-api-generate-answer` | Start or continue ordinary active-runtime turns, pass caller context, and capture conversation and Action evidence. |
 | `fini-api-draft-validation` | Compare an active baseline with exact unpublished prompt, knowledge, snapshot, or eligible intent-rule candidates through request-scoped artifact IDs without publishing them. |
 | `fini-api-sources` | Import, crawl, register, ingest, refresh, poll, detect changed content for, or delete Fini sources before knowledge generation. |

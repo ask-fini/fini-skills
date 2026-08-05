@@ -30,6 +30,17 @@ Resolution semantics:
 
 Use `resolved: false` when a previously handled negative issue needs to be reopened. Clearing a note does not clear the rating. Clearing the rating can change aggregate resolution independently of the note.
 
+## Exact Event Metadata RCA
+
+1. Discover the exact response event through List or Get conversation.
+2. Verify that its role is `finibot`; do not substitute the linked user event.
+3. Fetch metadata once for that exact event. The direct API route currently lacks the common `/public` suffix.
+4. Separate stored execution evidence from current configuration definitions. Treat nullable sections as absent or not recorded rather than proof of failure.
+5. Route knowledge-selection issues to Knowledge, Attribute or Data Step issues to Actions/Attributes, Rulebook execution issues to Agent Configuration or Testing, and caller-context issues to Generate Answer.
+6. Treat current Reply Rules as a separate configuration diagnostic; they are not historical proof of what executed for this event.
+
+Event metadata is observational. Reading it does not replay the answer, rerun a Rule, execute an Action, or change configuration. Summarize only task-relevant Attribute and external-step evidence and redact secrets or unnecessary customer data.
+
 ## Replay And Rule-Evaluation Handoff
 
 Use `fini-api-testing` for replay creation and comparison:

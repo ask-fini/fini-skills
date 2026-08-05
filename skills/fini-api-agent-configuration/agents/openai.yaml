@@ -1,4 +1,4 @@
 interface:
   display_name: "Fini Agent Configuration API"
-  short_description: "Configure prompts and rules with safe lifecycles."
-  default_prompt: "Use $fini-api-agent-configuration to configure a Fini prompt or rule with the correct intent-rule or Business Rule lifecycle."
+  short_description: "Configure prompts and Rulebooks; audit Reply Rules."
+  default_prompt: "Use $fini-api-agent-configuration to configure prompts or Rulebooks with the correct lifecycle, or audit workspace Reply Rules without changing them."

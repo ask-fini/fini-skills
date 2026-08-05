@@ -1,6 +1,6 @@
 ---
 name: fini-api-conversations
-description: Use when the user wants to list, export, inspect, summarize, analyze, paginate, retrieve, delete, or bulk-delete Fini conversations through the public API; record or clear an event's thumbs-up/down rating, teammate feedback note, or resolution state; build QA, compliance, BI, RCA, golden-set, support-review, knowledge-improvement, fix-review, replay, regression-testing, or agent-analytics workflows from conversation evidence; or understand conversation filters, cursors, event fields, used articles, user attributes, and deletion guardrails.
+description: Use when the user wants to list, export, inspect, summarize, analyze, paginate, retrieve, delete, or bulk-delete Fini conversations through the public API; inspect one Fini-authored event's stored execution metadata, including planning, knowledge, tag, Attribute, and Rule traces; record or clear an event's thumbs-up/down rating, teammate feedback note, or resolution state; build QA, compliance, BI, RCA, golden-set, support-review, knowledge-improvement, fix-review, replay, regression-testing, or agent-analytics workflows from conversation evidence; or understand conversation filters, cursors, event fields, used articles, user attributes, and deletion guardrails.
 ---
 
 # Fini API Conversations
@@ -14,6 +14,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 | User intent | Path |
 | --- | --- |
 | Export or inspect conversations | Bounded list/get workflow in this skill |
+| Explain why one exact Fini response behaved as it did | Resolve the exact `role=finibot` event, then read its stored event metadata |
 | Give an event thumbs up/down or clear its rating | Conversation feedback with `approved: true`, `false`, or `null` |
 | Save or clear a teammate explanation of why an event was good or bad | Feedback-note workflow |
 | Mark a negatively rated issue handled or reopened | Feedback-resolution workflow with `resolved: true` or `false` |
@@ -31,11 +32,12 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 6. Continue until `hasMore=false` or the user-requested bound is reached. If interrupted or rate-limited repeatedly, stop cleanly and preserve the resume cursor.
 7. Process or write each page incrementally instead of accumulating an unbounded transcript payload in context.
 8. For conversation-level RCA, extract evidence fields and preserve source conversation IDs. Avoid fetching every conversation again when the list response already contains the required events and evidence. For aggregate metrics or trends, hand off to `fini-api-agents` rather than deriving workspace-wide conclusions from a sample export.
-9. For QA/golden-set work, preserve expected vs actual answer fields, used articles, user attributes, feedback, failure type, and next action.
-10. For fix review, target the exact conversation and answer event, create an iteration from concise feedback, then inspect the resulting session. Treat recommendations and replay answers as proposals, not applied configuration.
-11. Keep event rating, qualitative note, and resolution as three separate writes. Target the exact conversation and event, use `approved` only for the thumbs signal, use `feedback` only for the note, set `resolved: true` after handling a negatively rated event, and use `resolved: false` to mark it unresolved again.
-12. For replay, rule evaluation, or regression testing, preserve the exact source conversation and Fini response event, then hand off to `fini-api-testing`. Do not treat a replay as a live configuration change or an automatically saved regression case.
-13. For deletion, produce an exact deletion plan and wait for explicit confirmation before calling delete routes.
+9. For exact-event RCA, fetch metadata only for the selected Fini-authored event. Treat nullable trace sections as absent or not recorded, not as proof that a stage failed. Separate observed planning, knowledge selection, answer reasoning, tag selection, executed Attributes, and executed Rules before routing the issue to its owning workflow.
+10. For QA/golden-set work, preserve expected vs actual answer fields, used articles, user attributes, feedback, failure type, and next action.
+11. For fix review, target the exact conversation and answer event, create an iteration from concise feedback, then inspect the resulting session. Treat recommendations and replay answers as proposals, not applied configuration.
+12. Keep event rating, qualitative note, and resolution as three separate writes. Target the exact conversation and event, use `approved` only for the thumbs signal, use `feedback` only for the note, set `resolved: true` after handling a negatively rated event, and use `resolved: false` to mark it unresolved again.
+13. For replay, rule evaluation, or regression testing, preserve the exact source conversation and Fini response event, then hand off to `fini-api-testing`. Do not treat a replay as a live configuration change or an automatically saved regression case.
+14. For deletion, produce an exact deletion plan and wait for explicit confirmation before calling delete routes.
 
 ## Defaults
 
@@ -59,6 +61,11 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - Results are sorted newest-first; `direction=next` moves older.
 - A page containing 100 records is not proof that only 100 conversations matched. Check `hasMore` and continue with `nextCursor`.
 - Do not create an N+1 read pattern by fetching every conversation again unless fields required by the task are absent from the list response.
+- Event metadata accepts only a Fini-authored event with `role=finibot`; do not substitute the linked user event. The direct API route unusually omits the common `/public` suffix.
+- Event metadata is a stored read-only trace. It does not replay the answer, rerun Rules, call Actions, or change configuration.
+- Trace sections may be `null`. Do not invent execution evidence from an absent section.
+- Attribute and external-step results may contain customer data. Report only task-relevant evidence and never expose secrets or unnecessary payloads.
+- Avoid an N+1 metadata sweep across broad exports. Fetch metadata only for events selected for diagnosis.
 - The endpoint returns conversations Fini touched, not necessarily every customer conversation in an external system.
 - `userAttributes` can be workspace-defined and schema-less; do not build brittle assumptions around it.
 - The wire field `approved` is the event's thumbs rating: `true` is thumbs up, `false` is thumbs down, and `null` clears it. It is not configuration approval.
@@ -73,6 +80,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 
 - Export: report filters, time range, count, pages processed, whether `hasMore` remains, final cursor/timestamp, and where data was written or how it was summarized. Label bounded or interrupted exports as incomplete.
 - Single conversation lookup: include the conversation ID, event count, key timestamps, and whether referenced articles or user attributes were present.
+- Exact-event RCA: report the conversation ID, exact Fini event ID, confirmed `finibot` role, returned and absent trace sections, evidence-based diagnosis, and owning follow-up skill. Do not imply that any replay, test, or mutation occurred.
 - QA/golden-set export: include question/evidence, actual answer, used articles, feedback/resolution signal, and recommended next action.
 - Feedback write: re-read the target event and report its rating, note, event-level resolution, and recalculated conversation resolution separately.
 - Fix review: include conversation ID, event ID, session/iteration ID, old and replay answers, recommendations, and whether any recommendation was separately applied.
@@ -87,4 +95,4 @@ Read [conversation-export-playbook.md](references/conversation-export-playbook.m
 
 Read [qa-and-golden-set.md](references/qa-and-golden-set.md) when using conversations to build a golden set, find KB gaps, evaluate user attributes, or plan knowledge improvements.
 
-Read [feedback-replay-and-analysis.md](references/feedback-replay-and-analysis.md) for the separate rating/note/resolution writes and for replay, regression-testing, rule-evaluation, and analytics handoffs.
+Read [feedback-replay-and-analysis.md](references/feedback-replay-and-analysis.md) for exact-event metadata RCA, separate rating/note/resolution writes, and replay, regression-testing, rule-evaluation, and analytics handoffs.

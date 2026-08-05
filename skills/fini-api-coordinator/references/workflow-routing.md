@@ -20,6 +20,7 @@ If the request mixes agent lifecycle, configuration, content, integration, runti
 | "Show this agent's analytics, trends, knowledge usage, rules, or escalations" | `fini-api-agents` |
 | "Onboard us to Fini" / "set up our support bot and KB from Slack" | `fini-api-slack-onboarding` after workspace-state classification |
 | "Update the bot prompt" / "show prompt history" / "publish this reviewed prompt draft" | `fini-api-agent-configuration` |
+| "Show when we use no reply, an internal comment, or a direct reply" | Audit Reply Rules and fields context in `fini-api-agent-configuration` |
 | "Compare these unpublished prompt, KB, snapshot, or Rulebook candidates with the current bot" | `fini-api-draft-validation` |
 | "Create or test a Rulebook" / "show rule versions" | Author in `fini-api-agent-configuration`; diagnose or regress in `fini-api-testing` |
 | "Create routing or outcome tags" | `fini-api-agent-configuration` |
@@ -27,6 +28,7 @@ If the request mixes agent lifecycle, configuration, content, integration, runti
 | "Refund, cancel, look up, or update through our API" | `fini-api-actions-attributes` Action workflow, then Rulebook wiring in `fini-api-agent-configuration` |
 | "Configure or test an external API step" | `fini-api-actions-attributes` |
 | "Export, inspect, annotate, resolve, or delete conversations" | `fini-api-conversations` |
+| "Explain why this exact Fini response used this knowledge, tag, Attribute, or Rule" | Exact event metadata in `fini-api-conversations` |
 | "Send one message to the bot" | `fini-api-generate-answer` |
 | "Replay this historical answer" | `fini-api-testing` |
 | "Run our regression suite" / "compare pre- and post-change quality" | `fini-api-testing` Test Set workflow |
@@ -44,9 +46,11 @@ If the request mixes agent lifecycle, configuration, content, integration, runti
 | One Rulebook's node-level behavior | Rule evaluation |
 | Persistent regression against current published live-agent behavior | Test Set |
 | Raw stored conversation evidence | Conversations |
+| One exact Fini-authored event's stored execution trace | Event metadata through Conversations |
+| Current no-reply, internal-comment, and direct-reply conditions | Reply Rules plus fields context through Agent Configuration |
 | Aggregate agent performance | Agent analytics |
 
-These surfaces complement each other. Do not substitute raw conversation aggregation for analytics, or a handful of Generate Answer calls for a requested persistent Test Set. Draft Validation applies unpublished exact-ID candidates request by request; a Test Set runs persistent cases against current published live-agent behavior and may invoke Actions.
+These surfaces complement each other. Do not substitute raw conversation aggregation for analytics, or a handful of Generate Answer calls for a requested persistent Test Set. Draft Validation applies unpublished exact-ID candidates request by request; a Test Set runs persistent cases against current published live-agent behavior and may invoke Actions. Event metadata is stored evidence for one exact Fini-authored event, while Reply Rules describe current workspace response-mode configuration. Neither should be presented as the other, and Reply Rules are not Rulebooks.
 
 ## Cross-Domain Recipes
 

@@ -90,6 +90,31 @@
         "Deletes only the exact supplied article ID",
         "Reports API response evidence and any remaining source or assignment cleanup"
       ]
+    },
+    {
+      "id": 9,
+      "prompt": "The live article says version 21, but its article history ends at version 20. Is the history API out of sync? Do not change anything.",
+      "expected_output": "Explains that the exact current article is the live head while article history contains prior saved snapshots, treats current 21 and history 20 as expected, and performs no write.",
+      "assertions": [
+        "Fetches the exact current live article separately from its history",
+        "Explains that article history contains prior saved snapshots rather than the current head",
+        "Does not report current version 21 versus latest history version 20 as drift by itself",
+        "Does not call revert, update, publish, or another live write"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Publish knowledge draft draft_refund and prove it worked. I approve that exact draft, but the draft list is empty right now.",
+      "expected_output": "Treats the list as discovery, reviews draft_refund by exact ID when read scope is available without using isDraft as the sole discriminator, publishes the approved complete payload through the write-only draft endpoint, and treats the resulting live article as authoritative before checking draft consumption secondarily.",
+      "assertions": [
+        "Does not infer that an empty draft list proves the listing route is broken",
+        "Fetches draft_refund by exact ID and reconciles the requested ID with returned IDs",
+        "Stops if an exact read proves the record is absent, but does not reject a derived draft merely because it reports isDraft false or label it expired without evidence",
+        "Does not make read scope a requirement for the dedicated write-only publish operation",
+        "Publishes the exact approved ID with the complete required article payload and valid parentFolderId, letting the draft-only endpoint validate target eligibility",
+        "After success, treats the returned live article and state as authoritative",
+        "Checks old-draft absence as secondary expected verification and flags unexpected persistence"
+      ]
     }
   ]
 }

@@ -158,6 +158,32 @@
         "Does not coerce the rule by passing type intent or status DRAFT",
         "Offers a full re-fetch, exact diff review, confirmation, immediate update, and post-write verification path"
       ]
+    },
+    {
+      "id": 14,
+      "prompt": "Get the Rulebook draft whose version ID is rv_escalation. I passed rv_escalation to Get rule and it returned 404.",
+      "expected_output": "Distinguishes the stable parent ruleId from rv_escalation's versionId, explains why Get rule can 404, resolves the parent, then fetches the exact version using both identifiers.",
+      "assertions": [
+        "Does not pass rv_escalation to Get rule as though it were the parent ruleId",
+        "Explains that Get rule requires the parent ruleId while versionStatus is optional and only selects DRAFT or PUBLISHED",
+        "Resolves or requests the parent ruleId before fetching the exact version",
+        "Uses both the parent ruleId and rv_escalation with Get rule version",
+        "Does not claim the 404 proves the rule version was deleted"
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "List our Reply Rules and explain the conditions that choose no reply, internal comment, or direct reply. Do not change anything.",
+      "expected_output": "Reads all three workspace Reply Rule slots and fields context, then explains the current conditions without treating them as Rulebooks or mutating configuration.",
+      "assertions": [
+        "Uses both Get Reply Rules and Get Reply Rule fields context",
+        "Reports noReply, internalComment, and directReply independently",
+        "Uses returned fields context to interpret paths, operators, quantifiers, Attributes, tags, and sources",
+        "Treats an empty disabled slot as unconfigured rather than missing",
+        "Does not request or invent a bot ID or workspace ID",
+        "Does not substitute Rulebook list, test, evaluation, draft, or publish operations",
+        "Makes no mutation claim"
+      ]
     }
   ]
 }

@@ -112,6 +112,21 @@
         "Does not imply that clearing one field clears the other",
         "Re-reads or reports rating, note, and aggregate conversation resolution"
       ]
+    },
+    {
+      "id": 11,
+      "prompt": "Explain why this exact Fini response used this article, selected these tags, and ran this Attribute and Rule. Read-only.",
+      "expected_output": "Resolves the exact Fini-authored event and uses its stored event metadata once to produce an evidence-based RCA without replaying or changing anything.",
+      "assertions": [
+        "Resolves the event through its conversation and verifies role=finibot",
+        "Fetches metadata only for the exact selected event rather than sweeping the export",
+        "When using the direct API, calls GET /v2/hc-events/{id}/metadata without adding a /public suffix",
+        "Interprets planning, knowledge, answer reasoning, tags, executed Attributes, and executed Rules only when returned",
+        "Treats null sections as absent or not recorded rather than inventing a failure",
+        "Does not Replay, Generate Answer, evaluate a Rule, execute an Action, or mutate configuration",
+        "Redacts unnecessary Attribute and external-step payload data",
+        "Routes the diagnosed issue to the correct owning skill"
+      ]
     }
   ]
 }

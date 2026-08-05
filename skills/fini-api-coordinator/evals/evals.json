@@ -87,6 +87,19 @@
         "States that Generate Answer may invoke Actions and creates conversation events",
         "Does not publish any candidate"
       ]
+    },
+    {
+      "id": 8,
+      "prompt": "Read-only: explain the stored execution trace for this exact Fini response, then audit our current Reply Rules for no reply, internal comment, and direct reply.",
+      "expected_output": "Routes the exact historical event trace to Conversations and the current workspace Reply Rule audit to Agent Configuration, keeping observed execution evidence separate from current configuration.",
+      "assertions": [
+        "Routes exact event metadata to fini-api-conversations and verifies role=finibot",
+        "Routes Reply Rules and Reply Rule fields context to fini-api-agent-configuration",
+        "Keeps stored event execution evidence distinct from current workspace Reply Rule configuration",
+        "Keeps Reply Rules distinct from intent Rulebooks and Business Rules",
+        "Does not use current Reply Rules as conclusive historical execution proof",
+        "Does not Replay, Generate Answer, evaluate a Rule, execute an Action, or mutate configuration"
+      ]
     }
   ]
 }

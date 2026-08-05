@@ -1,6 +1,6 @@
 ---
 name: fini-api-knowledge
-description: Use when the user wants to generate Fini knowledge from raw text, PDFs/files converted to text, inbox evidence, conversations, golden-set failures, or sources; create draft KB articles through Generate knowledge with candidateKnowledge and isDraft; bulk-generate from source IDs; poll knowledge jobs; manage articles/drafts; inspect article history or one exact saved version; revert and verify an article version; or publish, update, delete, move, organize, and assign knowledge through the public API.
+description: Use when the user wants to generate Fini knowledge from raw text, PDFs/files converted to text, inbox evidence, conversations, golden-set failures, or sources; create draft KB articles through Generate knowledge with candidateKnowledge and isDraft; bulk-generate from source IDs; poll knowledge jobs; manage articles/drafts; distinguish a current live article from its prior history snapshots; revert and verify an article version; or publish, update, delete, move, organize, and assign knowledge through the public API.
 ---
 
 # Fini API Knowledge
@@ -21,7 +21,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 | First KB setup in an empty workspace | Create or initialize/persist a folder tree before source-backed generation |
 | Write exact article text manually | Direct article management |
 | Review before changing answers | Draft workflow |
-| Inspect what an article contained at a prior version | History list -> exact version read |
+| Inspect current versus prior article content | Exact current-article read -> prior-history list -> exact version read |
 | Restore a saved article version immediately | Exact version comparison -> live revert -> verification |
 | Make existing knowledge visible to an agent | Tree/folder assignment |
 | Change where knowledge lives | Move article or folder |
@@ -36,11 +36,13 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 6. Poll async jobs when the route queues work.
 7. Inspect result state: draft, live, no-op, failed, or duplicate. `COMPLETED` with no article/draft ID is blocked/no-op, not success.
 8. For a review draft that is expected to change answers, route to `fini-api-draft-validation`: run an artifact-free baseline, fetch exact persisted draft IDs, test `artifacts.knowledgeArticleDraftIds` with `markAsTest: true`, and preserve the comparison.
-9. For history work, list available versions, fetch the exact numeric version, and compare it with the current live article before choosing draft restoration or immediate revert.
-10. Treat revert as an immediate live write. Capture the current version first, restore only the exact reviewed version, then re-fetch and compare the live article with the target snapshot.
-11. Publish or revert only after explicit confirmation if the request did not already authorize the exact live change.
-12. Verify folder placement and agent assignment when the user expects answers to change.
-13. When behavioral proof is requested, after publish or revert run or rerun the case without draft artifacts to prove active behavior.
+9. Treat article lists as discovery. For an exact draft or live article ID, fetch by ID and reconcile every requested ID with the returned IDs; the lookup can return only the articles it found without rejecting missing IDs.
+10. For history work, fetch the current live article separately, list its prior saved history snapshots, fetch the exact numeric history version, and compare it with the current head before choosing draft restoration or immediate revert. A current version `N` with latest history version `N-1` is normal.
+11. Immediately before publishing, re-fetch the exact target when read scope is available and reconcile the requested/found ID plus draft provenance; do not require `isDraft: true` because valid derived drafts can report `isDraft: false`. Publish the exact reviewed ID through the write-only draft endpoint with the complete required article payload and valid `parentFolderId`; let that endpoint validate target eligibility. After success, treat the returned live article/state as authoritative and the old draft's absence as a secondary expected check.
+12. Treat revert as an immediate live write. Capture the current version first, restore only the exact reviewed version, then re-fetch and compare the live article with the target snapshot.
+13. Publish or revert only after explicit confirmation if the request did not already authorize the exact live change.
+14. Verify folder placement and agent assignment when the user expects answers to change.
+15. When behavioral proof is requested, after publish or revert run or rerun the case without draft artifacts to prove active behavior.
 
 ## Defaults
 
@@ -63,8 +65,13 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - A completed generation job with `hcArticleId: null` did not create or update knowledge.
 - `DO_NOTHING` can still produce reviewable output in draft mode.
 - Direct article management is the manual/advanced path, not the default for source content.
-- There is no need to memorize direct lookup paths; verify current article lookup docs before fetching by IDs.
-- Listing article history returns saved versions; fetching one exact history version uses a read-scoped `POST`. HTTP method alone does not make that read a live write.
+- An empty `type: "draft"` article list means no draft was returned by that listing; it does not prove the list route is broken. Use the exact-ID lookup when a draft ID is known.
+- Exact article lookup returns only the articles it finds. Reconcile requested IDs with returned IDs instead of treating HTTP `200` or a non-error response as proof every requested article exists.
+- Do not call a missing draft "expired" without separate lifecycle evidence. It may have been deleted, already published and consumed, or otherwise no longer persisted.
+- Article history contains prior saved snapshots, not the current live head. Fetch the current article separately; current version `N` with history ending at version `N-1` is expected rather than an out-of-sync result.
+- Fetching one exact history version uses a read-scoped `POST`. HTTP method alone does not make that read a live write.
+- Publishing consumes the draft row and returns the resulting live article. Use the returned live article/state as primary success proof; the old draft ID is expected to disappear, but if it remains, flag that unexpected lifecycle state for investigation rather than discarding the authoritative publish result.
+- Do not gate a valid draft solely on the exact-read `isDraft` field; draft responses created from live articles may report `isDraft: false` alongside draft provenance. The dedicated publish endpoint validates the draft target and needs write scope only. Use exact lookup as separate review evidence when read scope is available.
 - Revert accepts the numeric `version`, writes to the knowledge graph immediately, and returns the restored live article. Do not substitute `versionId` unless current docs explicitly change the contract.
 - A successful revert response is not enough proof. Re-fetch the live article, compare the restored fields with the exact target snapshot, and verify folder/agent visibility.
 - Knowledge can be live but invisible to an agent until assigned through the folder tree.
@@ -75,10 +82,10 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 ## Proof Of Completion
 
 - Generation: job reached terminal state and produced the expected article/draft ID, or a no-op/duplicate was explicitly accepted.
-- Draft review: draft exists, links back to original article or source evidence when applicable, is not assumed live, and—when behavior proof is required—has an exact-artifact Generate Answer result.
-- Publish: live article exists after publish, draft state is resolved, and the same case passes without draft artifacts when behavioral proof was requested.
+- Draft review: an exact-ID lookup proves the draft currently exists, requested and returned IDs were reconciled, the draft links back to original article or source evidence when applicable, it is not assumed live, and—when behavior proof is required—has an exact-artifact Generate Answer result.
+- Publish: the exact target and complete content were reviewed, any separate exact lookup reconciled the requested ID without treating `isDraft` as the sole discriminator, the dedicated publish response authoritatively identifies the resulting live article/state, folder/agent visibility is correct, and the same case passes without draft artifacts when behavioral proof was requested. Check the old draft ID afterward as secondary lifecycle verification; expect absence and flag unexpected persistence.
 - Direct update: article fields changed as intended after re-fetch/list.
-- History inspection: report the article ID, available version numbers, exact version fetched, provenance/timestamp when present, and the differences from current live content.
+- History inspection: report the article ID, current live version, available prior history versions, exact history version fetched, provenance/timestamp when present, and the differences from current live content. Do not flag current `N` versus latest history `N-1` as drift by itself.
 - Revert: current pre-revert snapshot and target version were captured, the exact numeric version was restored, the live article matches the intended historical fields after re-fetch, and folder/agent visibility remains correct.
 - Assignment: scoped tree for the target `botId` shows the intended folder.
 - Behavior: a marked Generate Answer smoke uses the updated/assigned knowledge; any broader Test Set run evaluates current published live-agent behavior and may invoke Actions or external APIs.

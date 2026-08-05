@@ -1,13 +1,13 @@
 ---
 name: fini-api-agent-configuration
-description: Use when the user wants to configure an existing Fini agent through public APIs; inspect prompt history or exact versions; create, duplicate, refine, publish, restore, test, update, or delete Rulebooks/rules with the correct intent-versus-Business Rule lifecycle; create, review, publish, rebase, or directly save prompt versions; wire Actions into Rulebook Tool nodes; manage tags and tag groups; or validate configuration before runtime testing.
+description: Use when the user wants to configure an existing Fini agent through public APIs; inspect prompt history or exact versions; create, duplicate, refine, publish, restore, test, update, or delete Rulebooks/rules with the correct intent-versus-Business Rule lifecycle; audit workspace Reply Rules and interpret their fields context; create, review, publish, rebase, or directly save prompt versions; wire Actions into Rulebook Tool nodes; manage tags and tag groups; or validate configuration before runtime testing.
 ---
 
 # Fini API Agent Configuration
 
-Use this skill for existing-agent behavior configuration: prompts, rulebooks/rules, and tags/tag groups. Route agent creation to `fini-api-agents`, Action/Attribute construction to `fini-api-actions-attributes`, unpublished exact-ID behavior comparisons to `fini-api-draft-validation`, and live regression suites or Replays to `fini-api-testing`.
+Use this skill for existing-agent behavior configuration and workspace reply-mode audits: prompts, Rulebooks/rules, tags/tag groups, and read-only Reply Rules. Reply Rules are not Rulebooks. Route agent creation to `fini-api-agents`, Action/Attribute construction to `fini-api-actions-attributes`, unpublished exact-ID behavior comparisons to `fini-api-draft-validation`, and live regression suites or Replays to `fini-api-testing`.
 
-Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the relevant Prompts, Rules, Tags, or Tag Groups docs page.
+Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the relevant Prompts, Rules, Reply Rules, Tags, or Tag Groups docs page.
 
 ## Choose The Layer
 
@@ -17,10 +17,12 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 | "Change how the agent behaves globally" | Current prompt -> draft -> exact review -> exact publish -> Generate Answer |
 | "Make this exact prompt live immediately" | Direct prompt update only when the caller explicitly chooses the live path |
 | "Test answers, diagnose failures, and change the guidelines" | Active baseline -> prompt diff -> exact draft validation -> review/publish -> marked active proof |
+| "Explain when Fini sends no reply, an internal comment, or a direct reply" | Read all three Reply Rule slots -> read fields context -> interpret every configured condition |
 | "Create a rulebook/rule from instructions" | Generate preview -> persist intent draft |
 | "Refine this rulebook before launch" | Refine the same intent rule as a new draft version |
 | "Publish this rulebook to one bot" | Require the explicit exact reviewed `draftVersionId`, then publish it with explicit agent IDs |
-| "Inspect or restore an older rule version" | Rule version history -> restore as draft |
+| "Inspect a draft or published rule" | Get rule with the parent `ruleId`; optionally use `versionStatus` to select `DRAFT` or `PUBLISHED` |
+| "Inspect or restore an exact rule version" | Parent `ruleId` + exact `versionId` -> version read or restore as draft |
 | "Duplicate this rule" | Re-fetch the exact source and actual rule kind -> disclose possible live/assigned copy -> exact confirmation -> duplicate -> inspect the copy |
 | "Test a published saved rule" | Saved test fields -> inspect inputs -> evaluate with explicit context |
 | "Inspect an unsaved flow or brand-new draft" | Preview test fields -> structural review; persist/review before a supported execution path |
@@ -32,13 +34,15 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 
 1. Resolve the target agent with List agents when the user gives a name.
 2. Read current state before writing: prompts/history, rule list/get, tag groups/tags. For a rule mutation, re-fetch the exact rule and use its returned kind; never choose draft or live policy from a caller-supplied/default `type`.
-3. Prefer reviewable, versioned paths. For prompt changes, create a draft, fetch that exact version, require a complete non-truncated payload, compare it with the current prompt, and publish only the reviewed `versionId`. For intent rules, generate a preview, persist it as `DRAFT`, refine the same rule, and publish the exact reviewed draft version.
-4. Preserve and submit all three prompt arrays even when only one section changes.
-5. Write only to workspace-owned custom tag groups/tags; treat Fini-managed defaults as read-only.
-6. Re-fetch after writes and report changed IDs, exact version, draft/live state, assigned `botIds`, and remaining review steps.
-7. Inspect rule test fields before evaluating a published saved rule. Preview fields for an unsaved flow are structural guidance, not execution. Treat supported evaluation as potentially effectful when a flow reaches an Action Tool node.
-8. Inspect conversations when the user needs QA, rollout, or golden-set evidence.
-9. Route unpublished prompt/knowledge/rule candidate comparisons to `fini-api-draft-validation`; test final active behavior with marked Generate Answer; route broad persistent live regression to `fini-api-testing`.
+3. For a Reply Rule audit, fetch both the three-slot collection and workspace fields context. Report `noReply`, `internalComment`, and `directReply` independently, resolving condition paths, operators, quantifiers, Attributes, tags, and installed sources from returned context rather than hardcoding them.
+4. Prefer reviewable, versioned paths. For prompt changes, create a draft, fetch that exact version, require a complete non-truncated payload, compare it with the current prompt, and publish only the reviewed `versionId`. For intent rules, generate a preview, persist it as `DRAFT`, refine the same rule, and publish the exact reviewed draft version.
+5. Preserve and submit all three prompt arrays even when only one section changes.
+6. Write only to workspace-owned custom tag groups/tags; treat Fini-managed defaults as read-only.
+7. Re-fetch after writes and report changed IDs, exact version, draft/live state, assigned `botIds`, and remaining review steps.
+8. Inspect rule test fields before evaluating a published saved rule. Preview fields for an unsaved flow are structural guidance, not execution. Treat supported evaluation as potentially effectful when a flow reaches an Action Tool node.
+9. Inspect conversations when the user needs QA, rollout, or golden-set evidence.
+10. Route unpublished prompt/knowledge/rule candidate comparisons to `fini-api-draft-validation`; test final active behavior with marked Generate Answer; route broad persistent live regression to `fini-api-testing`.
+11. Keep rule resource IDs distinct: use the parent `ruleId` for Get rule/list versions and supply both that parent ID and the exact `versionId` for Get rule version. Preserve both identifiers in mutation results and handoffs.
 
 ## Defaults
 
@@ -63,6 +67,11 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - Do not fabricate a partial prompt payload from a summary or truncated preview. Fetch the complete prompt, apply the smallest intended diff, and submit the complete arrays.
 - When an MCP prompt read reports `truncated: true`, it is not an exact review artifact. Retrieve the complete arrays and require `truncated: false` before publication.
 - Current prompt write routes use the `/public` suffix; verify the live docs before calling them.
+- Reply Rules are workspace-level Automations configuration, not intent Rulebooks or Business Rules. They accept no `botId` or workspace ID because the workspace comes from authentication.
+- The current public Reply Rule API is read-only. Do not offer create, update, publish, evaluate, version, or delete operations for Reply Rules.
+- The Reply Rule collection always returns three slots. A slot with `conditions: []`, `isEnabled: false`, and no saved ID is unconfigured and inactive, not a failed list operation.
+- Use Reply Rule fields context for current workspace paths and values. Do not hardcode providers, Attribute schemas, operators, tag IDs, or labels.
+- Current Reply Rules are not conclusive historical execution evidence when configuration may have changed after an event. Use Conversations event metadata for one actual stored response trace.
 - Intent-rule creation defaults to published unless `status: DRAFT` is supplied; always send `DRAFT` for the review-first natural-language workflow. Business Rule creation is immediate and non-versioned.
 - `List rules` defaults to intent rules when `type` is omitted; ask for or send `type=business` when Business Rules are intended.
 - Intent rules are the only rules with draft/version/refine/restore/publish semantics. Filter by version status, refine the same rule in place, and publish the explicitly supplied exact reviewed `draftVersionId`.
@@ -73,6 +82,8 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - Business Rules are immediate-live and non-versioned. Do not send them through intent draft, refine, restore, version-history, or publish routes. Business Rule create, update, duplicate, and delete operations require live-write treatment.
 - If the fetched rule kind conflicts with the requested workflow or caller-supplied `type`, stop instead of coercing the resource through the other kind's route.
 - Rule list summaries omit `flowConfig`; use Get rule before explaining or editing the tree.
+- Get rule requires the parent `ruleId`, not a rule-version ID. Its optional `versionStatus` selects `DRAFT` or `PUBLISHED`; when omitted, the API chooses its documented default. Passing a `versionId` as `ruleId` can correctly return `404`; do not interpret that alone as a missing version.
+- Get rule version requires both the parent `ruleId` and the exact `versionId`, and the version must belong to that rule. If only a version ID is known, resolve its parent before calling the exact-version route.
 - Draft intent rules return empty `botIds`; publishing requires non-empty target agent IDs.
 - `isOutputTagGroup=true` makes a tag group unavailable in Rulebooks, including intent rules.
 - An Action does nothing merely because it exists. Active runtime needs a published Rulebook assigned to the responding agent with a Tool node pointing at it; an eligible exact draft override of that existing assigned rule can also execute the Tool node.
@@ -89,8 +100,9 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - Published prompt: the exact reviewed draft ID is `PUBLISHED`, current prompts are re-fetched, changed sections are summarized, and the same runtime cases are rerun when requested.
 - Stale prompt: the rejected version is not retried; stale draft, exact parent, and latest active versions were compared; conflicts were surfaced; and a newly based draft plus its exact review state are reported.
 - Direct prompt update: the caller's immediate-live intent is explicit, the returned saved version is re-fetched, and the history/rollback path is identified.
-- Rule draft: the fetched rule is confirmed as `intent`; persisted rule ID and draft version ID exist, status is `DRAFT`, no live assignment is assumed, and the next review/refine/publish step is clear.
-- Published rule: the explicit exact reviewed `draftVersionId` and target `botIds` are confirmed, the rule is re-fetched, Action Tool-node IDs are verified when used, and behavior is tested if requested.
+- Reply Rule audit: all three slots, enabled state, saved-rule presence, and conditions interpreted through current fields context are reported; no configuration change is claimed.
+- Rule draft: the fetched rule is confirmed as `intent`; parent `ruleId` and exact draft `versionId` are recorded separately, status is `DRAFT`, no live assignment is assumed, and the next review/refine/publish step is clear.
+- Published rule: the parent `ruleId`, explicit exact reviewed `draftVersionId`, and target `botIds` are confirmed; the rule is re-fetched by parent ID, Action Tool-node IDs are verified when used, and behavior is tested if requested.
 - Duplicated rule: exact source ID/kind and confirmation are recorded; the returned copy is re-fetched; its actual state, assignments, and independent ID are reported without assuming it is a draft.
 - Business Rule: the resource is reported as immediate-live and non-versioned; no intent draft/version/publish claims are made.
 - Rule test: tested rule/version, exact input context, node results, possible external effects, and remaining regression coverage are reported.

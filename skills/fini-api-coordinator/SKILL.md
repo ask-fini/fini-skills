@@ -1,6 +1,6 @@
 ---
 name: fini-api-coordinator
-description: Use when the user asks which Fini public API workflow or skill to use; wants to create, inspect, delete, configure, or analyze an agent; validate unpublished prompt, knowledge, snapshot, or eligible intent-rule candidates; onboard a Fini support bot from Slack; configure Actions, Attributes, or external API calls; manage prompts, Rulebooks, tags, sources, or knowledge; send or inspect conversations; run analytics, replays, rule evaluations, Test Sets, or regression testing; or sequence several Fini API domains end to end. Route to the narrowest Fini skill and verify current endpoint contracts through docs.usefini.com/llms.txt.
+description: Use when the user asks which Fini public API workflow or skill to use; wants to create, inspect, delete, configure, or analyze an agent; inspect one event's execution metadata; audit workspace Reply Rules; validate unpublished prompt, knowledge, snapshot, or eligible intent-rule candidates; onboard a Fini support bot from Slack; configure Actions, Attributes, or external API calls; manage prompts, Rulebooks, tags, sources, or knowledge; send or inspect conversations; run analytics, replays, rule evaluations, Test Sets, or regression testing; or sequence several Fini API domains end to end. Route to the narrowest Fini skill and verify current endpoint contracts through docs.usefini.com/llms.txt.
 ---
 
 # Fini API Coordinator
@@ -25,11 +25,11 @@ Use the scoped `add --all --copy` flow so newly released Fini skills are include
 | --- | --- |
 | List, resolve, create, or delete agents; inspect full or sectioned agent analytics | `fini-api-agents` |
 | Configure Actions, Attributes for eligible messages, their agent assignments, or ordered external API calls | `fini-api-actions-attributes` |
-| Configure prompt drafts/history/publishing, Rulebooks/rules/versions, tags, or tag groups | `fini-api-agent-configuration` |
+| Configure prompt drafts/history/publishing, Rulebooks/rules/versions, tags, or tag groups; audit workspace Reply Rules | `fini-api-agent-configuration` |
 | Compare active behavior with exact unpublished prompt, knowledge, snapshot, or eligible intent-rule version IDs before publishing | `fini-api-draft-validation` |
 | Run Test Sets, criteria, asynchronous regression runs, replays, or rule diagnostics/evaluations | `fini-api-testing` |
 | Run a full Slack-led onboarding inside an authenticated Fini workspace | `fini-api-slack-onboarding` |
-| List, inspect, export, annotate, resolve, analyze, or delete conversations | `fini-api-conversations` |
+| List, inspect, export, annotate, resolve, analyze, or delete conversations; inspect one exact Fini event's stored execution metadata | `fini-api-conversations` |
 | Send or continue one runtime turn when the configuration choice is already known | `fini-api-generate-answer` |
 | Crawl, register, ingest, refresh, inspect, or delete raw sources | `fini-api-sources` |
 | Generate or manage knowledge, article drafts/history/rollback, folders, and agent visibility | `fini-api-knowledge` |
@@ -40,6 +40,8 @@ Use these distinctions when requests sound similar:
 - Use `fini-api-draft-validation` for an active baseline, isolated exact-ID candidates, and a combined unpublished candidate.
 - Use `fini-api-generate-answer` for one controlled turn when no candidate-comparison methodology is needed.
 - Use `fini-api-conversations` for stored conversation evidence and QA state.
+- Use `fini-api-conversations` for one exact Fini-authored event's stored execution trace. Verify `role=finibot`; this read does not replay or rerun the event.
+- Use `fini-api-agent-configuration` for current workspace Reply Rules and their fields context. Reply Rules are read-only workspace response-mode conditions, not Rulebooks or historical execution proof.
 - Use `fini-api-testing` for Replay, rule diagnosis, or persistent live-agent regression. A Test Set does not accept unpublished draft artifact overrides and may invoke Actions or external APIs.
 - Use `fini-api-agents` for aggregate analytics rather than rebuilding dashboard metrics from raw exports.
 - Use `fini-api-actions-attributes` for a supported business-action integration. The customer still owns the target API, credentials, permissions, idempotency, and business rules.
@@ -94,6 +96,7 @@ For a full bot workflow, use only the stages the request needs:
 - Public source APIs use `document*` wire names even though product language says "sources."
 - Conversation/source pagination is newest-first; follow the cursor contract from the current docs.
 - Generate Answer creates events; it is not a conversation-list response.
+- Event metadata is stored evidence for one exact Fini-authored event. Reply Rules are current workspace-level response-mode configuration; keep both distinct from Rulebooks and from each other.
 - Draft validation does not publish. Test one artifact dimension at a time before a combined candidate, and keep every comparison like-for-like.
 - Test Set runs asynchronously evaluate persistent cases against current published live-agent behavior and may invoke configured Actions or external APIs.
 - Action/Attribute tests and individual external-call tests execute outbound HTTP; the word "test" does not imply a dry run.

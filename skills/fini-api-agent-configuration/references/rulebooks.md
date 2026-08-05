@@ -5,6 +5,7 @@ Use this reference when the user says rulebook, rule, business rule, intent rule
 ## Contents
 
 - [Rulebook Mental Model](#rulebook-mental-model)
+- [Reply Rules Are Not Rulebooks](#reply-rules-are-not-rulebooks)
 - [Choose The Safe Path](#choose-the-safe-path)
 - [Draft-First Workflow](#draft-first-workflow)
 - [Duplication Workflow](#duplication-workflow)
@@ -27,7 +28,17 @@ Common rulebook jobs:
 - use tags or input schema as conditions
 - constrain behavior around sensitive or high-risk situations
 
-Intent-rule drafts are versioned review artifacts. Published rules assigned to `botIds` can affect live behavior. Business Rules use a separate, non-versioned lifecycle.
+Intent-rule drafts are versioned review artifacts. Keep the parent rule resource ID (`ruleId`) separate from each lifecycle snapshot ID (`versionId` or publish-specific `draftVersionId`). Published rules assigned to `botIds` can affect live behavior. Business Rules use a separate, non-versioned lifecycle.
+
+## Reply Rules Are Not Rulebooks
+
+Reply Rules are three fixed workspace-level slots for no reply, internal comment, and direct reply behavior. They do not use intent-rule drafts, Business Rule lifecycle, bot assignment, versions, publishing, or Rulebook evaluation. The current public surface is read-only.
+
+Read Reply Rules together with Reply Rule fields context. Resolve condition paths, operators, quantifiers, installed sources, Attributes, and output-tag values from the returned workspace context. Never infer paths from display labels or hardcode workspace resources.
+
+Report every slot separately. `isEnabled=false` means the slot is inactive; a slot with no saved ID and empty conditions is unconfigured, not an active rule or a failed read.
+
+Use Conversations event metadata for evidence about one actual Fini response. Current Reply Rules describe current configuration and may not prove what was configured when an older event occurred.
 
 ## Choose The Safe Path
 
@@ -36,8 +47,8 @@ Intent-rule drafts are versioned review artifacts. Published rules assigned to `
 | Natural-language behavior instructions | Generate a preview, inspect it, then persist it as an intent `DRAFT` |
 | Revise generated behavior before launch | Refine the same intent rule into a new draft version |
 | Launch approved draft to agents | Require and publish the explicitly supplied exact reviewed `draftVersionId` with explicit `botIds` |
-| Inspect current behavior | List rules, then Get rule by ID |
-| Inspect or recover history | List/get versions; restore the selected version as a new draft |
+| Inspect current draft or published behavior | List rules, then Get rule with the parent `ruleId`; optionally select `DRAFT` or `PUBLISHED` with `versionStatus` |
+| Inspect or recover one exact version | List versions with the parent `ruleId`; get or restore with both parent `ruleId` and exact `versionId` |
 | Clone existing behavior intentionally | Re-fetch exact source and kind, disclose possible live/assigned copy, require exact confirmation, duplicate, then inspect the independent copy |
 | Manually edit exact tree or assignments | Update rule after re-fetch and approval |
 | Validate a published saved rule | Get rule test fields, supply explicit context, then evaluate |
@@ -53,7 +64,7 @@ Intent-rule drafts are versioned review artifacts. Published rules assigned to `
 3. Generate a preview and inspect its name, description, and flow tree. A preview is not persisted.
 4. Persist the approved preview as an intent rule with status `DRAFT`.
 5. Refine by regenerating from the current flow and updating the same rule as `DRAFT`. Do not duplicate first.
-6. Re-fetch the draft and its versions; record the exact `draftVersionId` that was reviewed.
+6. Re-fetch the draft with its parent `ruleId`, list versions under that parent, and record the exact `draftVersionId` that was reviewed. Do not substitute one identifier for the other.
 7. Resolve target `botIds`.
 8. Require that exact reviewed `draftVersionId` as an explicit publish input. Never omit it or resolve a current/latest draft after approval.
 9. Publish only that reviewed version, after explicit approval bound to the version ID and with non-empty target agents.
@@ -106,8 +117,8 @@ Rule evaluation requires write scope and may execute external Actions. It is not
 
 ## Existing Rule Workflow
 
-1. List rules with explicit `type` and intent `versionStatus` when relevant.
-2. Fetch the full rule by ID before explaining or mutating it. Bind all policy and lifecycle decisions to the returned kind, not a caller-supplied/default `type`.
+1. List rules with explicit `type` and intent `versionStatus` when relevant. Preserve each parent `ruleId` separately from any returned `versionId`.
+2. Fetch the full rule with its parent `ruleId` before explaining or mutating it. Bind all policy and lifecycle decisions to the returned kind, not a caller-supplied/default `type`.
 3. Preserve `flowConfig` and `inputSchema` unless the user intends to change them.
 4. For intent rules only, inspect version history before restore, rollback, or publish. Restore creates a new draft; it does not silently replace live behavior.
 5. For Business Rules, use the current rule directly or start from a documented default template. Create/update/delete/duplicate are immediate-live operations; do not apply intent draft, refine, restore, version-history, or publish semantics.
@@ -122,6 +133,9 @@ Rule evaluation requires write scope and may execute external Actions. It is not
 - Intent-rule creation defaults to published unless the request explicitly sends `status: DRAFT`; use `DRAFT` for the review-first workflow. Business Rule creation is immediate and non-versioned, so treat it as a live write.
 - `List rules` defaults to `intent`; send `type=business` explicitly for Business Rules.
 - Use `versionStatus` for intent draft/published/archived reads; do not rely on a stale `isDraft` convention.
+- Get rule requires the parent `ruleId`; it does not accept a lifecycle `versionId` in that path position. `versionStatus` is optional and only selects `DRAFT` or `PUBLISHED`. A `404` after swapping those IDs is an identifier error, not proof that the version disappeared.
+- Get one exact intent-rule version with both its parent `ruleId` and exact `versionId`. The exact-version route rejects a version that does not belong to the supplied parent.
+- Preserve both identifiers when creating, refining, listing, fetching, publishing, restoring, or handing off a rule workflow.
 - List summaries omit `flowConfig` and do not expand assignments. Fetch by ID for full tree.
 - Draft intent rules return `botIds: []`.
 - Publish requires at least one target `botId` and an explicitly supplied exact reviewed `draftVersionId`. Never omit the version ID or resolve a current/latest draft after approval.
@@ -144,9 +158,10 @@ For any rulebook operation, report:
 
 ```markdown
 Rule/rulebook: [name and ID]
+Parent ruleId: [stable rule resource ID]
 Type: [intent/business/unknown]
 State: [draft/published/archived/deleted]
-Version: [version ID/number or not versioned]
+Version: [exact versionId and number / not versioned]
 Agents: [botIds or not assigned]
 Operation: [listed/fetched/drafted/refined/published/duplicated/updated/deleted]
 Action wiring: [none / exact Action ID and Tool node verified]
