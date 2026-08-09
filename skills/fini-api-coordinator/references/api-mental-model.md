@@ -14,6 +14,7 @@ Use this reference for broad API architecture, behavior-change triage, and end-t
 | Draft validation | Active baseline plus isolated and combined exact-ID artifact candidates | Creates marked test conversations/events without publishing; can still reach configured Actions. |
 | Runtime | Ordinary Generate Answer turns and caller metadata | Creates conversation events and can reach configured Actions. |
 | Conversations | Stored evidence, QA state, feedback notes, resolution, deletion | QA writes change review state; deletion changes stored records. |
+| Refine with AI | One exact bad response, AI diagnosis, persisted draft recommendations, and an embedded answer replay | Creates review drafts and a replay conversation; it does not publish configuration. |
 | Testing | Replays, rule evaluation, generated tests, Test Sets, criteria, runs | Replay, rule evaluation, and live Test Set runs can execute Tool nodes or external APIs; Test Sets use current published agent behavior and do not accept draft overrides. |
 
 ## What Changes Bot Behavior
@@ -31,7 +32,7 @@ Use this reference for broad API architecture, behavior-change triage, and end-t
 | Prove unpublished behavior before launch | Persist/fetch exact candidates -> active baseline -> isolated artifact runs -> combined candidate | Exact artifact, interaction, and event IDs show request-scoped behavior; active state is unchanged. |
 | Prove one scenario | Generate Answer with explicit test metadata or reviewed artifacts | Created events and answer evidence satisfy the case. |
 | Prove a release did not regress | Run the same persistent Test Set before and after the published change -> poll -> compare | Published configuration IDs, terminal run IDs, case/criterion results, external effects, failures, and baseline comparison. |
-| Diagnose a historical failure | Conversation evidence -> replay and/or rule evaluation | Original and diagnostic outputs remain separately identifiable. |
+| Diagnose and improve one historical failure | Conversation evidence -> Refine with AI -> exact artifact review | Original answer, diagnosis, generated drafts, and Refine replay remain linked and separately identifiable. |
 
 ## Triage A Bad Answer
 
@@ -49,6 +50,7 @@ Use this reference for broad API architecture, behavior-change triage, and end-t
 | Need persistent multi-case evidence | `fini-api-testing` Test Set |
 | Need dashboard-style aggregate metrics | `fini-api-agents` analytics |
 | Need exact transcript or reviewer evidence | `fini-api-conversations` |
+| Need an AI-proposed fix and replay for one exact bad response | `fini-api-refine-with-ai` |
 | Need one article, saved version, history, or rollback | `fini-api-knowledge` |
 
 ## Agent Setup Model

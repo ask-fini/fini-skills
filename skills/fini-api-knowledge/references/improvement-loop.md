@@ -30,12 +30,12 @@ Route accordingly:
 ## Draft Fix Workflow
 
 1. Preserve the failing question and expected answer/reference.
-2. Extract the smallest useful evidence from the conversation or review note.
-3. Generate draft knowledge by default.
-4. Poll the job and inspect draft/no-op/failure state.
-5. Review the draft content and folder placement.
-6. Retest through `fini-api-draft-validation`: preserve the active baseline, fetch the exact draft ID, and use it in `artifacts.knowledgeArticleDraftIds` with `markAsTest: true`.
-7. Publish only after explicit approval or prior authorization and a satisfactory draft result.
+2. If it comes from one exact eligible bad Fini response and the user wants AI-assisted correction, use `fini-api-refine-with-ai` first.
+3. When Refine returns a `draftArticleId`, fetch and review that exact draft here; do not generate a duplicate.
+4. Verify the article's factual support and folder placement. The improved Refine replay is behavioral evidence, not automatic factual proof.
+5. Use the manual generation path only when no eligible response exists or the user explicitly requests direct authoring.
+6. Use `fini-api-draft-validation` for additional fresh cases or combined candidates when needed.
+7. Publish only after explicit approval or prior authorization and satisfactory exact-draft review.
 8. Verify the article is in a folder visible to the intended agent.
 9. Rerun the same question without draft artifacts to prove active behavior.
 

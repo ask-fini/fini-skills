@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fini Refine with AI"
+  short_description: "Diagnose and improve one bad Fini response."
+  default_prompt: "Use $fini-api-refine-with-ai to diagnose this bad Fini response, review the proposed drafts, and compare the replay."

@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "fini",
   "displayName": "Fini",
-  "version": "0.6.1",
-  "description": "Fini public API workflow skills and authenticated MCP tools for onboarding, agent configuration, actions, exact draft validation, analytics, knowledge management, QA, and live regression testing.",
+  "version": "0.7.0",
+  "description": "Fini public API workflow skills and authenticated MCP tools for onboarding, agent configuration, actions, Refine with AI, exact draft validation, analytics, knowledge management, QA, and live regression testing.",
   "author": {
     "name": "Fini",
     "url": "https://usefini.com"
@@ -15,6 +15,7 @@
     "customer-support",
     "knowledge-base",
     "agent-configuration",
+    "refine-with-ai",
     "draft-validation",
     "testing",
     "mcp"

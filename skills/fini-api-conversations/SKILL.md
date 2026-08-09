@@ -1,6 +1,6 @@
 ---
 name: fini-api-conversations
-description: Use when the user wants to list, export, inspect, summarize, analyze, paginate, retrieve, delete, or bulk-delete Fini conversations through the public API; inspect one Fini-authored event's stored execution metadata, including planning, knowledge, tag, Attribute, and Rule traces; record or clear an event's thumbs-up/down rating, teammate feedback note, or resolution state; build QA, compliance, BI, RCA, golden-set, support-review, knowledge-improvement, fix-review, replay, regression-testing, or agent-analytics workflows from conversation evidence; or understand conversation filters, cursors, event fields, used articles, user attributes, and deletion guardrails.
+description: Use when the user wants to list, export, inspect, summarize, analyze, paginate, retrieve, delete, or bulk-delete Fini conversations through the public API; inspect one Fini-authored event's stored execution metadata, including planning, knowledge, tag, Attribute, and Rule traces; record or clear an event's thumbs-up/down rating, teammate feedback note, or resolution state; build QA, compliance, BI, RCA, golden-set, support-review, knowledge-improvement, replay, regression-testing, or agent-analytics workflows from conversation evidence; prepare an exact bad-response handoff to fini-api-refine-with-ai; or understand conversation filters, cursors, event fields, used articles, user attributes, and deletion guardrails.
 ---
 
 # Fini API Conversations
@@ -18,13 +18,14 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 | Give an event thumbs up/down or clear its rating | Conversation feedback with `approved: true`, `false`, or `null` |
 | Save or clear a teammate explanation of why an event was good or bad | Feedback-note workflow |
 | Mark a negatively rated issue handled or reopened | Feedback-resolution workflow with `resolved: true` or `false` |
+| Diagnose and improve one exact bad Fini response with generated drafts and an automatic replay | Preserve the exact evidence, then use `fini-api-refine-with-ai` |
 | Re-run an answer, compare configurations, or add regression coverage | Preserve the exact conversation/event evidence, then use `fini-api-testing` |
 | Ask for aggregate agent metrics, trends, knowledge usage, or escalation breakdowns | Use `fini-api-agents` analytics, then return here for conversation-level evidence |
 | Send a new message turn | Use `fini-api-generate-answer` |
 
 ## Workflow
 
-1. Clarify the goal: export, inspect one conversation, analyze evidence, record feedback, run fix review, prepare replay/testing evidence, or delete.
+1. Clarify the goal: export, inspect one conversation, analyze evidence, record feedback, prepare Refine/Replay/testing evidence, or delete.
 2. Resolve agent identity only if needed. If the user gives an agent name instead of an ID, use List agents from the docs to map it to `botId`.
 3. Choose a bounded window. Do not rely on defaults for exports.
 4. List conversations with the narrowest useful filters.
@@ -34,7 +35,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 8. For conversation-level RCA, extract evidence fields and preserve source conversation IDs. Avoid fetching every conversation again when the list response already contains the required events and evidence. For aggregate metrics or trends, hand off to `fini-api-agents` rather than deriving workspace-wide conclusions from a sample export.
 9. For exact-event RCA, fetch metadata only for the selected Fini-authored event. Treat nullable trace sections as absent or not recorded, not as proof that a stage failed. Separate observed planning, knowledge selection, answer reasoning, tag selection, executed Attributes, and executed Rules before routing the issue to its owning workflow.
 10. For QA/golden-set work, preserve expected vs actual answer fields, used articles, user attributes, feedback, failure type, and next action.
-11. For fix review, target the exact conversation and answer event, create an iteration from concise feedback, then inspect the resulting session. Treat recommendations and replay answers as proposals, not applied configuration.
+11. When the user wants AI-assisted diagnosis and a proposed correction for one exact bad response, preserve the exact conversation and `finibot` event, then hand execution to `fini-api-refine-with-ai` instead of manually creating drafts here.
 12. Keep event rating, qualitative note, and resolution as three separate writes. Target the exact conversation and event, use `approved` only for the thumbs signal, use `feedback` only for the note, set `resolved: true` after handling a negatively rated event, and use `resolved: false` to mark it unresolved again.
 13. For replay, rule evaluation, or regression testing, preserve the exact source conversation and Fini response event, then hand off to `fini-api-testing`. Do not treat a replay as a live configuration change or an automatically saved regression case.
 14. For deletion, produce an exact deletion plan and wait for explicit confirmation before calling delete routes.
@@ -50,7 +51,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - Preserve event IDs, used articles, user attributes, status/resolution, and feedback fields when the export is for quality improvement.
 - Preserve rating (`approved`), qualitative note (`feedback`), event resolution, conversation resolution, and CSAT as distinct signals. Do not collapse them into one "approval" field.
 - Route evidence by failure type: content gaps to Knowledge/Sources; behavior config issues to Agent Configuration; configured Attribute, Data Step, or Action failures to Actions/Attributes; Action reachability to Agent Configuration Tool-node wiring; and caller-supplied runtime context issues to Generate Answer metadata.
-- Prefer fix-review iteration when the user wants a grounded proposed correction from a specific bad answer. Route any approved recommendation to the owning Knowledge or Agent Configuration workflow for a separate write.
+- Prefer `fini-api-refine-with-ai` when the user wants a grounded proposed correction from a specific bad answer. It owns the iteration, generated draft lineage, and embedded replay; this skill retains evidence and QA state.
 - Use `fini-api-draft-validation` for unpublished exact-ID candidate comparisons. Use `fini-api-testing` for Replays, rule evaluation, and persistent Test Set runs against current published live-agent behavior; those runs may invoke Actions or external APIs.
 - Use `fini-api-agents` for aggregate analytics and section-level performance reads.
 - Do not bulk delete unless the user explicitly confirms exact IDs.
@@ -72,7 +73,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - A feedback note does not set the thumbs rating, and marking feedback resolved does not erase the underlying rating or note.
 - `resolved: false` explicitly reopens or marks a negatively rated event unresolved; it does not clear its rating or note.
 - Conversation `resolved` is recalculated from negatively rated Fini events: no negatives yields `null`, all handled negatives yields `true`, and any unresolved negative yields `false`.
-- A fix-review iteration does not apply or publish its recommendations. Verify the session output, then use the owning skill for any real KB, prompt, or rule change.
+- Refine with AI creates persisted draft recommendations and a separate replay but does not publish them. Route the iteration lifecycle to `fini-api-refine-with-ai` and keep event rating, note, and resolution separate.
 - Replays are separate conversations and require a Fini response event with a linked user event. Route their creation and comparison to `fini-api-testing`.
 - Bulk delete can have partial-effect behavior. Check current docs and warn before execution.
 
@@ -83,7 +84,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - Exact-event RCA: report the conversation ID, exact Fini event ID, confirmed `finibot` role, returned and absent trace sections, evidence-based diagnosis, and owning follow-up skill. Do not imply that any replay, test, or mutation occurred.
 - QA/golden-set export: include question/evidence, actual answer, used articles, feedback/resolution signal, and recommended next action.
 - Feedback write: re-read the target event and report its rating, note, event-level resolution, and recalculated conversation resolution separately.
-- Fix review: include conversation ID, event ID, session/iteration ID, old and replay answers, recommendations, and whether any recommendation was separately applied.
+- Refine handoff: include the conversation ID, exact `finibot` event ID, linked-user-event eligibility when known, evidence/feedback goal, and QA state. The Refine skill owns session, iteration, replay, and generated-draft proof.
 - Replay/testing handoff: include source conversation ID, target Fini response event ID, linked user event availability, intended replay mode or regression goal, and the testing workflow receiving it.
 - Analytics handoff: report the agent, time window, filters, requested metric/section, and which conversation evidence should be inspected afterward.
 - Deletion plan: include exact IDs, count, route type, expected irreversibility, and confirmation status.

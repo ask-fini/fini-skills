@@ -7,7 +7,7 @@ Use this reference when conversations are being exported for QA, golden-set crea
 - [Conversation Evidence Model](#conversation-evidence-model)
 - [Build A Golden Set From Conversations](#build-a-golden-set-from-conversations)
 - [Conversation Evidence To Knowledge Improvement](#conversation-evidence-to-knowledge-improvement)
-- [Fix-Review Iteration](#fix-review-iteration)
+- [Refine With AI Handoff](#refine-with-ai-handoff)
 - [Replay And Regression Handoff](#replay-and-regression-handoff)
 - [Golden Set Output Template](#golden-set-output-template)
 - [QA Summary Template](#qa-summary-template)
@@ -55,20 +55,18 @@ Use this when the conversation shows a KB gap or stale answer:
 4. Route stale source issues to `fini-api-sources` first.
 5. Route prompt, rulebook, routing, escalation, or tag classification issues to `fini-api-agent-configuration`.
 6. Route configured Attribute, Data Step, or Action implementation failures to `fini-api-actions-attributes`; keep missing Tool-node reachability with Agent Configuration.
-7. Retest through `fini-api-draft-validation` before publishing when an exact eligible draft artifact exists, then use marked Generate Answer for a targeted active proof after publish.
+7. For a manually created draft, or when the Refine result needs additional clean-case or combined-candidate proof, use `fini-api-draft-validation` before publishing. Do not duplicate Refine's embedded replay for the original response; after publish, use marked Generate Answer for targeted active proof.
 
-## Fix-Review Iteration
+## Refine With AI Handoff
 
-Use fix review when one specific Fini answer needs a grounded proposed correction:
+Use `fini-api-refine-with-ai` when one specific Fini answer needs AI diagnosis, persisted draft recommendations, and an improved replay:
 
 1. Fetch the conversation and identify the exact Fini response event (`role=finibot`).
-2. Create a fix-review iteration with concise feedback describing the observed failure and desired behavior.
-3. Read the active or exact session and compare the original answer, replay answer, and recommendations.
-4. Classify each recommendation as Knowledge, Sources, Prompt, Rule, Tag, Action/Attribute, or runtime metadata work.
-5. Treat recommendations as proposals only. They do not update or publish Fini configuration.
-6. Route the accepted recommendation to the owning skill, apply it through its normal approval gate, and rerun the same case.
+2. Preserve the observed failure, desired behavior, and QA state, then hand off to the Refine skill.
+3. Let that skill own active-session reuse, confirmed iteration creation, polling, generated-draft lineage, and embedded replay comparison.
+4. Route each exact returned article/prompt/rule draft to its owning skill for review and separate publication approval.
 
-The event's thumbs rating, qualitative note, and resolution flag are separate QA-state writes. Do not confuse any of them with applying the recommended fix.
+The event's thumbs rating, qualitative note, resolution flag, and Refine `feedbackNote` are separate writes. Do not confuse any of them with publishing a recommended fix.
 
 ## Replay And Regression Handoff
 

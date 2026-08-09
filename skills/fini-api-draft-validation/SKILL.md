@@ -1,6 +1,6 @@
 ---
 name: fini-api-draft-validation
-description: Use when the user wants to validate unpublished Fini prompt, knowledge-article, knowledge-snapshot, or eligible intent-rule candidates through `fini_generate_answer`; compare current behavior with one or more exact draft artifact IDs; test each candidate dimension before a combined configuration; or prove a review draft without publishing it. Route ordinary turns to `fini-api-generate-answer`, historical regeneration to Replay, rule-only logic checks to rule evaluation, and persistent live-agent regression to `fini-api-testing`.
+description: Use when the user wants to validate unpublished Fini prompt, knowledge-article, knowledge-snapshot, or eligible intent-rule candidates through `fini_generate_answer`; compare current behavior with one or more exact draft artifact IDs; test each candidate dimension before a combined configuration; or prove a review draft without publishing it. Route AI diagnosis and draft generation for one exact bad response to `fini-api-refine-with-ai`, ordinary turns to `fini-api-generate-answer`, caller-selected historical candidates to Replay, rule-only logic checks to rule evaluation, and persistent live-agent regression to `fini-api-testing`.
 ---
 
 # Fini API Draft Validation
@@ -14,6 +14,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` plus th
 | Need | Use |
 | --- | --- |
 | Compare active behavior with exact unpublished candidates on a new controlled turn | This skill |
+| Diagnose one bad historical response and have Fini propose drafts plus a replay | `fini-api-refine-with-ai` |
 | Send or continue one ordinary turn with already selected configuration | `fini-api-generate-answer` |
 | Regenerate a known historical response with its prior context | Replay through `fini-api-testing` |
 | Inspect only a Rulebook path for supplied fields | Rule test fields and rule evaluation |

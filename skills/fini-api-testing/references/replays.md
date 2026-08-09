@@ -4,7 +4,7 @@ Use a replay to regenerate one known Fini response or a sequence ending at that 
 
 ## Selection
 
-Choose Replay when the source conversation and target Fini response already exist and the question is about regenerating that response with a specific supported candidate. Choose Generate Answer for a new scenario, an intentional multi-turn probe, or Attribute runtime proof. Choose a Test Set for persistent multi-case regression against current published live-agent behavior; its runs may invoke Actions.
+Choose Replay when the source conversation and target Fini response already exist and the caller already selected a specific supported candidate or only wants regeneration. Choose `fini-api-refine-with-ai` when the user wants Fini to diagnose that response, generate reviewable draft fixes, and provide its own improved replay. Choose Generate Answer for a new scenario, an intentional multi-turn probe, or Attribute runtime proof. Choose a Test Set for persistent multi-case regression against current published live-agent behavior; its runs may invoke Actions.
 
 A replay creates a separate conversation and does not overwrite the original or publish configuration changes. By default, it regenerates an answer while reusing the original response's executed Rulebook and Attribute evidence; it is not a complete current-configuration rerun.
 

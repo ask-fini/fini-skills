@@ -29,8 +29,9 @@ If the request mixes agent lifecycle, configuration, content, integration, runti
 | "Configure or test an external API step" | `fini-api-actions-attributes` |
 | "Export, inspect, annotate, resolve, or delete conversations" | `fini-api-conversations` |
 | "Explain why this exact Fini response used this knowledge, tag, Attribute, or Rule" | Exact event metadata in `fini-api-conversations` |
+| "Refine/fix this bad Fini answer, propose the right draft changes, and show the improved replay" | `fini-api-refine-with-ai` |
 | "Send one message to the bot" | `fini-api-generate-answer` |
-| "Replay this historical answer" | `fini-api-testing` |
+| "Replay this historical answer with this exact candidate" | `fini-api-testing` |
 | "Run our regression suite" / "compare pre- and post-change quality" | `fini-api-testing` Test Set workflow |
 | "Evaluate this rule against context or a conversation" | `fini-api-testing` |
 | "Import or refresh web, Zendesk, Notion, or Confluence content" | `fini-api-sources`, then `fini-api-knowledge` if it should affect answers |
@@ -42,6 +43,7 @@ If the request mixes agent lifecycle, configuration, content, integration, runti
 | --- | --- |
 | One new turn | Generate Answer |
 | One active-vs-unpublished exact-ID candidate comparison | Draft Validation |
+| One exact bad response plus AI diagnosis, generated draft fixes, and embedded replay | Refine with AI |
 | One historical answer under another configuration | Replay |
 | One Rulebook's node-level behavior | Rule evaluation |
 | Persistent regression against current published live-agent behavior | Test Set |
@@ -113,11 +115,11 @@ Use only for full onboarding inside an authenticated workspace:
 ### Conversation Evidence To Improvement
 
 1. `fini-api-conversations`: preserve exact conversation/event evidence and QA state.
-2. Classify the owner: Knowledge, Prompt, Rulebook, Action/Attribute, or caller context.
-3. Make the smallest reviewable change in the owning skill.
-4. Use Replay when it isolates the event; use `fini-api-draft-validation` when the proposed fix is unpublished.
-5. Publish the exact approved fix, then rerun the stable Test Set against current live-agent behavior and compare with baseline.
-6. Mark feedback resolved only after the evidence supports it.
+2. When the user wants Fini to diagnose and propose the correction, use `fini-api-refine-with-ai`; read the active session first, create one confirmed iteration, and poll it to a terminal state.
+3. Review the old/replayed answers, root cause, and exact returned article/prompt/rule draft IDs. Do not recreate those drafts manually.
+4. Route each artifact to Knowledge or Agent Configuration for exact review and separate publication approval.
+5. Use Draft Validation only for additional clean cases or combined-candidate proof; after publish, rerun the stable Test Set against current live-agent behavior.
+6. Mark feedback resolved only after the live evidence supports it.
 
 ## Clarify Only Material Ambiguity
 

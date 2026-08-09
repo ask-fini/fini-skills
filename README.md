@@ -1,12 +1,12 @@
 # Fini API Skills
 
-Workflow skills for AI coding agents using the Fini public API for agent lifecycle, configuration, customer API integrations, knowledge, runtime, analytics, conversations, and quality.
+Workflow skills for AI coding agents using the Fini public API for agent lifecycle, configuration, customer API integrations, knowledge, runtime, analytics, conversations, Refine with AI, and quality.
 
-These skills do not replace the Fini API docs. They teach an agent how to choose and sequence workflows, handle async and versioned lifecycles, distinguish draft from live state, preserve source/knowledge boundaries, configure agents and customer API integrations, validate exact unpublished candidate artifacts, run persistent cases against current published behavior, and verify that an API workflow actually worked.
+These skills do not replace the Fini API docs. They teach an agent how to choose and sequence workflows, handle async and versioned lifecycles, distinguish draft from live state, preserve source/knowledge boundaries, use Refine with AI for conversation-grounded fixes, validate exact unpublished candidate artifacts, run persistent cases against current published behavior, and verify that an API workflow actually worked.
 
 ## Install In Claude
 
-The Fini Claude plugin installs all eleven workflow skills and connects the
+The Fini Claude plugin installs all twelve workflow skills and connects the
 authenticated Fini MCP toolset in one package.
 
 In Claude:
@@ -61,6 +61,7 @@ npx skills add ask-fini/fini-skills --all
 | `fini-api-agents` | Create, inspect, delete, and analyze Fini agents, then route them into configuration, knowledge, Actions/Attributes, and testing workflows. |
 | `fini-api-actions-attributes` | Configure Actions, eligible-message Attributes, external API steps, assignments, Rulebook wiring, testing, and cleanup. |
 | `fini-api-conversations` | Export, inspect, annotate, rate, resolve, replay-route, analyze, and delete Fini conversation evidence, including exact-event execution traces. |
+| `fini-api-refine-with-ai` | Diagnose one exact bad Fini response, generate reviewable prompt/article/rule drafts, inspect the improved replay, and route exact artifacts toward separately approved publication. |
 | `fini-api-generate-answer` | Start or continue ordinary active-runtime turns, pass caller context, and capture conversation and Action evidence. |
 | `fini-api-draft-validation` | Compare an active baseline with exact unpublished prompt, knowledge, snapshot, or eligible intent-rule candidates through request-scoped artifact IDs without publishing them. |
 | `fini-api-sources` | Import, crawl, register, ingest, refresh, poll, detect changed content for, or delete Fini sources before knowledge generation. |
@@ -124,4 +125,4 @@ These skills intentionally avoid copying endpoint tables, request schemas, and l
 
 ## Current Shape
 
-The current package uses eleven skills. `fini-api-slack-onboarding` remains intentionally narrow: it should trigger only for full new-client-style onboarding, then route into focused skills. Agent lifecycle and analytics live in `fini-api-agents`; customer API integrations live in `fini-api-actions-attributes`; exact pre-publish artifact proof lives in `fini-api-draft-validation`; ordinary active-runtime turns live in `fini-api-generate-answer`; and Replay, rule diagnostics, and persistent Test Sets against current published behavior live in `fini-api-testing`. Knowledge and agent-configuration workflows remain grouped where their lifecycle operations compose.
+The current package uses twelve skills. `fini-api-refine-with-ai` owns AI-assisted diagnosis, generated draft lineage, and the embedded replay for one exact bad response; Conversations retains evidence and QA state, while Knowledge and Agent Configuration retain exact review and publication. `fini-api-slack-onboarding` remains intentionally narrow: it should trigger only for full new-client-style onboarding, then route into focused skills. Agent lifecycle and analytics live in `fini-api-agents`; customer API integrations live in `fini-api-actions-attributes`; exact pre-publish artifact proof lives in `fini-api-draft-validation`; ordinary active-runtime turns live in `fini-api-generate-answer`; and standalone Replay, rule diagnostics, and persistent Test Sets against current published behavior live in `fini-api-testing`.

@@ -8,7 +8,7 @@
     {
       "name": "fini",
       "source": "./",
-      "description": "Fini workflow expertise and authenticated MCP tools for agents, actions, knowledge, configuration, exact draft validation, analytics, conversations, and live regression testing.",
+      "description": "Fini workflow expertise and authenticated MCP tools for agents, actions, knowledge, configuration, Refine with AI, exact draft validation, analytics, conversations, and live regression testing.",
       "author": {
         "name": "Fini"
       },
@@ -21,6 +21,7 @@
         "ai-agents",
         "analytics",
         "actions",
+        "refine-with-ai",
         "draft-validation",
         "testing",
         "mcp"

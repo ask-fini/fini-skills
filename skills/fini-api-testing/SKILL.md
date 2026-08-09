@@ -1,6 +1,6 @@
 ---
 name: fini-api-testing
-description: Use when the user wants to test, evaluate, compare, or monitor Fini agent behavior through public APIs; replay known responses with exact candidate artifacts; inspect or evaluate Rulebooks; run persistent Test Set cases and criteria against current published live-agent behavior; start, poll, compare, or delete Test Set runs/resources; inspect agent analytics; or build evidence-based quality, release-gate, regression, and improvement workflows. Route unpublished active-baseline versus draft-artifact comparisons to `fini-api-draft-validation`.
+description: Use when the user wants to test, evaluate, compare, or monitor Fini agent behavior through public APIs; replay known responses with caller-selected exact candidate artifacts; inspect or evaluate Rulebooks; run persistent Test Set cases and criteria against current published live-agent behavior; start, poll, compare, or delete Test Set runs/resources; inspect agent analytics; or build evidence-based quality, release-gate, regression, and improvement workflows. Route AI-assisted diagnosis plus generated drafts and automatic replay for one exact bad Fini response to `fini-api-refine-with-ai`, and unpublished active-baseline versus draft-artifact comparisons to `fini-api-draft-validation`.
 ---
 
 # Fini API Testing
@@ -15,6 +15,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 | --- | --- | --- |
 | "What does the agent answer to this new message?" | Generate Answer | Stores conversation events and runs normal live behavior |
 | "How does this unpublished prompt/KB/rule candidate compare with current behavior?" | `fini-api-draft-validation` | Uses exact request-scoped artifact IDs; creates marked conversations/events; does not publish |
+| "Why was this exact answer bad, what should change, and what would the improved answer be?" | `fini-api-refine-with-ai` | Diagnoses the event, creates reviewable draft recommendations, and returns its own replay evidence |
 | "Would this known bad response differ with this exact prompt/rule/model candidate?" | Replay | Creates a separate replay conversation; default replay reuses original Rulebook and Attribute execution evidence unless supported artifacts change rule evaluation |
 | "How does this Rulebook resolve for these fields?" | Rule test fields plus rule evaluation | Executes rule logic against synthetic or stored context |
 | "Did quality or usage change over time?" | Agent analytics | Read-only aggregate observation; not causal proof |
@@ -23,6 +24,8 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 Test Sets do not accept the request-scoped unpublished artifact overrides used by Draft Validation. Run the same stable Test Set before and after a separately approved publish when release comparison is needed. Preflight every live run for reachable Actions and customer-API effects.
 
 Use `fini-api-draft-validation` to decide whether unpublished candidates are ready. Use a Test Set after publication to prove that current live-agent behavior passes persistent cases and criteria.
+
+Use standalone Replay when the caller already selected the candidate or only wants regeneration. Do not create a duplicate Replay when Refine with AI already returned replay interaction/event IDs for the original bad response.
 
 Use conversation ratings, feedback notes, and resolved state as quality labels and evidence. Route changes to those fields through `fini-api-conversations`; they are QA-state mutations, not behavioral tests.
 

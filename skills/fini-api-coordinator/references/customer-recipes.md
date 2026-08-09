@@ -180,26 +180,25 @@ Proof:
 
 Customer phrases:
 
-- "Why was this answer wrong?"
-- "Replay it against the draft."
+- "Why was this answer wrong? Propose the fix and replay it."
+- "Use Refine with AI and show the improved replay."
 - "Fix this and prove nothing else regressed."
 
 Workflow:
 
 1. Use `fini-api-conversations` to preserve the exact conversation and event evidence.
-2. Classify the owner: Knowledge, Prompt, Rulebook, Attribute, Action, or caller metadata.
-3. Use `fini-api-testing` for replay or rule evaluation when it isolates the cause.
-4. Create the smallest reviewable change in the owning skill.
-5. Use `fini-api-draft-validation` for exact unpublished artifacts when supported.
-6. Publish the reviewed version.
-7. Rerun the persistent Test Set against current live-agent behavior and compare with baseline.
-8. Update feedback/resolution state only after the evidence supports it.
+2. If the user asked only for a read-only explanation, stop with Conversations evidence. When they want AI diagnosis plus a proposed correction, use `fini-api-refine-with-ai`; read an active session first and do not duplicate its drafts or replay.
+3. Review the returned root cause, old/replayed answers, and every exact article/prompt/rule draft ID. Verify factual claims against trusted evidence.
+4. Route each exact draft to Knowledge or Agent Configuration for its normal review and separate publication approval.
+5. Use `fini-api-draft-validation` only for additional clean cases or combined-candidate proof.
+6. Publish only the exact approved artifact, then rerun the persistent Test Set against current live-agent behavior and compare with baseline.
+7. Update feedback/resolution state only after the live evidence supports it.
 
 Proof:
 
 - Original event and root-cause evidence.
-- Exact changed artifact/version.
-- Replay or controlled-turn result.
+- Refine session/iteration, exact generated artifact IDs, and old/replayed answers.
+- Factual review plus exact separately published artifact/version, if approved.
 - Test Set regression result.
 
 ## Prove Quality With A Test Set
