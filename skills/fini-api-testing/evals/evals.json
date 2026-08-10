@@ -84,7 +84,7 @@
       "assertions": [
         "Does not pass promptVersionId to the Test Set run",
         "Routes active-baseline versus exact unpublished draft proof to fini-api-draft-validation",
-        "Uses markAsTest true for the Generate Answer candidate traffic",
+        "When using MCP, uses its markAsTest input for Generate Answer candidate traffic; does not invent that top-level field on direct REST",
         "Keeps publication a separate decision",
         "Explains that a later Test Set run evaluates the published live agent and may invoke Actions or external APIs"
       ]

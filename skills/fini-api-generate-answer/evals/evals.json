@@ -40,10 +40,11 @@
     },
     {
       "id": 4,
-      "prompt": "Continue conversation int_123 and personalize the answer with plan=enterprise. The agent also has a Get Account attribute.",
-      "expected_output": "Continues the exact conversation, distinguishes caller metadata from the configured Attribute lookup, and interprets the created events in context.",
+      "prompt": "Continue email conversation int_123 and personalize the answer with plan=enterprise. The agent also has a Get Account attribute.",
+      "expected_output": "Continues the exact conversation, sends email through the dedicated channel field, distinguishes caller user attributes from the configured Attribute lookup, and interprets the created events in context.",
       "assertions": [
         "Uses interactionId rather than starting a new conversation",
+        "Uses email through direct REST metadata.channel or the MCP channel input and does not place channel in metadata.user_attributes",
         "Sends plan through metadata.user_attributes without inventing other fields",
         "Treats Get Account as a configured Attribute that can run automatically only when this agent and channel are eligible",
         "Does not conflate supplied metadata with Attribute output",

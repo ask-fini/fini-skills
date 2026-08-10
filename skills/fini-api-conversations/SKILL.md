@@ -38,7 +38,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 11. When the user wants AI-assisted diagnosis and a proposed correction for one exact bad response, preserve the exact conversation and `finibot` event, then hand execution to `fini-api-refine-with-ai` instead of manually creating drafts here.
 12. Keep event rating, qualitative note, and resolution as three separate writes. Target the exact conversation and event, use `approved` only for the thumbs signal, use `feedback` only for the note, set `resolved: true` after handling a negatively rated event, and use `resolved: false` to mark it unresolved again.
 13. For replay, rule evaluation, or regression testing, preserve the exact source conversation and Fini response event, then hand off to `fini-api-testing`. Do not treat a replay as a live configuration change or an automatically saved regression case.
-14. For deletion, produce an exact deletion plan and wait for explicit confirmation before calling delete routes.
+14. For deletion, produce an exact deletion plan and wait for explicit confirmation before calling delete routes. Bulk-delete requests accept 1-50 unique conversation IDs; split larger exact sets into disclosed batches before confirmation.
 
 ## Defaults
 
@@ -54,7 +54,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - Prefer `fini-api-refine-with-ai` when the user wants a grounded proposed correction from a specific bad answer. It owns the iteration, generated draft lineage, and embedded replay; this skill retains evidence and QA state.
 - Use `fini-api-draft-validation` for unpublished exact-ID candidate comparisons. Use `fini-api-testing` for Replays, rule evaluation, and persistent Test Set runs against current published live-agent behavior; those runs may invoke Actions or external APIs.
 - Use `fini-api-agents` for aggregate analytics and section-level performance reads.
-- Do not bulk delete unless the user explicitly confirms exact IDs.
+- Do not bulk delete unless the user explicitly confirms exact IDs and, for more than 50 IDs, the disclosed batch boundaries.
 
 ## Gotchas
 
@@ -75,7 +75,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - Conversation `resolved` is recalculated from negatively rated Fini events: no negatives yields `null`, all handled negatives yields `true`, and any unresolved negative yields `false`.
 - Refine with AI creates persisted draft recommendations and a separate replay but does not publish them. Route the iteration lifecycle to `fini-api-refine-with-ai` and keep event rating, note, and resolution separate.
 - Replays are separate conversations and require a Fini response event with a linked user event. Route their creation and comparison to `fini-api-testing`.
-- Bulk delete can have partial-effect behavior. Check current docs and warn before execution.
+- Bulk delete accepts 1-50 unique IDs per request and can have partial-effect behavior. Plan larger exact sets as disclosed batches of at most 50 before authorization; after any error, reconcile completed and remaining IDs before continuing.
 
 ## Proof Of Completion
 
@@ -87,7 +87,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - Refine handoff: include the conversation ID, exact `finibot` event ID, linked-user-event eligibility when known, evidence/feedback goal, and QA state. The Refine skill owns session, iteration, replay, and generated-draft proof.
 - Replay/testing handoff: include source conversation ID, target Fini response event ID, linked user event availability, intended replay mode or regression goal, and the testing workflow receiving it.
 - Analytics handoff: report the agent, time window, filters, requested metric/section, and which conversation evidence should be inspected afterward.
-- Deletion plan: include exact IDs, count, route type, expected irreversibility, and confirmation status.
+- Deletion plan: include exact IDs, total count, route type, batch count and boundaries when above 50, expected irreversibility, and confirmation status.
 - Completed deletion: re-check or report API response evidence from current docs.
 
 ## References

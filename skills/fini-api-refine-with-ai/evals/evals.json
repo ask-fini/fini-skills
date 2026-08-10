@@ -1,0 +1,49 @@
+{
+  "skill_name": "fini-api-refine-with-ai",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "If I give you a bad Fini response and ask you to improve it, what would you do?",
+      "expected_output": "Explains the Refine-with-AI-first workflow without creating anything, and treats an exact eligible Fini response as an execution prerequisite rather than a skill-selection prerequisite.",
+      "assertions": [
+        "Chooses fini-api-refine-with-ai rather than leading with manual Knowledge or Draft Validation",
+        "Explains active-session check, one generated iteration, terminal polling, exact artifact review, and the embedded replay",
+        "Requires an exact finibot response with a linked user event only before iteration creation",
+        "Does not create drafts, replay, publish, or make another write for the hypothetical request"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Improve this exact bad Fini response using the intended behavior I supplied, replay the fix, and show me before versus after. Do not publish anything.",
+      "expected_output": "Uses one active-session-aware Refine iteration, polls latestIteration.status, reviews every exact generated artifact and the embedded replay, and stops before publication.",
+      "assertions": [
+        "Resolves the exact conversation, finibot event, linked user event, and botId",
+        "Reads the active Refine session before creating an iteration and avoids a duplicate in-flight iteration",
+        "Treats iteration creation and its automatic replay as potentially effectful",
+        "Polls latestIteration.status to a documented terminal state",
+        "Reports old and new answer snapshots, replay IDs, every changeType, and every exact returned draft ID",
+        "Verifies generated facts and does not publish or activate any artifact"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Read-only: explain why this exact Fini response was wrong. Do not generate a fix or replay it.",
+      "expected_output": "Routes the request to Conversations for exact-event evidence and performs no Refine write.",
+      "assertions": [
+        "Routes exact-event read-only RCA to fini-api-conversations",
+        "Does not create a Refine iteration, draft, Replay, Generate Answer turn, or feedback write",
+        "Does not treat a read-only diagnosis as authorization to generate a correction"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Create a standalone draft Knowledge article from this policy text. It is not tied to a bad conversation.",
+      "expected_output": "Routes standalone article authoring to Knowledge and does not force the Refine workflow.",
+      "assertions": [
+        "Routes standalone article work to fini-api-knowledge",
+        "Does not require a conversation or Fini response event",
+        "Does not create a Refine session, iteration, or replay"
+      ]
+    }
+  ]
+}

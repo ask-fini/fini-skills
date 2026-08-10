@@ -53,7 +53,9 @@ A rule-version override does not make a new rule available to a bot. Collector a
 - Do not flatten a long transcript into one user message unless the caller explicitly wants a summarization-style test.
 - Do not treat human-agent or third-party-bot messages as the latest customer request.
 
-## Caller Attributes vs Configured Attributes
+## Channel And Caller Attributes vs Configured Attributes
+
+For direct REST calls, send the message surface through `metadata.channel` with `chat` or `email`. The MCP tool exposes this as top-level `channel` and maps it to the REST field. Do not place channel inside `metadata.user_attributes`.
 
 Use `metadata.user_attributes` for facts the caller already knows and wants Fini to consider.
 
@@ -63,8 +65,7 @@ Good examples:
 - locale or region
 - account status
 - customer segment
-- channel
-- test-run marker
+- caller-owned test cohort or label when its downstream convention is explicitly supplied
 
 Rules:
 
@@ -98,7 +99,7 @@ For each row:
 1. Resolve the target `botId`.
 2. Send one clear `role=user` question.
 3. Include only the metadata needed for the scenario.
-4. Set `markAsTest: true`.
+4. Through MCP, set the connector's `markAsTest: true`; direct REST exposes no top-level field by that name.
 5. Use the same artifact set for comparable cases and record it with the result.
 6. Capture actual answer, event IDs, used articles, configured-integration effects, and whether the result should pass.
 6. Fetch the full conversation only when persistence or audit evidence is needed.

@@ -23,7 +23,7 @@ Lifecycle:
 2. Register provider resources when needed.
 3. Ingest or refresh source records.
 4. For provider registration, send `addedDocumentIds` to `documentIdsToAdd` and `updatedDocumentIds` to `documentIdsToRefresh`.
-5. For the dedicated refresh route, preflight exact source records and separate `raw-file` targets.
+5. For the dedicated refresh route, preflight exact source records and separate uploaded-file targets whose returned wire value is `source="files"`.
 6. Poll exact known source IDs through Get source; use a filtered List sources query for cohorts.
 7. Detect changed linked sources when updating existing content.
 8. Hand processed source IDs to Knowledge generation.
@@ -81,12 +81,12 @@ Key mistake: skipping registration and trying to ingest provider-native IDs dire
 
 Provider discovery is for new importable content. If the user asks what is already in Fini, use the source-listing route with provider/source filters instead.
 
-The current public provider discovery and registration routes support Notion, Zendesk, and Confluence. A source type appearing in read results does not by itself prove that provider discovery supports importing it.
+The current public provider discovery and registration routes support Notion, Zendesk, and Confluence. `googledrive` is supported by List/Get/Ingest for already registered source IDs, but no public Google Drive discovery or registration route is documented. A source type appearing in read results does not by itself prove that provider discovery supports importing it.
 
 ## Refresh Existing Sources
 
 1. Fetch the exact target source records before queueing refresh.
-2. Separate any `raw-file` sources. The dedicated route rejects them; delete/re-upload only those exact files when explicitly intended.
+2. Separate any uploaded-file records whose returned `source` is `files`. The dedicated route rejects them. No public API or MCP route uploads or replaces that source-record type; a separate CSV knowledge-tree helper does not replace a file source. Require an explicit dashboard/manual re-upload plan before considering deletion.
 3. Send only refreshable existing Fini source IDs in the dedicated route's `documentIds`. Do not pass web URLs here.
 4. Poll each known source ID through Get source and interpret job status together with `success` and `error`.
 5. Preserve the targeted source IDs and their pre-generation `changed` state.
@@ -131,4 +131,4 @@ Before deleting sources, clarify:
 
 Never infer linked article deletion from "delete source" unless the user explicitly asks for it.
 
-When replacing a raw-file source, treat delete and re-upload as separate destructive/live writes. Preserve the old source ID and linked-article impact, and do not include ordinary refreshable sources in the delete batch.
+When replacing an uploaded-file source, preserve the old source ID and linked-article impact. Source deletion is a destructive public API write; replacement upload must happen in the Fini dashboard or another separately verified non-public surface. Do not delete until that plan is explicit, and do not include ordinary refreshable sources in the delete batch.

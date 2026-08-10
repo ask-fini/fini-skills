@@ -15,10 +15,11 @@
     {
       "id": 2,
       "prompt": "Delete our old Returns Bot. Its exact ID is 4f5ef695-d03b-4d56-8fef-7f2bd5c17ef3.",
-      "expected_output": "An exact-resource deletion workflow that reviews agent-linked configuration and usage, deletes only the supplied ID, and verifies its absence without inventing cascade behavior.",
+      "expected_output": "An exact-resource deletion workflow that treats the imperative exact-ID request as authorization, reviews agent-linked configuration and usage, deletes only the supplied ID, and verifies its absence without inventing cascade behavior or asking twice.",
       "assertions": [
         "Re-lists and binds the operation to the exact ID and current name",
         "Inventories prompts, knowledge assignments, Action or Attribute assignments, rules, and relevant usage before deletion",
+        "Treats the caller's imperative exact-ID request as authorization and does not ask for duplicate confirmation",
         "Does not expand the request into automatic cleanup of related resources",
         "Verifies the ID is absent from List agents after deletion",
         "Does not claim undocumented cascade, restoration, or retention behavior"

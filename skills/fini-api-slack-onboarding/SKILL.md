@@ -70,7 +70,7 @@ Read [intake-and-state.md](references/intake-and-state.md) for the intake order,
    - Use `fini-api-draft-validation` for an artifact-free baseline, one-dimension-at-a-time exact draft candidates, and an intentional combined candidate when pre-publish proof is required.
    - Publish only separately approved exact prompt, knowledge, and intent-rule versions through their owning skills.
 9. **Targeted active smoke**
-   - Use `fini-api-generate-answer` with `markAsTest: true` for a small controlled proof of active behavior after publication.
+   - Use `fini-api-generate-answer` for a small controlled proof of active behavior after publication. Through MCP, set its `markAsTest: true`; direct REST exposes no top-level field by that name.
 10. **Go-live regression gate**
    - Use `fini-api-testing` to create or update a persistent Test Set, attach criteria, run it against current published live-agent behavior, poll to a terminal result, and classify every blocking failure.
    - Preflight Action, Attribute, and external-API effects because the Test Set run can invoke them.

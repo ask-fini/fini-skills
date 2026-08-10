@@ -34,7 +34,7 @@ Do not use it for aggregate regression analysis. Route an active-baseline versus
 3. Build one user message.
 4. Choose active configuration or resolve exact artifact overrides.
 5. Add only intentional metadata.
-6. Set `markAsTest: true` for synthetic traffic.
+6. Through MCP, set the connector's `markAsTest: true` for synthetic traffic. Do not send a top-level field by that name to direct REST.
 7. Inspect configured Attribute assignments and Action-bearing Rulebooks when their effects matter.
 8. Send with a user role when an AI response is desired.
 9. Inspect all returned events.
@@ -71,25 +71,26 @@ Before sending:
 6. Route baseline, isolated-dimension, and combined-candidate comparisons to `fini-api-draft-validation`.
 7. Verify whether each override replaces or composes with active state when isolation matters; do not infer unspecified merge behavior.
 
-The override is request-scoped and does not publish configuration. It still creates conversation/events and runs the normal runtime, including configured Attributes and Action Tool nodes. `markAsTest: true` is a traffic marker, not a dry-run or Action-suppression flag.
+The override is request-scoped and does not publish configuration. It still creates conversation/events and runs the normal runtime, including configured Attributes and Action Tool nodes. The MCP connector's `markAsTest: true` is a traffic marker, not a dry-run or Action-suppression flag.
 
 `ruleVersionIds` is not a way to attach a brand-new rule to a bot. The owning rule must already have a published version assigned to the target bot. A draft version of that existing rule can be tested as an override; a brand-new unassigned draft is limited to structural preview/review until it has a supported executable path.
 
 ## Metadata Guidance
 
-Use metadata to represent facts the customer system already knows:
+For direct REST, send `metadata.channel` as `chat` or `email`. The MCP tool exposes it as top-level `channel` and maps it to the REST field. Do not put channel in `metadata.user_attributes`.
 
-- Channel or surface.
+Use user attributes to represent facts the customer system already knows:
+
 - Customer/account identifiers.
 - Plan, segment, locale, or other routing attributes.
-- Business metadata needed by the test case. Use top-level `markAsTest: true`, not an invented metadata marker, for synthetic traffic.
+- Business metadata needed by the test case. Through MCP, use its top-level `markAsTest: true` input for synthetic traffic; direct REST exposes no top-level field by that name.
 
 Do not invent metadata keys unless the user gives the downstream convention.
 
 For user attributes:
 
 - Keep field names stable across tests and production calls.
-- Prefer small, business-relevant fields such as plan, locale, segment, account status, or channel when the caller supplies them.
+- Prefer small, business-relevant fields such as plan, locale, segment, or account status when the caller supplies them.
 - Avoid sensitive fields unless the customer explicitly confirms they are safe for Fini context.
 - Do not use metadata as a place to hide instructions; it is context data.
 
@@ -115,7 +116,7 @@ Use Generate Answer as a proof step after another workflow prepares or changes a
 - Prompt, Rulebook, or tag changes -> route setup to `fini-api-agent-configuration`; test exact prompt drafts and eligible rule-version drafts here before publication, then test active configuration afterward.
 - Action or Attribute changes -> route setup to `fini-api-actions-attributes`, then use a controlled runtime proof here.
 - Source or knowledge changes -> route setup to `fini-api-sources` or `fini-api-knowledge`, then test here.
-- User attributes or channel behavior -> send only the minimal metadata needed for the scenario.
+- User attributes or channel behavior -> send only the minimal attributes plus the separate channel field needed for the scenario.
 
 If the answer is wrong, classify the likely failure before proposing a fix:
 

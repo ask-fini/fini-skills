@@ -92,7 +92,7 @@ Use this loop when the user supplies questions/answers, failing conversations, o
 2. Run a small active baseline through `fini-api-draft-validation` and preserve interaction/event IDs.
 3. Classify each failure as prompt behavior, rule behavior, missing knowledge, or runtime metadata before editing.
 4. For prompt failures, make the smallest diff to the full arrays.
-5. Create and fetch an exact draft. Require complete non-truncated arrays. Test it before publication through `fini-api-draft-validation` by sending only its `promptVersionId` through Generate Answer artifacts with `markAsTest: true`.
+5. Create and fetch an exact draft. Require complete non-truncated arrays. Test it before publication through `fini-api-draft-validation` by sending only its `promptVersionId` through Generate Answer artifacts. Through MCP, set the connector's `markAsTest: true`; direct REST exposes no top-level field by that name.
 6. Publish the exact reviewed version when requested, then rerun the same cases without the draft override to prove active behavior.
 7. Report before/after behavior and any regressions; do not claim success from a saved version alone.
 

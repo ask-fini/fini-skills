@@ -1,6 +1,6 @@
 {
   "name": "@ask-fini/fini-skills",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Fini public API workflow skills for agent operations, Refine with AI, exact draft validation, and live regression testing",
   "files": [
     ".claude-plugin",

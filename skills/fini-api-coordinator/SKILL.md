@@ -1,13 +1,13 @@
 ---
 name: fini-api-coordinator
-description: Use when the user asks which Fini public API workflow or skill to use; wants to create, inspect, delete, configure, or analyze an agent; use Refine with AI to diagnose and improve one bad response; inspect one event's execution metadata; audit workspace Reply Rules; validate unpublished prompt, knowledge, snapshot, or eligible intent-rule candidates; onboard a Fini support bot from Slack; configure Actions, Attributes, or external API calls; manage prompts, Rulebooks, tags, sources, or knowledge; send or inspect conversations; run analytics, replays, rule evaluations, Test Sets, or regression testing; or sequence several Fini API domains end to end. Route to the narrowest Fini skill and verify current endpoint contracts through docs.usefini.com/llms.txt.
+description: Use when the user asks which Fini public API workflow or skill to use; wants to create, inspect, delete, configure, or analyze an agent; plans or executes a Refine with AI workflow to diagnose and improve a bad response; inspects one event's execution metadata; audits workspace Reply Rules; validates unpublished prompt, knowledge, snapshot, or eligible intent-rule candidates; onboards a Fini support bot from Slack; configures Actions, Attributes, or external API calls; manages prompts, Rulebooks, tags, sources, or knowledge; sends or inspects conversations; runs analytics, replays, rule evaluations, Test Sets, or regression testing; or sequences several Fini API domains end to end. Route to the narrowest Fini skill and verify current endpoint contracts through docs.usefini.com/llms.txt.
 ---
 
 # Fini API Coordinator
 
 Use this skill as the front door for cross-domain Fini public API work. Route the request to the smallest focused skill, then let that skill own execution and proof.
 
-Before relying on a route, field, enum, scope, response shape, or limit, fetch `https://docs.usefini.com/llms.txt` and the relevant linked Markdown page. Treat those public docs as endpoint truth; keep endpoint tables out of this skill pack.
+Before relying on a route, field, enum, scope, response shape, or limit, fetch `https://docs.usefini.com/llms.txt` and the relevant linked Markdown page. The REST docs own direct HTTP contracts; the current MCP tool schema owns connector-only inputs, translations, defaults, and confirmation gates; skills own workflow judgment and safety. Label runtime observations as observed evidence rather than silently turning them into documented API facts.
 
 ## Package Freshness
 
@@ -26,7 +26,7 @@ Use the scoped `add --all --copy` flow so newly released Fini skills are include
 | List, resolve, create, or delete agents; inspect full or sectioned agent analytics | `fini-api-agents` |
 | Configure Actions, Attributes for eligible messages, their agent assignments, or ordered external API calls | `fini-api-actions-attributes` |
 | Configure prompt drafts/history/publishing, Rulebooks/rules/versions, tags, or tag groups; audit workspace Reply Rules | `fini-api-agent-configuration` |
-| Diagnose or improve one exact bad Fini response with AI-generated drafts and an automatic replay | `fini-api-refine-with-ai` |
+| Plan or execute diagnosis and improvement of a bad Fini response with AI-generated drafts and an automatic replay | `fini-api-refine-with-ai`; resolve one exact eligible response before execution |
 | Compare active behavior with exact unpublished prompt, knowledge, snapshot, or eligible intent-rule version IDs before publishing | `fini-api-draft-validation` |
 | Run Test Sets, criteria, asynchronous regression runs, replays, or rule diagnostics/evaluations | `fini-api-testing` |
 | Run a full Slack-led onboarding inside an authenticated Fini workspace | `fini-api-slack-onboarding` |
@@ -42,7 +42,7 @@ Use these distinctions when requests sound similar:
 - Use `fini-api-generate-answer` for one controlled turn when no candidate-comparison methodology is needed.
 - Use `fini-api-conversations` for stored conversation evidence and QA state.
 - Use `fini-api-conversations` for one exact Fini-authored event's stored execution trace. Verify `role=finibot`; this read does not replay or rerun the event.
-- Use `fini-api-refine-with-ai` when a specific bad Fini response should produce a diagnosis, reviewable prompt/article/rule drafts, and an embedded answer replay. It wins over manually guessing and recreating the fix.
+- Use `fini-api-refine-with-ai` when planning or executing a bad-response workflow that should produce a diagnosis, reviewable prompt/article/rule drafts, and an embedded answer replay. It wins over manually guessing and recreating the fix; an exact eligible response is required only before iteration creation.
 - Use `fini-api-agent-configuration` for current workspace Reply Rules and their fields context. Reply Rules are read-only workspace response-mode conditions, not Rulebooks or historical execution proof.
 - Use `fini-api-testing` for Replay, rule diagnosis, or persistent live-agent regression. A Test Set does not accept unpublished draft artifact overrides and may invoke Actions or external APIs.
 - Use `fini-api-agents` for aggregate analytics rather than rebuilding dashboard metrics from raw exports.
@@ -72,7 +72,7 @@ For a full bot workflow, use only the stages the request needs:
 - Preserve documented backend limits and return rich structured results; do not invent smaller wrapper limits.
 - Treat deletions, article rollback, prompt/rule publish, agent assignment, and external execution as real mutations, not as read-only checks.
 - Treat Action, Attribute, external-call, rule-evaluation, replay, Generate Answer, and Test Set execution as potentially side-effecting when Tool nodes or customer APIs are involved. A live Test Set run can invoke Actions.
-- For synthetic Generate Answer candidate traffic, use `markAsTest: true`; this marks traffic but does not suppress configured Attributes, Actions, external effects, or stored events.
+- For synthetic Generate Answer candidate traffic through MCP, use the connector's `markAsTest: true`; this marks traffic but does not suppress configured Attributes, Actions, external effects, or stored events. Direct REST docs expose no top-level field by that name.
 - Persist candidate content through its owning API and pass only exact stored IDs in Generate Answer `artifacts`. Never inline prompt, knowledge, or rule content there.
 - Never ask for or repeat raw secrets in chat. Preserve a documented masked value only when the API defines that as the way to keep an existing stored secret.
 - Translate customer language into Fini concepts:

@@ -11,7 +11,7 @@
         "Preserves all three prompt arrays in the draft",
         "Fetches and reviews the exact draft version ID",
         "Requires a complete non-truncated exact-version payload before publication",
-        "Routes baseline-versus-draft behavior proof through fini-api-draft-validation with markAsTest true",
+        "Routes baseline-versus-draft proof through fini-api-draft-validation and, when using MCP, uses its markAsTest input without inventing that top-level field on direct REST",
         "Passes only the persisted promptVersionId and keeps baseline/candidate cases like-for-like",
         "Publishes only the exact reviewed version",
         "Re-fetches active prompts and reruns the same questions"
@@ -183,6 +183,18 @@
         "Does not request or invent a bot ID or workspace ID",
         "Does not substitute Rulebook list, test, evaluation, draft, or publish operations",
         "Makes no mutation claim"
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "Manually revise the existing published refund intent Rulebook, but leave the revision as a draft for review and do not change its agent assignments.",
+      "expected_output": "Re-fetches the exact intent rule, applies the reviewed complete edit with explicit status DRAFT and no botIds, then verifies the new draft without changing live behavior.",
+      "assertions": [
+        "Fetches the parent rule and verifies that it is an intent rule before updating",
+        "Sends status DRAFT explicitly rather than relying on an omitted-status default",
+        "Omits botIds from the draft update",
+        "Explains that omitted status could create a published version when a published version already exists",
+        "Re-fetches the exact returned draft version and does not publish it"
       ]
     }
   ]

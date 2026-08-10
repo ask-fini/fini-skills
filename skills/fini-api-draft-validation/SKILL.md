@@ -26,8 +26,8 @@ A Test Set run evaluates its persistent cases against current live-agent behavio
 
 1. Resolve the exact workspace and `botId`.
 2. Fix the test case before execution: user message, role, channel, metadata, user attributes, prior-context shape, expected result, and controlled customer/test identity.
-3. Inspect configured Attributes and reachable Action Tool nodes. `markAsTest: true` labels synthetic traffic; it does not suppress integrations, prevent external effects, or make Generate Answer read-only.
-4. Run an active baseline in a fresh conversation with `role: user`, `markAsTest: true`, and no `artifacts`.
+3. Inspect configured Attributes and reachable Action Tool nodes. Through MCP, `markAsTest: true` labels synthetic traffic; it does not suppress integrations, prevent external effects, or make Generate Answer read-only. Direct REST exposes no top-level field by that name.
+4. Run an active baseline in a fresh conversation with `role: user` and no `artifacts`. Through MCP, set the connector's `markAsTest: true`.
 5. Persist every candidate through its owning skill and fetch the exact stored object:
    - prompt draft/version through `fini-api-agent-configuration`;
    - knowledge drafts or an exact knowledge snapshot through `fini-api-knowledge`;

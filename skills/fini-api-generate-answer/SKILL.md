@@ -29,8 +29,8 @@ Generate Answer creates real conversation events and runs the agent's normal rep
 4. Decide whether to use active configuration or one already-selected exact `artifacts` set. Route baseline/isolation/combined-candidate methodology to `fini-api-draft-validation`. Resolve every artifact ID; do not mix workspaces or silently combine draft and active versions. A rule-version override is eligible only when its owning rule is already published and assigned to the target bot.
 5. Inspect configured Attributes and reachable Action Tool nodes when their external effects matter. Caller-supplied `metadata.user_attributes` are not the same as configured Attributes.
 6. Use `role=user` only when the caller expects the full reply runtime.
-7. Include channel and user metadata intentionally; do not invent CRM fields.
-8. Set `markAsTest: true` for synthetic traffic, then send after the target, runtime configuration, and acceptable external effects are unambiguous.
+7. Include channel and user metadata intentionally; do not invent CRM fields. For direct REST, send `metadata.channel` as `chat` or `email` and keep it out of `metadata.user_attributes`. The MCP tool's top-level `channel` input maps to that REST field.
+8. For synthetic traffic through the MCP connector, set its top-level `markAsTest: true` input, then send after the target, runtime configuration, and acceptable external effects are unambiguous. The direct REST docs expose no top-level `markAsTest` request field; do not invent one there.
 9. Interpret all returned created events.
 10. Classify failures as configuration, knowledge, runtime metadata, Attribute/Data Step, or Action/Rulebook behavior before recommending follow-up work.
 11. Fetch the full conversation afterward when the user needs wrapper state, historical context, or persisted evidence.
@@ -40,8 +40,8 @@ Generate Answer creates real conversation events and runs the agent's normal rep
 - Ask before sending test traffic to a production agent if the target is ambiguous.
 - Treat non-user roles as event storage, not answer generation.
 - Keep metadata minimal and explicit.
-- Use stable `metadata.user_attributes` keys for golden-set and personalization tests.
-- Set top-level `markAsTest: true` for synthetic traffic. Do not substitute an ad hoc metadata marker for the documented field.
+- Use stable `metadata.user_attributes` keys for golden-set and personalization tests. Send channel separately through `metadata.channel` on direct REST or `channel` in the MCP tool.
+- Through MCP, set the connector field `markAsTest: true` for synthetic traffic. It maps to Fini's test marker. Do not send it as a top-level direct REST field or invent another marker when the direct API docs do not define one.
 - Use exact artifact overrides to test prompt and knowledge review drafts without changing active configuration. For rules, use a draft override only when its owning rule is already published and assigned to the target bot.
 - Use this as the one-turn proof after prompt, rulebook, Action/Attribute, source, or knowledge changes; do not make those changes from this skill.
 - Use a controlled workspace, test account, and inputs whenever reachable Actions can mutate an external system.
@@ -64,7 +64,8 @@ Persist and fetch candidate content through its owning prompt, knowledge, or int
 - Non-user roles do not trigger a new AI reply.
 - Public file attachments are not accepted by Generate Answer. Response events can still contain attachments already produced by the runtime.
 - This requires write scope.
-- `markAsTest: true` labels synthetic traffic but does not prevent event creation or suppress configured Attributes and Actions.
+- The MCP connector's `markAsTest: true` labels synthetic traffic but does not prevent event creation or suppress configured Attributes and Actions.
+- Channel is `metadata.channel` in direct REST and accepts `chat` or `email`; it is not a user-attribute key. The MCP tool exposes the same choice as top-level `channel`.
 - Retrying a send can create duplicate events unless the caller has an idempotency strategy from the current docs or surrounding system.
 - `metadata.user_attributes` are values supplied by the caller. Configured Attributes are outbound data lookups that run automatically only for eligible messages on their configured agent/channel assignments.
 - A `role=user` turn may run configured Attributes and any Action Tool node reached by a published or overridden Rulebook. Those calls may read or mutate customer systems.
@@ -79,7 +80,7 @@ Persist and fetch candidate content through its owning prompt, knowledge, or int
 
 - New conversation: report the created `interactionId`, agent used, configuration mode, and reply event evidence.
 - Continued conversation: report the existing `interactionId`, new event count, and whether an AI reply was created.
-- Artifact proof: report every exact persisted artifact ID, `markAsTest` state, rule-override eligibility, actual output, and whether active configuration was unchanged.
+- Artifact proof: report every exact persisted artifact ID, MCP `markAsTest` state or direct-REST not-applicable state, rule-override eligibility, actual output, and whether active configuration was unchanged.
 - Runtime integrations: report configured Attribute/Action effects that were observed or state that they were not inspected.
 - Test run: state whether the output proves one runtime case, whether a historical case needs separate Replay diagnosis, and whether current published behavior needs a persistent live Test Set run.
 - Full-state requirement: fetch the conversation and verify the event appears in the thread.

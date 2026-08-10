@@ -50,7 +50,8 @@ Use Conversations event metadata for evidence about one actual Fini response. Cu
 | Inspect current draft or published behavior | List rules, then Get rule with the parent `ruleId`; optionally select `DRAFT` or `PUBLISHED` with `versionStatus` |
 | Inspect or recover one exact version | List versions with the parent `ruleId`; get or restore with both parent `ruleId` and exact `versionId` |
 | Clone existing behavior intentionally | Re-fetch exact source and kind, disclose possible live/assigned copy, require exact confirmation, duplicate, then inspect the independent copy |
-| Manually edit exact tree or assignments | Update rule after re-fetch and approval |
+| Manually edit an exact intent-rule tree for review | Re-fetch, update with explicit `status: DRAFT`, then verify the new draft; omit `botIds` from the draft update |
+| Manually edit an exact live intent rule | Re-fetch, review the complete live-impacting diff, obtain immediate-live authorization, then update with explicit `status: PUBLISHED` |
 | Validate a published saved rule | Get rule test fields, supply explicit context, then evaluate |
 | Inspect an unsaved flow | Preview test fields from `flowConfig`, then review or persist; this does not execute the flow |
 | Test a draft version of an existing assigned rule | Use its exact `ruleVersionId` through Generate Answer; the owning rule must already be published and assigned to that bot |
@@ -63,7 +64,7 @@ Use Conversations event metadata for evidence about one actual Fini response. Cu
 2. Capture behavior instructions in customer language.
 3. Generate a preview and inspect its name, description, and flow tree. A preview is not persisted.
 4. Persist the approved preview as an intent rule with status `DRAFT`.
-5. Refine by regenerating from the current flow and updating the same rule as `DRAFT`. Do not duplicate first.
+5. Refine or manually edit by updating the same intent rule with explicit `status: DRAFT`. Omit `botIds` from the draft update, and do not duplicate first.
 6. Re-fetch the draft with its parent `ruleId`, list versions under that parent, and record the exact `draftVersionId` that was reviewed. Do not substitute one identifier for the other.
 7. Resolve target `botIds`.
 8. Require that exact reviewed `draftVersionId` as an explicit publish input. Never omit it or resolve a current/latest draft after approval.
@@ -120,17 +121,18 @@ Rule evaluation requires write scope and may execute external Actions. It is not
 1. List rules with explicit `type` and intent `versionStatus` when relevant. Preserve each parent `ruleId` separately from any returned `versionId`.
 2. Fetch the full rule with its parent `ruleId` before explaining or mutating it. Bind all policy and lifecycle decisions to the returned kind, not a caller-supplied/default `type`.
 3. Preserve `flowConfig` and `inputSchema` unless the user intends to change them.
-4. For intent rules only, inspect version history before restore, rollback, or publish. Restore creates a new draft; it does not silently replace live behavior.
-5. For Business Rules, use the current rule directly or start from a documented default template. Create/update/delete/duplicate are immediate-live operations; do not apply intent draft, refine, restore, version-history, or publish semantics.
-6. If the fetched kind conflicts with the requested workflow, stop and explain the correct lifecycle instead of coercing the rule through a cross-kind route.
-7. Treat assignment changes in `botIds` and every duplication as live-impacting.
-8. Re-fetch after write.
+4. For every intent-rule update, send status explicitly. Use `status: DRAFT` and omit `botIds` for review-first work; use `status: PUBLISHED` only after immediate-live authorization. Never rely on omission.
+5. For intent rules only, inspect version history before restore, rollback, or publish. Restore creates a new draft; it does not silently replace live behavior.
+6. For Business Rules, use the current rule directly or start from a documented default template. Create/update/delete/duplicate are immediate-live operations; do not apply intent draft, refine, restore, version-history, or publish semantics.
+7. If the fetched kind conflicts with the requested workflow, stop and explain the correct lifecycle instead of coercing the rule through a cross-kind route.
+8. Treat assignment changes in `botIds` and every duplication as live-impacting.
+9. Re-fetch after write.
 
 ## Gotchas
 
 - Product language may say "Rulebook"; current docs use "rule" and "rule draft".
 - AI generation returns an unpersisted preview. Persist it explicitly before reporting a created draft.
-- Intent-rule creation defaults to published unless the request explicitly sends `status: DRAFT`; use `DRAFT` for the review-first workflow. Business Rule creation is immediate and non-versioned, so treat it as a live write.
+- Intent-rule creation defaults to published unless the request explicitly sends `status: DRAFT`. Intent-rule update can also publish when status is omitted and a published version already exists. Never omit update status: send `DRAFT` for review-first work or explicit `PUBLISHED` only after immediate-live authorization. Business Rule creation and update are immediate and non-versioned.
 - `List rules` defaults to `intent`; send `type=business` explicitly for Business Rules.
 - Use `versionStatus` for intent draft/published/archived reads; do not rely on a stale `isDraft` convention.
 - Get rule requires the parent `ruleId`; it does not accept a lifecycle `versionId` in that path position. `versionStatus` is optional and only selects `DRAFT` or `PUBLISHED`. A `404` after swapping those IDs is an identifier error, not proof that the version disappeared.

@@ -67,10 +67,11 @@ The public deletion documentation does not define downstream cascade, restoratio
 
 1. Re-list immediately before deletion and bind the request to one exact ID and current name.
 2. Summarize the dependency findings and the expected loss of agent availability.
-3. Proceed when the current request clearly authorizes deletion of that exact resource. Do not require the user to repeat authorization already given.
-4. Delete `/v2/bots/{id}/public`.
-5. Record the returned message.
-6. Re-list agents and verify the deleted ID is absent.
-7. Report any dependent resources whose post-delete status remains unknown; do not infer cascade from the agent's absence.
+3. If the current request does not clearly authorize deletion of that exact resource, obtain one exact-ID confirmation. Do not require the user to repeat authorization already given.
+4. For the MCP connector, pass `confirmationPhrase: "CONFIRM"` after authorization; the literal phrase is a connector safety gate, not a direct REST field.
+5. Delete `/v2/bots/{id}/public`.
+6. Record the returned message.
+7. Re-list agents and verify the deleted ID is absent.
+8. Report any dependent resources whose post-delete status remains unknown; do not infer cascade from the agent's absence.
 
 A `404` before deletion means the ID is not a visible agent in this workspace, not proof that a similarly named agent should be substituted. A successful response without subsequent list verification is incomplete proof.

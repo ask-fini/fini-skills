@@ -50,13 +50,14 @@
     },
     {
       "id": 5,
-      "prompt": "Refresh these existing sources: one web source ID, one Notion source ID, and one raw-file source ID.",
-      "expected_output": "Fetches all three exact records, sends only refreshable Fini source IDs through the dedicated documentIds route, and isolates the raw file for a separately authorized delete/re-upload workflow.",
+      "prompt": "Refresh these existing sources: one web source ID, one Notion source ID, and one uploaded-file source whose returned source value is files.",
+      "expected_output": "Fetches all three exact records, sends only refreshable Fini source IDs through the dedicated documentIds route, and isolates the uploaded-file record without deleting it until a dashboard replacement-upload plan is explicit.",
       "assertions": [
         "Uses existing Fini source IDs rather than web URLs with the dedicated Refresh Sources route",
         "Preflights source types before queueing the mixed request",
-        "Does not send the raw-file source to Refresh Sources",
-        "Does not silently delete or re-upload the raw file",
+        "Uses files as the uploaded-file wire value and does not send that source to Refresh Sources",
+        "States that no public API or MCP route uploads or replaces a source record whose source is files, without confusing a separate CSV knowledge-tree helper for source replacement",
+        "Does not delete the file source until an explicit dashboard or separately verified replacement-upload plan is accepted",
         "Polls each accepted refreshable source independently"
       ]
     },

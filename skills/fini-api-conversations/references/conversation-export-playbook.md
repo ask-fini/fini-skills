@@ -103,6 +103,7 @@ Before deleting, produce:
 - Count.
 - How IDs were selected.
 - Whether this is single delete or bulk delete.
+- For bulk delete, the disclosed batch count and exact boundaries; each request accepts 1-50 unique IDs.
 - Current docs warning for partial/atomic behavior.
 - Expected irreversibility.
 - Confirmation phrase requested from user.
@@ -111,5 +112,8 @@ Execution summary should include:
 
 - Route used.
 - IDs attempted.
+- Batch number and boundaries when the plan required more than one request.
 - IDs confirmed deleted or response evidence.
 - Any IDs not found, inaccessible, or ambiguous.
+
+If one batch fails after earlier batches succeeded, stop and reconcile completed versus remaining IDs before retrying or continuing. Do not silently recompute the target set after authorization.

@@ -72,7 +72,7 @@
       "assertions": [
         "Routes the pre-publish comparison to fini-api-draft-validation",
         "Runs an artifact-free baseline and uses the exact persisted draft ID in artifacts.knowledgeArticleDraftIds",
-        "Sets markAsTest true and preserves separate baseline/candidate interaction and event IDs",
+        "When using MCP, sets its markAsTest input true and preserves separate baseline/candidate interaction and event IDs; does not invent that top-level field on direct REST",
         "Records the draft-artifact answer without claiming the draft is live",
         "Publishes only the exact approved draft",
         "Verifies the live article and target-agent visibility",

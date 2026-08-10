@@ -1,6 +1,6 @@
 ---
 name: fini-api-sources
-description: Use when the user wants to import, crawl, register, ingest, refresh, list, filter, inspect, poll, or delete Fini sources through the public API; inspect one exact source and its job, change, linkage, or error metadata; train a Fini bot from help-center articles, internal docs, websites, Notion, Zendesk, or Confluence; sync only changed linked content; distinguish provider discovery from already imported sources; or hand processed source IDs into knowledge generation.
+description: Use when the user wants to import, crawl, register, ingest, refresh, list, filter, inspect, poll, or delete Fini sources through the public API; inspect one exact source and its job, change, linkage, or error metadata; train a Fini bot from help-center articles, internal docs, websites, Notion, Zendesk, or Confluence; inspect already registered Google Drive or uploaded-file sources; sync only changed linked content; distinguish provider discovery from already imported sources; or hand processed source IDs into knowledge generation.
 ---
 
 # Fini API Sources
@@ -15,7 +15,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 2. When an exact source ID is known, use Get source for focused inspection and polling. Use List sources for discovery, filtered cohorts, or pagination.
 3. For first-time web imports, optionally crawl seed URLs, then call Ingest Sources with selected URLs in `documentIdsToAdd`. For existing web records, prefer the dedicated Refresh Sources route with their Fini source IDs in `documentIds`.
 4. For provider imports, list and register resources. Send registration `addedDocumentIds` to Ingest Sources as `documentIdsToAdd`, and `updatedDocumentIds` as `documentIdsToRefresh`.
-5. Before the dedicated refresh route, fetch the exact targets and separate `raw-file` sources. That route cannot refresh raw files; delete/re-upload them only when explicitly intended. Do not send a mixed batch that can fail as a unit.
+5. Before the dedicated refresh route, fetch the exact targets and separate uploaded-file sources whose returned wire value is `source="files"`. The route cannot refresh them. No public API or MCP route uploads or replaces that source-record type; the separate CSV knowledge-tree helper is not a file-source replacement. Do not delete one until the user has an explicit dashboard/manual replacement-upload plan and accepts the linked-article impact. Do not send a mixed batch that can fail as a unit.
 6. Poll each known source after ingestion or refresh. Verify terminal job status together with `success` and `error`; do not rely on one field alone.
 7. For refresh workflows, preserve the targeted IDs, identify sources that are both changed and linked to knowledge, and hand only that set to generation unless broader regeneration was requested.
 8. For a fresh or empty workspace, verify a usable folder tree exists before source-backed generation.
@@ -40,7 +40,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - The Ingest Sources contract uses `documentIdsToAdd` and `documentIdsToRefresh`; the product concept is "sources."
 - On Ingest Sources with `source=web`, both arrays contain URLs. That is distinct from the dedicated Refresh Sources route, whose `documentIds` are existing Fini source IDs, including for web records.
 - For providers, registration returns `addedDocumentIds` and `updatedDocumentIds`. Send new IDs to `documentIdsToAdd` and existing updated IDs to `documentIdsToRefresh`.
-- The dedicated Refresh Sources route rejects `raw-file` sources. Preflight mixed target lists and keep raw-file delete/re-upload as a separate explicitly authorized workflow.
+- The dedicated Refresh Sources route rejects uploaded-file records whose wire value is `source="files"`; `raw-file` is descriptive docs prose, not the List Sources enum. Preflight mixed targets. A replacement upload requires the Fini dashboard or another separately verified non-public surface, so never delete first without that plan.
 - A queued ingestion response is not completion.
 - `linkedJobStatus=COMPLETED` is not sufficient by itself; inspect `success`, `error`, `linkedKnowledgeId`, `linkedOperation`, and `linkedReason` for the intended workflow.
 - Source list/get responses also carry identity and processing metadata such as original/provider URL, external ID, MIME/provider type, job ID, paragraph snapshots, and timestamps. Preserve the fields needed for auditability without dumping large `paragraphs` payloads by default.
@@ -48,7 +48,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - Completed source processing also does not mean knowledge generation can succeed; fresh workspaces need a usable folder tree first.
 - Provider discovery may exclude already-imported resources.
 - Provider discovery requires the provider to be connected in the workspace first.
-- The public provider discovery/registration workflow currently supports Notion, Zendesk, and Confluence; check current docs before claiming another provider is importable through those routes.
+- The public provider discovery/registration workflow currently supports Notion, Zendesk, and Confluence; check current docs before claiming another provider is importable through those routes. `googledrive` is a supported List/Get/Ingest source value for already registered IDs, but that does not expose public Google Drive discovery or registration.
 - Discovery is for new importable provider content; list sources for content already imported into Fini.
 - Source deletion can optionally delete linked articles; treat this as destructive.
 

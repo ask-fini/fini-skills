@@ -4,12 +4,12 @@
     {
       "id": 1,
       "prompt": "Try this new guideline wording on our support bot before publishing it and compare the answer with what users get now.",
-      "expected_output": "Creates and fetches an exact complete prompt draft, captures an artifact-free active baseline, then runs a separate like-for-like candidate with artifacts.promptVersionId and markAsTest without publishing.",
+      "expected_output": "Creates and fetches an exact complete prompt draft, captures an artifact-free active baseline, then runs a separate like-for-like candidate with artifacts.promptVersionId without publishing; when using MCP, it uses the connector's markAsTest input.",
       "assertions": [
         "Runs the active baseline first with no artifacts",
         "Persists the complete prompt draft through agent configuration and fetches its exact non-truncated version",
         "Passes only the exact version ID through artifacts.promptVersionId rather than inline prompt text",
-        "Uses a fresh equivalent candidate conversation with markAsTest true",
+        "Uses a fresh equivalent candidate conversation and, when using MCP, its markAsTest input without inventing that top-level field on direct REST",
         "Captures baseline and candidate interaction and event IDs",
         "Does not publish or imply that the candidate became active"
       ]
@@ -34,7 +34,7 @@
         "Verifies every artifact ID belongs to the intended workspace and agent context",
         "Uses separate prompt-only, knowledge-only, snapshot-only, and eligible-rule-only conversations before combining",
         "Keeps message, role, metadata, user attributes, channel, and controlled identity equivalent",
-        "Uses markAsTest true and fresh interaction IDs for every variant",
+        "Uses fresh interaction IDs for every variant and, when using MCP, its markAsTest input without inventing that top-level field on direct REST",
         "Records the exact artifact set and event evidence per run",
         "Verifies documented snapshot and draft-article composition semantics before combining",
         "Does not publish any candidate"
@@ -80,9 +80,9 @@
     {
       "id": 7,
       "prompt": "Use markAsTest on our production cancellation agent so the draft check cannot actually cancel anything.",
-      "expected_output": "Rejects the false safety premise, inspects reachable Actions, and requires a controlled workspace/account/input because markAsTest labels traffic but does not suppress external effects.",
+      "expected_output": "Rejects the false safety premise, identifies markAsTest as an MCP connector field, inspects reachable Actions, and requires a controlled workspace/account/input because the marker does not suppress external effects.",
       "assertions": [
-        "States that markAsTest is not a dry-run or Action-suppression flag",
+        "States that MCP markAsTest is not a dry-run or Action-suppression flag and is not a top-level direct REST field",
         "Inspects active and overridden Rulebooks for reachable Action Tool nodes",
         "Uses a controlled workspace, agent, customer identity, and input before executing",
         "Treats Generate Answer as a write that creates conversation and events",

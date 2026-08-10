@@ -82,7 +82,7 @@
         "Routes the active-versus-unpublished comparison to fini-api-draft-validation",
         "Persists and fetches exact candidate IDs through their owning skills",
         "Tests prompt, knowledge drafts, snapshot, and eligible rule version one dimension at a time",
-        "Uses markAsTest true and like-for-like fresh conversations",
+        "Uses like-for-like fresh conversations and, when using MCP, its markAsTest input without inventing that top-level field on direct REST",
         "Keeps a Test Set separate as post-publish persistent live-agent regression",
         "States that Generate Answer may invoke Actions and creates conversation events",
         "Does not publish any candidate"

@@ -39,7 +39,7 @@ Starting a run returns `202`, `status: running`, and `result: null`. The run eva
 
 A Test Set run proves only current published live-agent behavior. It cannot apply an unpublished prompt, knowledge, snapshot, or rule artifact.
 
-1. For pre-publish proof, use `fini-api-draft-validation`: run an artifact-free active baseline, isolated exact-ID candidates, and a combined candidate with `markAsTest: true`.
+1. For pre-publish proof, use `fini-api-draft-validation`: run an artifact-free active baseline, isolated exact-ID candidates, and a combined candidate. Through MCP, set the connector's `markAsTest: true`; direct REST exposes no top-level field by that name.
 2. Publish only the separately approved exact versions through their owning skills.
 3. Re-fetch the live prompt, knowledge visibility, Rulebooks, Actions, and Attributes so the run's configuration is explicit.
 4. Run the same stable Test Set after publication, with the same cases and criteria used for the baseline run.

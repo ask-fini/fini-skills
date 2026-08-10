@@ -49,7 +49,7 @@ Use conversation ratings, feedback notes, and resolved state as quality labels a
 - Reuse the same Test Set cases, inputs, agent, and criteria before and after a published change.
 - Prefer known production failures and representative edge cases over invented happy paths.
 - Keep each Test Set single-agent by default. If a deliberate cross-agent set is necessary, stratify and report every result by `botId`.
-- Do not add conversations with `source=replay` or `source=testsuite` to a Test Set. When an eligible persistent case must be seeded, create a controlled `markAsTest: true` conversation through Generate Answer and treat its input as the reusable case; the later Test Set run generates current live-agent behavior rather than grading that stored answer.
+- Do not add conversations with `source=replay` or `source=testsuite` to a Test Set. When an eligible persistent case must be seeded, create a controlled conversation through Generate Answer; through MCP, set the connector's `markAsTest: true`. Treat its input as the reusable case. The later Test Set run generates current live-agent behavior rather than grading that stored answer, and direct REST exposes no top-level `markAsTest` field.
 - Read Test Set fields context before creating deterministic criteria; do not invent field paths, operators, or quantifiers.
 - Use deterministic criteria for directly observable fields, `basic_judge` for one bounded semantic judgment, and `complex_judge` for multi-part or conversation-level quality.
 - Make a criterion blocking only when its failure should fail the release gate. Keep exploratory criteria non-blocking.

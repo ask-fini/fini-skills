@@ -81,7 +81,7 @@ Creating the bare agent does not create a workspace, install Slack, authorize pr
 - Action assignment metadata is not an authorization or execution gate; published Rulebook reachability controls invocation.
 - "Test Action," "Test Attribute," and "Test external API call" perform real outbound HTTP.
 - Rule evaluation, replay, and Generate Answer can be effectful when reachable Tool nodes invoke Actions.
-- `markAsTest: true` labels synthetic Generate Answer traffic but does not suppress events, Attributes, Actions, or external effects.
+- The MCP connector's `markAsTest: true` labels synthetic Generate Answer traffic but does not suppress events, Attributes, Actions, or external effects. Direct REST exposes no top-level field by that name.
 - Replay mode matters: `until` regenerates every user turn through the target linked-user event and can execute effects multiple times; `single` preserves prior event history and regenerates only the target response.
 - By default, replay reuses original Attribute outputs and seeded Rulebook results unless exact prompt or rule artifacts cause the Rulebook to rerun.
 - Test Set runs evaluate current published live-agent behavior and can invoke Actions or external APIs; preflight their cases and effects before starting.

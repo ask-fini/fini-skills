@@ -52,7 +52,7 @@ Block rather than guess when:
 
 ## Run The Isolation Ladder
 
-Use fresh conversations and `markAsTest: true` throughout:
+Use fresh conversations throughout. Through MCP, set the connector's `markAsTest: true`; direct REST exposes no top-level field by that name:
 
 1. Active baseline: no `artifacts`.
 2. Prompt-only candidate, when present.
@@ -83,7 +83,7 @@ Use independent but equivalent threads for multi-turn cases. Do not test a candi
 Capture:
 
 - exact artifact set or explicit “active/no artifacts”;
-- `markAsTest: true`;
+- MCP `markAsTest: true` when the connector is used;
 - interaction and created-event IDs;
 - final answer and reply type;
 - used knowledge/evidence;
@@ -99,7 +99,7 @@ Capture:
 - **Rule evaluation:** use it to inspect a saved Rulebook's node path for supplied synthetic or conversation context. It does not prove the full prompt, retrieval, and answer runtime.
 - **Test Set:** use it for persistent cases, criteria, asynchronous run history, and release regression against current published live-agent behavior. It does not accept these request-scoped draft artifact IDs, and its live runs may invoke Actions or customer APIs.
 
-`markAsTest: true` is a traffic marker, not a dry-run switch. Generate Answer still writes conversation/events, configured Attributes can call external systems, and reachable Actions can mutate customer systems. Apply the same external-effect preflight before a live Test Set run.
+The MCP connector's `markAsTest: true` is a traffic marker, not a dry-run switch. Generate Answer still writes conversation/events, configured Attributes can call external systems, and reachable Actions can mutate customer systems. Apply the same external-effect preflight before a live Test Set run.
 
 ## Result Template
 
