@@ -17,7 +17,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 | Compare active behavior with unpublished artifacts one dimension at a time | `fini-api-draft-validation`, which executes through Generate Answer |
 | Execute one already-selected exact artifact set | Generate Answer with explicit persisted IDs in `artifacts` |
 | Rerun a turn from an existing conversation for diagnosis | Replay through `fini-api-testing` |
-| Run persistent cases against current published live-agent behavior | Test Set through `fini-api-testing` |
+| Run persistent cases against captured published or selected draft configuration | Test Suite through `fini-api-testing` |
 
 Generate Answer creates real conversation events and runs the agent's normal reply flow for `role=user`. It is not an asynchronous regression suite and does not reproduce a historical turn automatically.
 
@@ -74,7 +74,7 @@ Persist and fetch candidate content through its owning prompt, knowledge, or int
 - Generate Answer exposes no documented dry-run or Action-suppression flag.
 - Do not assume an artifact array replaces or merges with every active artifact not named in the request. Verify the current runtime semantics when isolation matters and report what is known.
 - Action assignment junctions do not control Action reachability; a Rulebook Tool node and the rule's agent assignment do.
-- Generate Answer is not a Replay and does not provide aggregate criteria results like a Test Set.
+- Generate Answer is not a Replay and does not provide aggregate criteria results like a Test Suite.
 
 ## Proof Of Completion
 
@@ -82,13 +82,13 @@ Persist and fetch candidate content through its owning prompt, knowledge, or int
 - Continued conversation: report the existing `interactionId`, new event count, and whether an AI reply was created.
 - Artifact proof: report every exact persisted artifact ID, MCP `markAsTest` state or direct-REST not-applicable state, rule-override eligibility, actual output, and whether active configuration was unchanged.
 - Runtime integrations: report configured Attribute/Action effects that were observed or state that they were not inspected.
-- Test run: state whether the output proves one runtime case, whether a historical case needs separate Replay diagnosis, and whether current published behavior needs a persistent live Test Set run.
+- Test run: state whether the output proves one runtime case, whether a historical case needs separate Replay diagnosis, and whether current published behavior needs a persistent simulated Test Suite run.
 - Full-state requirement: fetch the conversation and verify the event appears in the thread.
 - Golden-set run: preserve question, expected answer/reference, actual answer, used articles, pass/fail, and next action.
 
 ## References
 
-Read [send-turn-playbook.md](references/send-turn-playbook.md) for active-vs-artifact decisions, runtime integration effects, Replay/Test Set routing, and response interpretation.
+Read [send-turn-playbook.md](references/send-turn-playbook.md) for active-vs-artifact decisions, runtime integration effects, Replay/Test Suite routing, and response interpretation.
 
 Read [runtime-conversation-patterns.md](references/runtime-conversation-patterns.md) when continuing a conversation, passing user attributes, testing exact artifacts, or avoiding role/context mistakes.
 

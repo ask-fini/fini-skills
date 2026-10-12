@@ -12,7 +12,7 @@ Use Rulebook testing to inspect required inputs, generate candidate cases, or ex
 | Evaluate a published saved rule with controlled synthetic data | Evaluate rule |
 | Evaluate a published saved rule against stored real context | Evaluate conversation rule |
 
-Field discovery and preview do not execute the rule. Generated tests are suggestions and are not proof, persistence, or a Test Set run.
+Field discovery and preview do not execute the rule. Generated tests are suggestions and are not proof, persistence, or a Test Suite run.
 
 ## Evaluate A Rule
 
@@ -23,7 +23,7 @@ Field discovery and preview do not execute the rule. Generated tests are suggest
 5. Use synthetic evaluation when controlled input isolation matters. Use conversation evaluation when stored user attributes, messages, or runtime context are essential.
 6. Record the returned node/path results and compare them with the expected path. Preserve unexpected branches and errors rather than summarizing only `matched`.
 7. Re-fetch the rule if the test was part of a configuration workflow. Evaluation does not publish or update it.
-8. Use Generate Answer for final one-case end-to-end conversational proof. When published behavior must hold across persistent cases, use a Test Set live run after preflighting every reachable Action or external effect.
+8. Use Generate Answer for a separately authorized real integration check. Use Test Suite cases, criteria groups, and simulated Action fixtures for persistent published/draft regression.
 
 ## Generate Candidate Tests
 
@@ -35,7 +35,7 @@ Supply the exact rule description and `flowConfig`, plus the existing suite when
 - duplicate or tautological expectations;
 - fields unsupported by the current test-field response.
 
-Do not claim generated suggestions were saved. After review, establish eligible persistent Test Set cases, translate the assertions into criteria, and run them against the current published live agent with controlled inputs and external effects.
+Do not claim generated suggestions were saved. Review them, save eligible conversation captures or authored scenarios as Test Suite cases, attach criteria/groups, and run under the selected published or draft configuration with verified mocks.
 
 ## Verification
 

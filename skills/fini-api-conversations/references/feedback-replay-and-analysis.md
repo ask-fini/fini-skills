@@ -50,7 +50,7 @@ Use `fini-api-testing` for replay creation and comparison:
 3. Choose `single` to preserve prior history and regenerate only the target response. Choose `until` to regenerate every user turn through the user event linked to the target response.
 4. Supply model or artifact overrides only when they came from validated Fini data. By default replay reuses original Attribute outputs and Rulebook results; an exact rule artifact can trigger Rulebook rerun behavior.
 5. Compare the original event with the new replay events and keep both conversation IDs in the result.
-6. Use an eligible source conversation as a persistent Test Set case when appropriate. Validate any unpublished exact-ID fix through `fini-api-draft-validation`, publish it separately, then run the Test Set against current live-agent behavior. Replay conversations themselves remain ineligible Test Set inputs.
+6. Save an eligible source conversation or authored scenario as a Test Suite case, attach local/shared criteria, and compare exact draft configuration without publishing. After a separately requested publish, verify the intended published configuration on that setup. Replay conversations are ineligible capture sources.
 
 Also hand conversation-rule evaluation to `fini-api-testing`. Evaluation is a write-scoped test and can execute rule nodes; do not present it as a passive read.
 
@@ -76,7 +76,7 @@ Quality handoff
 - Source conversation:
 - Target Fini response event:
 - Rating / note / resolution:
-- Replay mode or Test Set goal:
+- Replay mode or Test Suite goal:
 - Analytics metric or section:
 - Owning skill:
 - Evidence to verify afterward:

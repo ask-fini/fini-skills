@@ -105,7 +105,7 @@ For each row:
 6. Fetch the full conversation only when persistence or audit evidence is needed.
 7. Route failures by type: content gaps to Knowledge/Sources, wrong behavior config to Agent Configuration, missing caller context to user attributes, and external lookup/action failures to Actions/Attributes.
 
-For broader regression coverage after publication, use a Test Set through `fini-api-testing`. Its asynchronous run evaluates persistent cases against current live-agent behavior and may invoke Actions or external APIs; it does not accept the unpublished artifact overrides used by Draft Validation.
+For broader regression coverage, use Test Suite cases, criteria groups, and asynchronous runs through `fini-api-testing`. Runs support captured published or selected draft configuration, recorded/custom Action mocks, and captured Attribute context; they do not prove real provider HTTP behavior.
 
 ## Attachments
 

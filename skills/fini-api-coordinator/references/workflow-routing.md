@@ -32,7 +32,7 @@ If the request mixes agent lifecycle, configuration, content, integration, runti
 | "Refine/fix this bad Fini answer, propose the right draft changes, and show the improved replay" | `fini-api-refine-with-ai` |
 | "Send one message to the bot" | `fini-api-generate-answer` |
 | "Replay this historical answer with this exact candidate" | `fini-api-testing` |
-| "Run our regression suite" / "compare pre- and post-change quality" | `fini-api-testing` Test Set workflow |
+| "Run our regression suite" / "compare pre- and post-change quality" | `fini-api-testing` Test Suite workflow |
 | "Evaluate this rule against context or a conversation" | `fini-api-testing` |
 | "Import or refresh web, Zendesk, Notion, or Confluence content" | `fini-api-sources`, then `fini-api-knowledge` if it should affect answers |
 | "Generate, inspect, version, draft, publish, roll back, or assign an article/KB content" | `fini-api-knowledge` |
@@ -46,13 +46,13 @@ If the request mixes agent lifecycle, configuration, content, integration, runti
 | One exact bad response plus AI diagnosis, generated draft fixes, and embedded replay | Refine with AI |
 | One historical answer under another configuration | Replay |
 | One Rulebook's node-level behavior | Rule evaluation |
-| Persistent regression against current published live-agent behavior | Test Set |
+| Persistent regression against captured published or selected draft configuration | Test Suite |
 | Raw stored conversation evidence | Conversations |
 | One exact Fini-authored event's stored execution trace | Event metadata through Conversations |
 | Current no-reply, internal-comment, and direct-reply conditions | Reply Rules plus fields context through Agent Configuration |
 | Aggregate agent performance | Agent analytics |
 
-These surfaces complement each other. Do not substitute raw conversation aggregation for analytics, or a handful of Generate Answer calls for a requested persistent Test Set. Draft Validation applies unpublished exact-ID candidates request by request; a Test Set runs persistent cases against current published live-agent behavior and may invoke Actions. Event metadata is stored evidence for one exact Fini-authored event, while Reply Rules describe current workspace response-mode configuration. Neither should be presented as the other, and Reply Rules are not Rulebooks.
+These surfaces complement each other. Do not substitute raw conversation aggregation for analytics, or a handful of Generate Answer calls for a requested persistent Test Suite. Draft Validation applies unpublished artifacts to new Generate Answer requests. Test Suite runs saved cases with captured published/draft configuration and simulated Actions. Event metadata is stored evidence for one exact Fini-authored event, while Reply Rules describe current workspace response-mode configuration. Neither should be presented as the other, and Reply Rules are not Rulebooks.
 
 ## Cross-Domain Recipes
 
@@ -72,7 +72,7 @@ Use only for full onboarding inside an authenticated workspace:
 10. `fini-api-draft-validation`: compare active behavior with isolated exact-ID candidates, then the reviewed combined candidate when needed.
 11. Publish separately approved exact versions through their owning skills.
 12. `fini-api-generate-answer`: create fresh active-behavior conversations and retain their IDs.
-13. `fini-api-testing`: run the persistent Test Set against current published live-agent behavior, poll it, inspect possible external effects, and use the terminal result as the go-live gate.
+13. `fini-api-testing`: run the persistent Test Suite against captured published or selected draft configuration, poll it, inspect case-level verdicts and mock diagnostics, and use the terminal result as the go-live gate.
 
 ### Customer API Action
 
@@ -83,7 +83,7 @@ Use only for full onboarding inside an authenticated workspace:
 5. `fini-api-agent-configuration`: wire the Action into an intent Rulebook draft Tool node and record its exact reviewed `draftVersionId`.
 6. Review and publish the explicit exact Rulebook `draftVersionId`; never omit it or infer a current/latest draft.
 7. Use marked Generate Answer with an acceptable target for a focused active smoke. Use Replay only for separate historical diagnosis.
-8. `fini-api-testing`: run persistent success, denial, failure, and escalation cases against the live agent; preflight controlled targets because the Test Set can rerun the Action.
+8. `fini-api-testing`: run persistent success, denial, failure, and escalation cases under captured configuration; verify recorded/custom Action mocks and saved context; a real HTTP integration smoke requires separate execution intent.
 
 ### Eligible-Message Customer Context
 
@@ -92,7 +92,7 @@ Use only for full onboarding inside an authenticated workspace:
 3. Map only the required output fields and choose which fields reach the model or Rulebooks.
 4. Test a controlled lookup, then assign the Attribute to the exact agent/channel.
 5. Verify eligible-message runtime behavior and latency with marked Generate Answer.
-6. Run persistent Attribute cases through a live Test Set and account for repeated external lookups.
+6. Run persistent Attribute cases through Test Suite using captured Attribute outputs or explicit overrides. Test real provider lookups separately.
 
 ### Prompt Or Rule Change
 
@@ -100,7 +100,7 @@ Use only for full onboarding inside an authenticated workspace:
 2. Create or refine a reviewable draft.
 3. Use `fini-api-draft-validation` to establish an artifact-free baseline, persist/fetch exact IDs, test one dimension at a time, then run a combined candidate when justified.
 4. Review and publish the exact version.
-5. Run the same persistent Test Set against current published behavior and compare with the prior live run.
+5. Run the same persistent Test Suite against current published behavior and compare with the prior run.
 6. Use Conversations and Analytics for rollout follow-up.
 
 ### First-Time Knowledge Import
@@ -110,7 +110,7 @@ Use only for full onboarding inside an authenticated workspace:
 3. Generate drafts and require persisted article/draft IDs.
 4. Review and validate exact drafts when needed, then publish, organize, and assign.
 5. Use marked Generate Answer for a focused active retrieval smoke.
-6. Gate go-live with a persistent Test Set against current published behavior; preflight reachable Actions and Attributes.
+6. Gate go-live with a persistent Test Suite against current published behavior; verify saved Attribute context, Action mocks, and effective criteria.
 
 ### Conversation Evidence To Improvement
 
@@ -118,7 +118,7 @@ Use only for full onboarding inside an authenticated workspace:
 2. When the user wants Fini to diagnose and propose the correction, use `fini-api-refine-with-ai`; read the active session first, create one confirmed iteration, and poll it to a terminal state.
 3. Review the old/replayed answers, root cause, and exact returned article/prompt/rule draft IDs. Do not recreate those drafts manually.
 4. Route each artifact to Knowledge or Agent Configuration for exact review and separate publication approval.
-5. Use Draft Validation only for additional clean cases or combined-candidate proof; after publish, rerun the stable Test Set against current live-agent behavior.
+5. Use Draft Validation only for additional clean cases or combined-candidate proof; after publish, rerun the stable Test Suite against captured published or selected draft configuration.
 6. Mark feedback resolved only after the live evidence supports it.
 
 ## Clarify Only Material Ambiguity

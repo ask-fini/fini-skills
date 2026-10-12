@@ -38,7 +38,7 @@ This sequence configures an existing Fini agent. Route agent creation to `fini-a
    - preserve returned event IDs and evidence fields
 7. Inspect conversations:
    - use conversation exports for QA, golden-set candidates, and rollout evidence
-8. Use `fini-api-draft-validation` for unpublished exact-ID candidates, `fini-api-testing` Replay for historical diagnosis, and Test Sets for persistent regression against current published live-agent behavior. Preflight Test Set Actions and external calls.
+8. Use `fini-api-draft-validation` for unpublished exact-ID candidates, `fini-api-testing` Replay for historical diagnosis, and Test Suite cases for persistent regression against captured published or selected draft configuration. Verify Test Suite saved context, effective criteria, and Action mocks.
 
 ## Configuration Mental Model
 

@@ -92,7 +92,7 @@ When Refine with AI returns a `draftArticleId`, fetch and review that exact arti
 - History inspection: report the article ID, current live version, available prior history versions, exact history version fetched, provenance/timestamp when present, and the differences from current live content. Do not flag current `N` versus latest history `N-1` as drift by itself.
 - Revert: current pre-revert snapshot and target version were captured, the exact numeric version was restored, the live article matches the intended historical fields after re-fetch, and folder/agent visibility remains correct.
 - Assignment: scoped tree for the target `botId` shows the intended folder.
-- Behavior: a marked Generate Answer smoke uses the updated/assigned knowledge; any broader Test Set run evaluates current published live-agent behavior and may invoke Actions or external APIs.
+- Behavior: a controlled Generate Answer smoke proves active knowledge behavior. Broader Test Suite regression uses saved inputs, captured published/draft configuration, and simulated Actions; verify saved context and mocks.
 - Improvement loop: failed question has a draft/live fix, retest evidence, and a clear publish decision.
 
 ## References

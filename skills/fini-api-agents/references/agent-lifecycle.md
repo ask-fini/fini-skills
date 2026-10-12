@@ -45,7 +45,7 @@ Route follow-up work:
 1. `fini-api-agent-configuration` for prompt drafts, rules, and tags.
 2. `fini-api-sources` and `fini-api-knowledge` for content, folders, and visibility.
 3. `fini-api-actions-attributes` for external capabilities and agent assignments.
-4. `fini-api-draft-validation` for unpublished candidates, marked `fini-api-generate-answer` for targeted active smoke, then `fini-api-testing` for focused diagnostics or persistent regression against current published live-agent behavior.
+4. `fini-api-draft-validation` for unpublished candidates, marked `fini-api-generate-answer` for targeted active smoke, then `fini-api-testing` for focused diagnostics or persistent regression against captured published or selected draft configuration.
 
 ## Dependency Preflight Before Delete
 
@@ -56,7 +56,7 @@ Resolve the exact ID, then create a concise dependency record:
 - knowledge folders assigned to the agent;
 - Action and Attribute assignment junctions containing the agent ID;
 - published and draft rules whose `botIds` contain the agent ID;
-- recent conversation volume and any Test Sets or operational reports that depend on its conversations;
+- recent conversation volume and any Test Suite cases or operational reports that depend on its conversations;
 - channel or provider integrations known outside the public agent endpoint.
 
 This inventory identifies impact; it is not an instruction to delete or unassign every dependency. Change related resources only when the user requests that additional scope.

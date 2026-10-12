@@ -57,7 +57,7 @@ Use full analytics when the task needs several of these together. Avoid fetching
 - A filtered view is not the agent's global performance. Include all active filters in the summary.
 - Preserve raw structured fields relevant to the question. Current documentation examples and field descriptions do not always show the same outer shape, so do not discard unfamiliar returned fields.
 - For per-conversation evidence or root-cause analysis, route to `fini-api-conversations`.
-- For an unpublished pre/post candidate, use `fini-api-draft-validation`. For release regression after publication, run the same persistent Test Set against current live-agent behavior and preflight any Actions or external APIs. Analytics remains observational.
+- Use Draft Validation for one new-turn artifact comparison, or Test Suite for saved-case published/draft regression with stable inputs, criteria groups, and mocks. Analytics remains observational.
 
 ## Report
 

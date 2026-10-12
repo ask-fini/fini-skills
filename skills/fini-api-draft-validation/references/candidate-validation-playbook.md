@@ -97,9 +97,9 @@ Capture:
 - **Ordinary Generate Answer:** use `fini-api-generate-answer` when the artifact set is already selected and no baseline/candidate methodology is needed.
 - **Replay:** use one when the question is specifically how a known stored response changes under preserved historical context. A replay creates a separate replay conversation and has its own reuse/rerun semantics.
 - **Rule evaluation:** use it to inspect a saved Rulebook's node path for supplied synthetic or conversation context. It does not prove the full prompt, retrieval, and answer runtime.
-- **Test Set:** use it for persistent cases, criteria, asynchronous run history, and release regression against current published live-agent behavior. It does not accept these request-scoped draft artifact IDs, and its live runs may invoke Actions or customer APIs.
+- **Test Suite:** use saved cases/scenarios, criteria groups, and asynchronous run history for multi-case regression. Exact prompt versions, rule drafts, and article drafts are selected on the run; Actions use saved mocks and Attributes use captured context.
 
-The MCP connector's `markAsTest: true` is a traffic marker, not a dry-run switch. Generate Answer still writes conversation/events, configured Attributes can call external systems, and reachable Actions can mutate customer systems. Apply the same external-effect preflight before a live Test Set run.
+The MCP connector's `markAsTest: true` is a traffic marker, not a dry-run switch. Generate Answer still writes conversation/events, configured Attributes can call external systems, and reachable Actions can mutate customer systems. Test Suite uses saved Attribute context and Action mocks; its results do not prove real provider calls.
 
 ## Result Template
 

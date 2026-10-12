@@ -1,6 +1,6 @@
 ---
 name: fini-api-draft-validation
-description: Use when the user wants to validate unpublished Fini prompt, knowledge-article, knowledge-snapshot, or eligible intent-rule candidates through `fini_generate_answer`; compare current behavior with one or more exact draft artifact IDs; test each candidate dimension before a combined configuration; or prove a review draft without publishing it. Route AI diagnosis and draft generation for one exact bad response to `fini-api-refine-with-ai`, ordinary turns to `fini-api-generate-answer`, caller-selected historical candidates to Replay, rule-only logic checks to rule evaluation, and persistent live-agent regression to `fini-api-testing`.
+description: Use when the user wants to validate unpublished Fini prompt, knowledge-article, knowledge-snapshot, or eligible intent-rule candidates through `fini_generate_answer`; compare current behavior with one or more exact draft artifact IDs; test each candidate dimension before a combined configuration; or prove a review draft without publishing it. Route AI diagnosis and draft generation for one exact bad response to `fini-api-refine-with-ai`, ordinary turns to `fini-api-generate-answer`, caller-selected historical candidates to Replay, rule-only logic checks to rule evaluation, and persistent simulated regression to `fini-api-testing`.
 ---
 
 # Fini API Draft Validation
@@ -18,9 +18,9 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` plus th
 | Send or continue one ordinary turn with already selected configuration | `fini-api-generate-answer` |
 | Regenerate a known historical response with its prior context | Replay through `fini-api-testing` |
 | Inspect only a Rulebook path for supplied fields | Rule test fields and rule evaluation |
-| Run durable regression cases against current published live-agent behavior | Test Sets through `fini-api-testing` |
+| Run durable regression cases against captured published or selected draft configuration | Test Suite cases through `fini-api-testing` |
 
-A Test Set run evaluates its persistent cases against current live-agent behavior and may invoke Actions or external APIs. It does not accept the request-scoped unpublished artifact overrides used here. Validate drafts with Generate Answer artifacts; use Test Sets after publication for persistent live regression.
+Test Suite runs evaluate saved inputs using captured published or selected draft configuration and simulated Actions. Use the testing skill for reusable cases, criteria groups, and multi-case draft regression; use this skill for a new request-scoped Generate Answer comparison or real integration behavior.
 
 ## Candidate Workflow
 

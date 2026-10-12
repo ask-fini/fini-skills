@@ -1,6 +1,6 @@
 ---
 name: fini-api-slack-onboarding
-description: "Use only when the user explicitly wants full Slack-led onboarding inside an existing authenticated Fini workspace: resolve or create a bare agent, configure behavior, ingest and assign knowledge, optionally add Actions and Attributes, validate review drafts, publish approved configuration, run a persistent Test Set against live-agent behavior as the go-live gate, and report readiness. First inspect workspace state; route one-off agent, source, knowledge, prompt, Rulebook, integration, analytics, conversation, or testing requests to the narrower Fini skill."
+description: "Use only when the user explicitly wants full Slack-led onboarding inside an existing authenticated Fini workspace: resolve or create a bare agent, configure behavior, ingest and assign knowledge, optionally add Actions and Attributes, validate review drafts, publish approved configuration, run a persistent Test Suite against captured published configuration as the go-live gate, and report readiness. First inspect workspace state; route one-off agent, source, knowledge, prompt, Rulebook, integration, analytics, conversation, or testing requests to the narrower Fini skill."
 ---
 
 # Fini API Slack Onboarding
@@ -72,8 +72,8 @@ Read [intake-and-state.md](references/intake-and-state.md) for the intake order,
 9. **Targeted active smoke**
    - Use `fini-api-generate-answer` for a small controlled proof of active behavior after publication. Through MCP, set its `markAsTest: true`; direct REST exposes no top-level field by that name.
 10. **Go-live regression gate**
-   - Use `fini-api-testing` to create or update a persistent Test Set, attach criteria, run it against current published live-agent behavior, poll to a terminal result, and classify every blocking failure.
-   - Preflight Action, Attribute, and external-API effects because the Test Set run can invoke them.
+   - Use `fini-api-testing` to save cases/scenarios, attach local or shared criteria, preview readiness, and run the intended published configuration. Inspect terminal case statuses and every blocking failure.
+   - Verify saved Attribute context, recorded/custom Action mocks, effective criteria, and run scope; real integration tests remain separate.
 11. **Rollout evidence**
    - Use `fini-api-conversations` for exact transcript/feedback evidence and `fini-api-agents` for aggregate analytics.
 
@@ -83,7 +83,7 @@ Read [intake-and-state.md](references/intake-and-state.md) for the intake order,
 - Prefer reviewable prompt, Rulebook, and knowledge drafts when a draft path exists.
 - If the user already provided explicit execution intent and exact targets, proceed without asking for duplicate approval.
 - If the target or intended live effect remains ambiguous, state the effect and ask one concise question.
-- Treat Action/external-call tests, rule evaluation, Replay, Generate Answer, and Test Set runs as executions when they can reach customer APIs. Use inputs and targets where the resulting real effect is acceptable.
+- Treat Action/Attribute tests, rule evaluation, standalone Replay, and Generate Answer as potentially effectful under their own contracts. Test Suite uses simulated Actions and captured Attributes, but creates replay/results and consumes model execution.
 - For historical replays, remember that `until` can regenerate multiple user turns through the target event, while `single` regenerates only the target response against preserved prior history.
 - By default, replay reuses original Attribute outputs and seeded Rulebook results unless exact prompt or rule artifacts cause the Rulebook to rerun.
 - Never expose, reconstruct, or log stored Action/Attribute secrets. Preserve a masked value only when the public contract defines it as retaining the stored secret.
@@ -98,10 +98,10 @@ Read [intake-and-state.md](references/intake-and-state.md) for the intake order,
 - **Action reachability gate:** require a reviewed published Rulebook Tool node and the explicit exact `draftVersionId` used to publish it; Action assignment alone is insufficient.
 - **Attribute assignment gate:** verify the exact agent/channel and eligible-message behavior before relying on the Attribute.
 - **Draft-validation gate:** when review drafts need behavioral proof, require persisted exact IDs, an artifact-free baseline, isolated candidates, and an explicit no-publish conclusion.
-- **Test Set gate:** do not mark a full onboarding ready without a terminal persistent regression run against current published live-agent behavior and a disposition for blocking failures.
-- **Integration-effect gate:** before Generate Answer, rule evaluation, Replay, integration tests, or Test Set runs, verify that real external effects and repeat counts are acceptable.
+- **Test Suite gate:** require terminal case-level regression evidence under the intended published configuration and a disposition for blocking failures. Draft runs provide pre-publish evidence only.
+- **Integration-effect gate:** verify acceptable real effects before Generate Answer, rule evaluation, standalone Replay, or integration tests. Verify saved context and mocks before simulated Test Suite execution.
 
-## Build The Go-Live Test Set
+## Build The Go-Live Test Suite
 
 Define 4-8 representative cases:
 
@@ -113,17 +113,15 @@ Define 4-8 representative cases:
 - Action success, denial, failure, and escalation cases when applicable
 - edge cases from historical bad answers
 
-After the intended prompt, Rulebook, knowledge, Attribute, and Action configuration is published:
+For the go-live gate, verify the intended published configuration first. Draft runs can provide earlier comparison evidence without publishing.
 
-1. Select eligible representative conversations/cases and verify the target agent, inputs, and expected behavior.
-2. Create or update the persistent Test Set and add deterministic and/or judge criteria that express launch requirements.
-3. Re-fetch current published configuration and inspect every case for reachable Actions, configured Attributes, external calls, and repeated-effect risk.
-4. Use controlled accounts and acceptable targets for Action-bearing cases.
-5. Start one live-agent run and poll until completed or failed.
-6. Inspect per-case, per-criterion, generated-behavior, and Action/external-effect evidence.
-7. Route each failure to the owning skill, make the smallest draft change, validate it before publish when needed, publish exactly, then rerun the same stable Test Set.
-
-The Test Set evaluates current published live-agent behavior and may invoke Actions or customer APIs. It does not accept the request-scoped unpublished artifact overrides used by `fini-api-draft-validation`.
+1. Save eligible conversation captures or authored scenarios for the target bot.
+2. Attach local criteria or reusable criteria groups expressing launch requirements.
+3. Verify saved Attribute context and recorded/custom Action mocks; real provider checks remain separate.
+4. Preview the exact case/folder/group selection and resolve incomplete criteria.
+5. Start one requested run against published configuration; inspect the same run until its case items are terminal.
+6. Inspect criterion verdicts, execution errors, generated replies, and mock diagnostics.
+7. Route failures to owning skills. Test selected drafts on the same setup before any separately approved publish, then rerun the intended published configuration.
 
 ## Failure Routing
 
@@ -153,7 +151,7 @@ Prompts: [draft/reviewed/published version]
 Rules/tags: [draft/published/verified IDs]
 Attributes: [not needed / IDs, assignments, proof]
 Actions: [not needed / IDs, Rulebook reachability, proof]
-Test Set: [ID, run ID, terminal status, blocking results]
+Test Suite: [case/group IDs, run ID, terminal case statuses, blocking results]
 Analytics/rollout evidence: [not checked / summary]
 Go-live blockers: [list / none]
 Next action: [one concrete step]

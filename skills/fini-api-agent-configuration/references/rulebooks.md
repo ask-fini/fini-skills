@@ -112,7 +112,7 @@ Do not rely on Action assignment junctions. The backend stores those records but
 6. Capture node-level path/results, outputs, Action calls, and errors.
 7. Generate suggested Rulebook tests when broader coverage is needed; treat the suggestions as review material, not persisted tests.
 8. For each accepted suggestion, establish an eligible persistent case, translate the relevant assertions into deterministic or judge criteria, then add the conversation/case and criteria through `fini-api-testing`.
-9. Use `fini-api-draft-validation` for an eligible unpublished exact rule-version candidate, marked Generate Answer for one final active proof, and a Test Set live run for persistent published regression. All can reach Actions.
+9. Use `fini-api-draft-validation` for one eligible Generate Answer candidate, controlled Generate Answer for real active behavior, and Test Suite for persistent published/draft regression using saved Action mocks. Real message generation retains its own external-effect rules.
 
 Rule evaluation requires write scope and may execute external Actions. It is not a read-only preview when the flow can reach a Tool node.
 
@@ -151,7 +151,7 @@ Rule evaluation requires write scope and may execute external Actions. It is not
 - Get/Preview rule test fields only derives required context. It does not prove behavior.
 - Evaluate rule loads the published saved rule and uses synthetic test identifiers. It cannot execute an unsaved flow or a brand-new unassigned draft. Use conversation-rule evaluation when testing a real conversation.
 - Rule evaluation can invoke Action Tool nodes and external APIs.
-- Generated Rulebook tests are suggestions, not Test Set records. Convert accepted cases into eligible persistent conversation/case IDs and criteria, then preflight effects before the live Test Set run.
+- Generated Rulebook tests are suggestions. Save reviewed conversation captures or authored scenarios as Test Suite cases, attach local/shared criteria, and preview the intended run with verified Action mocks.
 - Delete is destructive.
 
 ## Proof

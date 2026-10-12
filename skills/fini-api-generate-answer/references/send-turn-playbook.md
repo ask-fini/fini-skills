@@ -25,7 +25,7 @@ Use it to answer:
 - Did supplied user attributes, configured Attributes, channel, or reachable Actions matter?
 - Should the next fix go to configuration, Actions/Attributes, knowledge, sources, or caller metadata?
 
-Do not use it for aggregate regression analysis. Route an active-baseline versus unpublished-candidate sequence to `fini-api-draft-validation`. Use a Replay for historical regeneration: `single` preserves prior history and regenerates only the target response, while `until` regenerates every user turn through the linked target-user event. Default replay reuses original Attribute outputs and Rulebook results unless exact artifacts trigger Rulebook rerun behavior. Use a Test Set for persistent regression against current published live-agent behavior; it does not accept unpublished artifact overrides and may invoke Actions or external APIs.
+Do not use it for aggregate regression analysis. Route an active-baseline versus unpublished-candidate sequence to `fini-api-draft-validation`. Use a Replay for historical regeneration: `single` preserves prior history and regenerates only the target response, while `until` regenerates every user turn through the linked target-user event. Default replay reuses original Attribute outputs and Rulebook results unless exact artifacts trigger Rulebook rerun behavior. Use Test Suite cases and criteria groups for persistent published/draft regression with simulated Actions and captured Attribute context.
 
 ## Start New Conversation
 
@@ -138,7 +138,7 @@ Do not assume the first returned item is the final answer. Read all created even
 - Whether caller attributes or configured Attributes appear relevant to the answer.
 - Whether any Action result or external effect was observed.
 
-The response is event evidence for one submission, not a Test Set criterion result. Route aggregate pass/fail evidence to `fini-api-testing`.
+The response is event evidence for one submission, not a Test Suite criterion result. Route aggregate pass/fail evidence to `fini-api-testing`.
 
 ## Output Template
 

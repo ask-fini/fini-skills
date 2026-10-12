@@ -1,6 +1,6 @@
 ---
 name: fini-api-coordinator
-description: Use when the user asks which Fini public API workflow or skill to use; wants to create, inspect, delete, configure, or analyze an agent; plans or executes a Refine with AI workflow to diagnose and improve a bad response; inspects one event's execution metadata; audits workspace Reply Rules; validates unpublished prompt, knowledge, snapshot, or eligible intent-rule candidates; onboards a Fini support bot from Slack; configures Actions, Attributes, or external API calls; manages prompts, Rulebooks, tags, sources, or knowledge; sends or inspects conversations; runs analytics, replays, rule evaluations, Test Sets, or regression testing; or sequences several Fini API domains end to end. Route to the narrowest Fini skill and verify current endpoint contracts through docs.usefini.com/llms.txt.
+description: Use when the user asks which Fini public API workflow or skill to use; wants to create, inspect, delete, configure, or analyze an agent; plans or executes a Refine with AI workflow to diagnose and improve a bad response; inspects one event's execution metadata; audits workspace Reply Rules; validates unpublished prompt, knowledge, snapshot, or eligible intent-rule candidates; onboards a Fini support bot from Slack; configures Actions, Attributes, or external API calls; manages prompts, Rulebooks, tags, sources, or knowledge; sends or inspects conversations; runs analytics, replays, rule evaluations, Test Suite cases, or regression testing; or sequences several Fini API domains end to end. Route to the narrowest Fini skill and verify current endpoint contracts through docs.usefini.com/llms.txt.
 ---
 
 # Fini API Coordinator
@@ -8,6 +8,8 @@ description: Use when the user asks which Fini public API workflow or skill to u
 Use this skill as the front door for cross-domain Fini public API work. Route the request to the smallest focused skill, then let that skill own execution and proof.
 
 Before relying on a route, field, enum, scope, response shape, or limit, fetch `https://docs.usefini.com/llms.txt` and the relevant linked Markdown page. The REST docs own direct HTTP contracts; the current MCP tool schema owns connector-only inputs, translations, defaults, and confirmation gates; skills own workflow judgment and safety. Label runtime observations as observed evidence rather than silently turning them into documented API facts.
+
+For Test Suite cases, folders, criteria groups, mocks, and published/draft runs, load `fini-api-testing` and its versioned public REST reference. That contract supports shell/HTTP execution when named MCP tools are absent or still use legacy set-based operations; unavailable or stale docs do not authorize guessing other API contracts.
 
 ## Package Freshness
 
@@ -28,7 +30,7 @@ Use the scoped `add --all --copy` flow so newly released Fini skills are include
 | Configure prompt drafts/history/publishing, Rulebooks/rules/versions, tags, or tag groups; audit workspace Reply Rules | `fini-api-agent-configuration` |
 | Plan or execute diagnosis and improvement of a bad Fini response with AI-generated drafts and an automatic replay | `fini-api-refine-with-ai`; resolve one exact eligible response before execution |
 | Compare active behavior with exact unpublished prompt, knowledge, snapshot, or eligible intent-rule version IDs before publishing | `fini-api-draft-validation` |
-| Run Test Sets, criteria, asynchronous regression runs, replays, or rule diagnostics/evaluations | `fini-api-testing` |
+| Run Test Suite cases, criteria, asynchronous regression runs, replays, or rule diagnostics/evaluations | `fini-api-testing` |
 | Run a full Slack-led onboarding inside an authenticated Fini workspace | `fini-api-slack-onboarding` |
 | List, inspect, export, annotate, resolve, analyze, or delete conversations; inspect one exact Fini event's stored execution metadata | `fini-api-conversations` |
 | Send or continue one runtime turn when the configuration choice is already known | `fini-api-generate-answer` |
@@ -44,7 +46,7 @@ Use these distinctions when requests sound similar:
 - Use `fini-api-conversations` for one exact Fini-authored event's stored execution trace. Verify `role=finibot`; this read does not replay or rerun the event.
 - Use `fini-api-refine-with-ai` when planning or executing a bad-response workflow that should produce a diagnosis, reviewable prompt/article/rule drafts, and an embedded answer replay. It wins over manually guessing and recreating the fix; an exact eligible response is required only before iteration creation.
 - Use `fini-api-agent-configuration` for current workspace Reply Rules and their fields context. Reply Rules are read-only workspace response-mode conditions, not Rulebooks or historical execution proof.
-- Use `fini-api-testing` for Replay, rule diagnosis, or persistent live-agent regression. A Test Set does not accept unpublished draft artifact overrides and may invoke Actions or external APIs.
+- Use `fini-api-testing` for Replay, rule diagnosis, or persistent simulated regression. Test Suite runs accept exact prompt versions, rule drafts, and article drafts, and simulate Actions using recorded or custom mocks.
 - Use `fini-api-agents` for aggregate analytics rather than rebuilding dashboard metrics from raw exports.
 - Use `fini-api-actions-attributes` for a supported business-action integration. The customer still owns the target API, credentials, permissions, idempotency, and business rules.
 
@@ -61,7 +63,7 @@ For a full bot workflow, use only the stages the request needs:
 7. Use `fini-api-agent-configuration` to wire Actions into intent Rulebook draft Tool nodes.
 8. When unpublished behavior needs proof, use `fini-api-draft-validation` to run an artifact-free baseline, isolated exact-ID candidates, and then an intentional combined candidate.
 9. Publish only the separately approved exact prompt, knowledge, and intent-rule versions through their owning skills, then use `fini-api-generate-answer` for active-behavior proof.
-10. Use `fini-api-testing` for Replay diagnostics and persistent Test Set regression against current published live-agent behavior.
+10. Use `fini-api-testing` for Replay diagnostics and persistent Test Suite regression against captured published or selected draft configuration.
 11. Use `fini-api-conversations` for rollout evidence and improvement inputs.
 
 ## Operating Rules
@@ -71,7 +73,7 @@ For a full bot workflow, use only the stages the request needs:
 - Do not ask for duplicate confirmation when the user has already given clear execution intent and exact targets. If intent or target is ambiguous, explain the live effect and ask one concise question.
 - Preserve documented backend limits and return rich structured results; do not invent smaller wrapper limits.
 - Treat deletions, article rollback, prompt/rule publish, agent assignment, and external execution as real mutations, not as read-only checks.
-- Treat Action, Attribute, external-call, rule-evaluation, replay, Generate Answer, and Test Set execution as potentially side-effecting when Tool nodes or customer APIs are involved. A live Test Set run can invoke Actions.
+- Treat Action/Attribute tests, rule evaluation, standalone Replay, and Generate Answer as potentially effectful under their own contracts. Test Suite uses simulated Actions and captured Attributes, but creates replay/results and consumes model execution.
 - For synthetic Generate Answer candidate traffic through MCP, use the connector's `markAsTest: true`; this marks traffic but does not suppress configured Attributes, Actions, external effects, or stored events. Direct REST docs expose no top-level field by that name.
 - Persist candidate content through its owning API and pass only exact stored IDs in Generate Answer `artifacts`. Never inline prompt, knowledge, or rule content there.
 - Never ask for or repeat raw secrets in chat. Preserve a documented masked value only when the API defines that as the way to keep an existing stored secret.
@@ -79,7 +81,7 @@ For a full bot workflow, use only the stages the request needs:
   - "train/sync docs" means Sources -> Knowledge -> visibility -> proof;
   - "use account context" may mean configured Attributes for eligible messages, not only caller-supplied runtime metadata;
   - "refund/cancel/update an account" can mean a Fini Action backed by a customer-owned API;
-  - "prove we did not regress" means a persistent Test Set run against current published live-agent behavior, with external effects preflighted.
+  - "prove we did not regress" means a persistent Test Suite run against captured published or selected draft configuration, with saved inputs, effective criteria, and mocks verified.
 
 ## Boundaries
 
@@ -100,7 +102,7 @@ For a full bot workflow, use only the stages the request needs:
 - Generate Answer creates events; it is not a conversation-list response.
 - Event metadata is stored evidence for one exact Fini-authored event. Reply Rules are current workspace-level response-mode configuration; keep both distinct from Rulebooks and from each other.
 - Draft validation does not publish. Test one artifact dimension at a time before a combined candidate, and keep every comparison like-for-like.
-- Test Set runs asynchronously evaluate persistent cases against current published live-agent behavior and may invoke configured Actions or external APIs.
+- Test Suite runs asynchronously evaluate saved cases under captured published or selected draft configuration, with recorded/custom Action mocks and case-level results.
 - Action/Attribute tests and individual external-call tests execute outbound HTTP; the word "test" does not imply a dry run.
 - Analytics requires an explicit agent and time window; use sectioned analytics when the user only needs one view.
 

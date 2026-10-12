@@ -11,7 +11,7 @@ Use this reference when the user describes a customer job rather than an endpoin
 - [Train The Bot From Customer Docs](#train-the-bot-from-customer-docs)
 - [Refresh Changed Docs](#refresh-changed-docs)
 - [Diagnose And Fix A Bad Answer](#diagnose-and-fix-a-bad-answer)
-- [Prove Quality With A Test Set](#prove-quality-with-a-test-set)
+- [Prove Quality With A Test Suite](#prove-quality-with-a-test-suite)
 - [Use Caller Metadata Or Configured Attributes](#use-caller-metadata-or-configured-attributes)
 - [Make Knowledge Visible To One Agent](#make-knowledge-visible-to-one-agent)
 
@@ -33,14 +33,14 @@ Workflow:
 6. Use Actions/Attributes only when the use case needs live context or customer-system operations.
 7. Validate unpublished candidates through `fini-api-draft-validation` when pre-publish behavioral proof is required.
 8. After approved versions are published, use marked Generate Answer for focused active smoke.
-9. Use `fini-api-testing` for a persistent live-agent Test Set go-live gate and preflight possible Action/external effects.
+9. Use `fini-api-testing` for a persistent Test Suite go-live gate and verify saved inputs, effective criteria, and Action mocks.
 
 Proof:
 
 - Exact agent name and ID.
 - Existing versus newly created status.
 - Configuration, knowledge, integration, and channel-installation status kept separate.
-- Terminal Test Set run and unresolved blockers.
+- Terminal Test Suite run and unresolved blockers.
 
 ## Full Slack-Led Client Onboarding
 
@@ -62,14 +62,14 @@ Workflow:
 8. Add optional Attributes and Actions when requirements call for them.
 9. Validate review drafts through `fini-api-draft-validation` before publishing when pre-launch candidate proof is required.
 10. After publication, use marked Generate Answer for focused active smoke.
-11. Run the persistent Test Set against current published live-agent behavior, poll to terminal state, inspect external effects, and use its results as the go-live gate.
+11. Run the persistent Test Suite against captured published or selected draft configuration, inspect the same run until its case items are terminal, inspect mock diagnostics, and use its results as the go-live gate.
 
 Proof:
 
 - Onboarding classification and target agent.
 - Each user-owned prerequisite marked ready or blocked.
 - Persisted source, knowledge, configuration, and integration IDs.
-- Test Set/run IDs, pass/fail summary, and go-live blockers.
+- Test Suite/run IDs, pass/fail summary, and go-live blockers.
 
 ## Add An Action Backed By A Customer API
 
@@ -89,7 +89,7 @@ Workflow:
 6. Use `fini-api-agent-configuration` to add a Tool node to the intended intent Rulebook draft and record its exact reviewed `draftVersionId`.
 7. Publish the explicitly reviewed exact Rulebook `draftVersionId`; never omit it or resolve a current/latest draft after approval.
 8. Use marked Generate Answer with acceptable targets for a focused active smoke. Use Replay separately for historical diagnosis.
-9. Run persistent success, denial, failure, and escalation Test Set cases against the live agent. Use controlled targets because the Test Set can invoke and repeat the Action.
+9. Run persistent success, denial, failure, and escalation Test Suite cases with saved Action success/failure mocks. Verify real HTTP behavior separately through an explicitly requested integration test.
 
 Proof:
 
@@ -116,7 +116,7 @@ Workflow:
 4. Run one controlled lookup.
 5. Assign the Attribute to the exact agent/channel.
 6. Use marked Generate Answer to verify one focused eligible-message behavior, latency, and missing-data case.
-7. Run persistent Attribute cases through a live Test Set and account for repeated external lookups.
+7. Run persistent Attribute cases through Test Suite using captured Attribute outputs or explicit overrides. Test real provider lookups separately.
 
 Proof:
 
@@ -143,14 +143,14 @@ Workflow:
 4. `fini-api-knowledge`: bulk-generate draft knowledge from processed source IDs.
 5. Poll jobs and require persisted article/draft IDs.
 6. Review, publish, organize, and assign to the intended agent.
-7. Use marked Generate Answer for a focused active retrieval smoke, then run the go-live Test Set against current published behavior.
+7. Use marked Generate Answer for a focused active retrieval smoke, then run the go-live Test Suite against current published behavior.
 
 Proof:
 
 - Processed source IDs.
 - Persisted article or draft IDs.
 - Published state and agent-scoped visibility.
-- Test Set results for source-specific questions.
+- Test Suite results for source-specific questions.
 
 ## Refresh Changed Docs
 
@@ -167,7 +167,7 @@ Workflow:
 3. Generate updates as drafts.
 4. Review against the current article and its history.
 5. Publish and verify assignment.
-6. Rerun the same persistent Test Set against current published behavior and compare with its prior live run.
+6. Rerun the same persistent Test Suite against current published behavior and compare with its prior run.
 
 Proof:
 
@@ -191,7 +191,7 @@ Workflow:
 3. Review the returned root cause, old/replayed answers, and every exact article/prompt/rule draft ID. Verify factual claims against trusted evidence.
 4. Route each exact draft to Knowledge or Agent Configuration for its normal review and separate publication approval.
 5. Use `fini-api-draft-validation` only for additional clean cases or combined-candidate proof.
-6. Publish only the exact approved artifact, then rerun the persistent Test Set against current live-agent behavior and compare with baseline.
+6. Publish only the exact approved artifact, then rerun the persistent Test Suite against captured published or selected draft configuration and compare with baseline.
 7. Update feedback/resolution state only after the live evidence supports it.
 
 Proof:
@@ -199,9 +199,9 @@ Proof:
 - Original event and root-cause evidence.
 - Refine session/iteration, exact generated artifact IDs, and old/replayed answers.
 - Factual review plus exact separately published artifact/version, if approved.
-- Test Set regression result.
+- Test Suite regression result.
 
-## Prove Quality With A Test Set
+## Prove Quality With A Test Suite
 
 Customer phrases:
 
@@ -211,22 +211,22 @@ Customer phrases:
 
 Workflow:
 
-1. Select or create eligible persistent cases with stable inputs and expected outcomes.
-2. Create or update the Test Set and its deterministic and/or judge criteria.
-3. Re-fetch the target agent's current published configuration.
-4. Inspect cases for reachable Actions, Attributes, external calls, and repeated-effect risk; use controlled targets.
-5. Start one live-agent run and poll until completed or failed.
-6. Inspect per-case, per-criterion, generated-behavior, and external-effect evidence.
-7. Classify failures and route fixes to owning skills. Validate drafts separately, publish exactly, then rerun the same stable Test Set.
+1. Save eligible conversation captures or authored scenarios with stable inputs and expected outcomes.
+2. Attach case criteria or reusable criteria groups; organize cases/groups in folders when useful.
+3. Resolve published baseline or exact draft configuration and preserve saved Attribute context and Action mocks.
+4. Preview the exact selection and address cases without effective criteria.
+5. Start one requested run and inspect the same ID until all case items are terminal.
+6. Compare criterion evidence, replies, errors, mock diagnostics, and sameSetup across runs.
+7. Test candidate versions without publishing. Publish only when separately requested; a go-live gate must evaluate the intended published configuration.
 
 Proof:
 
-- Test Set, criterion, and run IDs.
+- Case, criteria-group, criterion, and run IDs.
 - Terminal status, totals, and blocking failures.
 - Baseline-versus-candidate comparison.
 - Clear go-live decision.
 
-Test Set runs evaluate current published live-agent behavior and may invoke Actions or customer APIs. They do not accept unpublished draft artifact overrides. Replay may diagnose a historical case but produces an ineligible Test Set source.
+Test Suite runs capture published or selected draft configuration and simulate Actions. Use conversation captures or authored scenarios as cases; standalone Replay output is not an eligible captured-conversation source.
 
 ## Use Caller Metadata Or Configured Attributes
 
@@ -243,4 +243,4 @@ Test Set runs evaluate current published live-agent behavior and may invoke Acti
 3. Confirm the article lives in the intended folder.
 4. Add or remove the folder-agent assignment.
 5. Re-fetch the agent-scoped tree.
-6. Use marked Generate Answer for one focused active retrieval smoke, then run the relevant persistent Test Set criterion against current live-agent behavior when broader proof is needed.
+6. Use marked Generate Answer for one focused active retrieval smoke, then run the relevant persistent Test Suite criterion against captured published or selected draft configuration when broader proof is needed.

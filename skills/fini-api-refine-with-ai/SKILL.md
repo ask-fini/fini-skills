@@ -19,7 +19,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 | Create or edit a standalone article from supplied text, files, or sources | `fini-api-knowledge` |
 | Replay a historical answer with a caller-selected exact candidate | `fini-api-testing` |
 | Compare persisted unpublished IDs on fresh controlled turns | `fini-api-draft-validation` |
-| Run broad post-publish regression | `fini-api-testing` Test Sets |
+| Run broad post-publish regression | `fini-api-testing` Test Suite cases |
 
 Do not trigger on the bare word "refine." For example, "refine this Rulebook" belongs to `fini-api-agent-configuration` unless the request is explicitly about Refine with AI for a bad response.
 
@@ -39,7 +39,7 @@ Do not trigger on the bare word "refine." For example, "refine this Rulebook" be
 9. Fetch and review each exact generated artifact. Do not recreate a second manual draft when Refine already returned one. Missing draft IDs are missing artifacts, not successful draft creation.
 10. Treat the Refine replay as the primary behavioral proof for the original response. Verify generated facts against trusted conversation, source, and current-artifact evidence; an improved answer is not by itself proof of factual accuracy.
 11. Publish only the separately reviewed exact artifact through its owning skill after explicit live-change authorization. Multiple recommendations may be approved or rejected independently.
-12. Use Draft Validation only for additional fresh cases, isolated artifact checks, or a combined candidate. After publication, use active Generate Answer proof and a stable Test Set when broader regression evidence is required. Mark conversation feedback resolved only after the live fix is proven.
+12. Use Draft Validation only for additional fresh cases, isolated artifact checks, or a combined candidate. After publication, use active Generate Answer proof and a stable Test Suite when broader regression evidence is required. Mark conversation feedback resolved only after the live fix is proven.
 
 ## Safety And Interpretation
 
