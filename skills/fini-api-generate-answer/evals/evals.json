@@ -17,12 +17,12 @@
     {
       "id": 2,
       "prompt": "Replay yesterday's failed refund conversation and score the same regression across our last 100 support conversations.",
-      "expected_output": "Routes historical-turn regeneration to Replay and the persistent cohort regression to a live Test Set run rather than using Generate Answer for both.",
+      "expected_output": "Routes historical-turn regeneration to Replay and the persistent cohort regression to a Test Suite run with saved context and mocks rather than using Generate Answer for both.",
       "assertions": [
         "Does not create a new Generate Answer conversation as a substitute for Replay",
         "Routes the historical turn to the replay workflow",
-        "Routes the multi-case criteria run to the Test Set workflow",
-        "States that the Test Set evaluates current published live-agent behavior and may invoke Actions or external APIs",
+        "Routes the multi-case criteria run to the Test Suite workflow",
+        "States that Test Suite supports published/draft configuration and simulated Actions without live fallback",
         "Explains that Generate Answer is appropriate only for a one-turn runtime proof"
       ]
     },

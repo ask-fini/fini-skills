@@ -69,7 +69,7 @@ Revert writes immediately to live knowledge. If the user wants a review step, co
 5. Revert the exact numeric version.
 6. Re-fetch the current live article and compare it field-by-field with the target snapshot.
 7. Verify folder placement and target-agent visibility.
-8. If behavioral proof is requested, rerun the affected question through marked Generate Answer traffic. For broader coverage, run a persistent Test Set against current published live-agent behavior and preflight any reachable Actions or external APIs.
+8. Use controlled Generate Answer for a separately requested active smoke. For persistent coverage, use Test Suite with saved cases, local/shared criteria, and selected published/draft configuration; Actions are simulated from saved mocks.
 
 Do not treat the revert response alone as proof. The completion record must include the pre-revert snapshot identity, target version, returned article, verification read, and any field that did not match.
 

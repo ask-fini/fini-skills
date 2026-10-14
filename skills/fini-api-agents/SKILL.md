@@ -57,7 +57,7 @@ Read [agent-analytics.md](references/agent-analytics.md) for filters, section se
 | Source ingestion | `fini-api-sources` |
 | Articles, folders, generation, agent knowledge assignment | `fini-api-knowledge` |
 | Actions, Attributes, external API calls, agent assignments | `fini-api-actions-attributes` |
-| Replays, persistent live-agent Test Set runs, criteria, or rule evaluation | `fini-api-testing` |
+| Replays, persistent Test Suite runs, criteria, or rule evaluation | `fini-api-testing` |
 | One direct behavioral turn | `fini-api-generate-answer` |
 
 Creating an agent does not create a Fini workspace, install Slack, authorize a provider, or provision a customer channel. State that boundary plainly and continue only with capabilities the public API actually exposes.

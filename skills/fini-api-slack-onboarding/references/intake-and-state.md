@@ -78,7 +78,7 @@ State:
 - customer API prerequisites: [not needed / ready / user action / blocked]
 - draft validation: [not needed / baseline / isolated candidates / combined candidate / blocked]
 - active smoke: [not started / marked test interaction+event IDs / passed / failed]
-- Test Set: [not started / cases ready / criteria ready / live run ID+status]
+- Test Suite: [not started / cases ready / criteria ready / run ID+case statuses]
 - blocking failures: [list / none]
 - approvals or user actions pending: [list / none]
 ```
@@ -93,7 +93,7 @@ Use plain, target-specific language when intent is not yet clear:
 - "I can save this as a reviewable draft or publish it immediately. Which do you want?"
 - "Assigning this Attribute makes it run for eligible message generations for agent/channel X."
 - "This Action test sends a real request to Y with operation Z."
-- "This marked Generate Answer check and the later live Test Set run can both invoke Action Y; I will use controlled targets and account for repeated effects."
+- "This Generate Answer check can invoke Action Y. The Test Suite regression uses saved mocks and does not prove the real provider operation."
 - "Deleting or rolling back this exact resource changes live workspace state."
 
 Do not repeat an approval question when the client already gave explicit intent and an exact target.
@@ -110,23 +110,23 @@ Define 4-8 cases covering the relevant subset:
 - Action success and denial/failure cases
 - one historical edge case
 
-Use exact draft validation before publication when needed. After publication, preserve representative cases for a persistent Test Set. A live Test Set run can invoke reachable Actions, so use controlled inputs and acceptable targets. For each case, track:
+Use exact draft validation before publication when needed. After publication, preserve representative cases for a persistent Test Suite. Test Suite runs simulate Actions with saved mocks and reuse captured Attributes; verify those fixtures and inputs. For each case, track:
 
 ```markdown
 Case:
 Expected behavior:
 Source conversation/case ID:
-Live-run generated result:
+Generated result:
 Criteria and execution evidence:
-Action/external effects:
+Recorded/custom Action mocks:
 Pass/fail/error:
 Failure owner:
 ```
 
-Then create/update the Test Set, add launch criteria, preflight external effects, start the live-agent run, and record:
+Then create/update the Test Suite, attach launch criteria/groups, preview readiness, start the requested simulated run, and record:
 
 ```markdown
-Test Set ID:
+Case/group IDs:
 Criterion IDs:
 Run ID:
 Terminal status:
@@ -135,4 +135,4 @@ Baseline or prior run:
 Go-live disposition:
 ```
 
-The Test Set evaluates current published live-agent behavior and may rerun Actions or external calls. It does not accept unpublished draft artifact overrides. If historical Replay is used for diagnosis, `until` can regenerate multiple user turns through the target event, while `single` regenerates only the target response against preserved history. Select acceptable inputs and targets for Generate Answer, Replay, rule evaluation, Test Set runs, and integration tests because all can be effectful.
+Test Suite supports captured published or selected draft configuration and simulated Actions. A go-live gate must use the intended published configuration; a draft pass is pre-publish evidence. Real Generate Answer, standalone Replay, rule evaluation, and integration tests retain their own external-effect preflight. Replay until/single mode remains relevant to historical diagnosis.

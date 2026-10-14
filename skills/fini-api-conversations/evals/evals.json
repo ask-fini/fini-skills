@@ -69,15 +69,15 @@
     {
       "id": 7,
       "prompt": "Replay this bad Fini response with the proposed fix and make it a permanent regression test.",
-      "expected_output": "Preserves the exact source conversation and Fini response event for Replay diagnosis, validates an unpublished exact-ID fix separately, then reruns a persistent Test Set against the published live agent.",
+      "expected_output": "Preserves the exact source conversation and Fini response event for Replay diagnosis, validates an unpublished exact-ID fix separately, then reruns Test Suite under the intended published configuration using saved context and mocks.",
       "assertions": [
         "Requires the exact Fini response event and checks for a linked user event",
         "Keeps the source conversation and replay conversation IDs distinct",
         "Routes replay creation and comparison to fini-api-testing",
-        "Does not claim that creating a replay automatically adds a Test Set case",
+        "Does not claim that creating a replay automatically adds a Test Suite case",
         "Uses fini-api-draft-validation when the proposed fix is still unpublished",
         "Uses an eligible source conversation as a persistent case only after verifying its inputs and expected behavior",
-        "States that the post-publish Test Set run evaluates live behavior and may invoke Actions or external APIs"
+        "States that post-publish Test Suite captures the intended configuration and simulates Actions; real integration health is separate"
       ]
     },
     {

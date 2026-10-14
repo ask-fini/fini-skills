@@ -4,14 +4,14 @@
     {
       "id": 1,
       "prompt": "We have a Fini workspace but no agent yet. Set up a new Slack support bot with our docs and prove it is ready to launch.",
-      "expected_output": "Routes bare-agent creation, onboarding, exact-ID draft validation, approved publication, and a persistent live-agent Test Set gate without claiming that agent creation installs Slack or creates a workspace.",
+      "expected_output": "Routes bare-agent creation, onboarding, draft validation, approved publication, and a Test Suite go-live gate under the intended published configuration without claiming agent creation installs Slack or creates a workspace.",
       "assertions": [
         "Routes agent discovery and bare-agent creation to fini-api-agents",
         "Routes the full workflow through fini-api-slack-onboarding",
         "Separates Slack installation and provider OAuth from bare-agent creation",
         "Routes unpublished candidate proof to fini-api-draft-validation when needed",
-        "Uses a terminal Test Set run against current published live-agent behavior as the go-live gate",
-        "Preflights Test Set Action and external-API effects"
+        "Uses terminal Test Suite case-level evidence under the intended published configuration as the go-live gate",
+        "Verifies Test Suite saved Attribute context and Action mocks; checks real integration effects separately"
       ]
     },
     {
@@ -40,16 +40,16 @@
     {
       "id": 4,
       "prompt": "Replay this bad response against the prompt draft and then run our 80-conversation regression suite.",
-      "expected_output": "Routes the historical exact-draft comparison to Replay, explains that the persistent Test Set cannot accept the unpublished draft, and runs the suite only against current published live-agent behavior with external effects preflighted.",
+      "expected_output": "Routes historical exact-draft comparison to Replay and saved-case regression to Test Suite, verifies the intended draft/published configuration and mocks, and keeps Replay external effects separate.",
       "assertions": [
-        "Routes replay and Test Set work to fini-api-testing",
+        "Routes Replay and Test Suite work to fini-api-testing",
         "Keeps the original conversation separate from the replay",
         "Uses the exact prompt draft artifact in Replay when supported",
         "Chooses single versus until replay deliberately and accounts for the number of regenerated user turns",
         "Accounts for default reuse of original Attribute outputs and seeded Rulebook results unless exact artifacts trigger a Rulebook rerun",
-        "Does not claim the Test Set accepts unpublished draft artifacts",
-        "States that the Test Set run evaluates current published behavior and may invoke Actions or external APIs",
-        "Polls the exact Test Set run to a terminal result only when the intended live configuration is in scope"
+        "Supports exact top-level promptVersionId for saved-case Test Suite draft regression",
+        "States that Test Suite simulates Actions while Replay retains its own effect rules",
+        "Polls the same Test Suite run until all case items are terminal"
       ]
     },
     {
@@ -83,7 +83,7 @@
         "Persists and fetches exact candidate IDs through their owning skills",
         "Tests prompt, knowledge drafts, snapshot, and eligible rule version one dimension at a time",
         "Uses like-for-like fresh conversations and, when using MCP, its markAsTest input without inventing that top-level field on direct REST",
-        "Keeps a Test Set separate as post-publish persistent live-agent regression",
+        "Uses Test Suite for saved-case published/draft regression, distinct from a fresh Generate Answer candidate",
         "States that Generate Answer may invoke Actions and creates conversation events",
         "Does not publish any candidate"
       ]

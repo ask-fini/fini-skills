@@ -15,7 +15,7 @@ Use this reference for broad API architecture, behavior-change triage, and end-t
 | Runtime | Ordinary Generate Answer turns and caller metadata | Creates conversation events and can reach configured Actions. |
 | Conversations | Stored evidence, QA state, feedback notes, resolution, deletion | QA writes change review state; deletion changes stored records. |
 | Refine with AI | One exact bad response, AI diagnosis, persisted draft recommendations, and an embedded answer replay | Creates review drafts and a replay conversation; it does not publish configuration. |
-| Testing | Replays, rule evaluation, generated tests, Test Sets, criteria, runs | Replay, rule evaluation, and live Test Set runs can execute Tool nodes or external APIs; Test Sets use current published agent behavior and do not accept draft overrides. |
+| Testing | Replays, rule evaluation, saved cases/scenarios, folders, criteria groups, runs | Test Suite captures published or selected draft configuration and simulates Actions; real Replay/rule evaluation follows its own execution mode. |
 
 ## What Changes Bot Behavior
 
@@ -31,7 +31,7 @@ Use this reference for broad API architecture, behavior-change triage, and end-t
 | Refresh changed facts | Refresh Sources -> changed subset -> Knowledge drafts -> publish | Changed source IDs and exact live article versions are verified. |
 | Prove unpublished behavior before launch | Persist/fetch exact candidates -> active baseline -> isolated artifact runs -> combined candidate | Exact artifact, interaction, and event IDs show request-scoped behavior; active state is unchanged. |
 | Prove one scenario | Generate Answer with explicit test metadata or reviewed artifacts | Created events and answer evidence satisfy the case. |
-| Prove a release did not regress | Run the same persistent Test Set before and after the published change -> poll -> compare | Published configuration IDs, terminal run IDs, case/criterion results, external effects, failures, and baseline comparison. |
+| Prove a release did not regress | Run the same persistent Test Suite before and after the published change -> poll -> compare | Captured configuration IDs, terminal case statuses, criterion evidence, mock diagnostics, errors, and baseline comparison. |
 | Diagnose and improve one historical failure | Conversation evidence -> Refine with AI -> exact artifact review | Original answer, diagnosis, generated drafts, and Refine replay remain linked and separately identifiable. |
 
 ## Triage A Bad Answer
@@ -47,7 +47,7 @@ Use this reference for broad API architecture, behavior-change triage, and end-t
 | Caller already knows the needed context | `fini-api-generate-answer` metadata/user attributes |
 | Need active-vs-unpublished candidate proof | `fini-api-draft-validation` |
 | Need one historical what-if comparison | `fini-api-testing` replay |
-| Need persistent multi-case evidence | `fini-api-testing` Test Set |
+| Need persistent multi-case evidence | `fini-api-testing` Test Suite |
 | Need dashboard-style aggregate metrics | `fini-api-agents` analytics |
 | Need exact transcript or reviewer evidence | `fini-api-conversations` |
 | Need an AI-proposed fix and replay for one exact bad response | `fini-api-refine-with-ai` |
@@ -69,7 +69,7 @@ For full onboarding inside an authenticated workspace:
 10. Validate unpublished prompt, knowledge, snapshot, and eligible intent-rule candidates one dimension at a time through `fini-api-draft-validation`.
 11. Publish only separately approved exact versions through their owning skills.
 12. Run controlled active Generate Answer cases and retain fresh live-agent conversation IDs.
-13. Create a Test Set with persistent cases and criteria, run it against current published live-agent behavior, and inspect terminal results and external effects.
+13. Save cases/scenarios, attach local or shared criteria, preview readiness, and run Test Suite with the intended published or draft configuration. Inspect case verdicts, errors, and mock diagnostics.
 14. Inspect rollout Conversations and Analytics.
 
 Creating the bare agent does not create a workspace, install Slack, authorize providers, or configure any of the subsequent layers. Verify the live docs before claiming those setup steps are publicly automatable.
@@ -84,5 +84,5 @@ Creating the bare agent does not create a workspace, install Slack, authorize pr
 - The MCP connector's `markAsTest: true` labels synthetic Generate Answer traffic but does not suppress events, Attributes, Actions, or external effects. Direct REST exposes no top-level field by that name.
 - Replay mode matters: `until` regenerates every user turn through the target linked-user event and can execute effects multiple times; `single` preserves prior event history and regenerates only the target response.
 - By default, replay reuses original Attribute outputs and seeded Rulebook results unless exact prompt or rule artifacts cause the Rulebook to rerun.
-- Test Set runs evaluate current published live-agent behavior and can invoke Actions or external APIs; preflight their cases and effects before starting.
+- Test Suite regenerates saved cases with captured published or selected draft configuration, simulated Actions, and captured Attributes. Missing mocks fail with diagnostics; no live Action fallback occurs.
 - Keep stored secrets masked. Do not reconstruct, log, or echo them in reports.

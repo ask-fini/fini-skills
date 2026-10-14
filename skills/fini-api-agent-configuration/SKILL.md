@@ -91,7 +91,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - Action assignment records are stored but not enforced at runtime. Do not use them as proof of Action availability.
 - A rule evaluation can reach Tool nodes and call external APIs. Use controlled inputs and do not label it read-only.
 - Generated Rulebook tests are suggestions, not persisted cases or behavioral proof.
-- A generated Rulebook test is not directly a Test Set row. Review it, establish an eligible persistent case/conversation, translate its assertions into Test Set criteria, then run the suite against current published live-agent behavior. Preflight reachable Actions.
+- Review generated Rulebook suggestions, save eligible conversation captures or authored scenarios as Test Suite cases, attach local criteria or reusable groups, and run published/draft regression with verified mocks. Generated suggestions do not create cases automatically.
 - Tag update/delete path IDs are tag IDs, not tag group IDs.
 - Some invalid tag/group IDs may return `500` or `null`; verify by listing known groups/tags first.
 

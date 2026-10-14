@@ -24,7 +24,7 @@ Conversations are evidence, not the fix. Use them to decide which workflow shoul
 - Action reached but failed -> `fini-api-actions-attributes`.
 - Good answer candidates -> golden-set regression rows.
 - One-off answer comparison -> replay through `fini-api-testing`.
-- Repeatable coverage -> Test Set and criteria through `fini-api-testing`.
+- Repeatable coverage -> Test Suite and criteria through `fini-api-testing`.
 - Aggregate quality or performance question -> agent analytics through `fini-api-agents`.
 - Delete requests -> destructive conversation cleanup only, not quality improvement.
 
@@ -43,7 +43,7 @@ Conversations are evidence, not the fix. Use them to decide which workflow shoul
    - pass/fail reason
    - next action
 4. Remove unnecessary personal data before sharing the golden set.
-5. Hand selected eligible conversation IDs to `fini-api-testing` as persistent cases. A run evaluates current published live-agent behavior and may invoke Actions; it says nothing about a later configuration until that version is published and the same stable set is rerun.
+5. Hand selected eligible conversation IDs to `fini-api-testing` as persistent cases. A Test Suite run evaluates captured published or selected draft configuration using saved Attribute context and simulated Action mocks; verify the intended published configuration separately for a go-live claim.
 
 ## Conversation Evidence To Knowledge Improvement
 
@@ -74,9 +74,9 @@ The event's thumbs rating, qualitative note, resolution flag, and Refine `feedba
 2. Confirm the response has a linked user event before requesting a replay.
 3. Record whether the user wants `single` to preserve prior history and regenerate only the target response, or `until` to regenerate every user turn through the linked target-user event.
 4. Record whether validated model/artifact overrides are in scope. Default replay reuses original Attribute outputs and Rulebook results; exact rule artifacts can trigger Rulebook rerun behavior.
-5. Hand replay creation, replay-event comparison, rule evaluation, and Test Set work to `fini-api-testing`.
-6. Keep the original and replay IDs distinct. A replay is a separate conversation and is not automatically a Test Set case.
-7. Validate an unpublished fix through `fini-api-draft-validation`, publish it exactly, then rerun the stable persistent Test Set against current live-agent behavior before declaring the regression resolved. Preflight Action/external effects.
+5. Hand replay creation, replay-event comparison, rule evaluation, and Test Suite work to `fini-api-testing`.
+6. Keep the original and replay IDs distinct. A replay is a separate conversation and is not automatically a Test Suite case.
+7. Compare the unpublished fix on the stable Test Suite setup using exact run-level draft selectors, or use Draft Validation for a new controlled turn. Publish only when separately requested; verify the intended published configuration before declaring the live regression resolved.
 
 ## Golden Set Output Template
 
