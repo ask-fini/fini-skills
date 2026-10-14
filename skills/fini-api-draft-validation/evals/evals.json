@@ -54,15 +54,12 @@
     },
     {
       "id": 5,
-      "prompt": "Run our Test Set against this unpublished prompt draft so we know how the live regression suite performs.",
-      "expected_output": "Explains that a Test Set cannot apply the unpublished draft, uses exact-ID Generate Answer candidate validation first, and keeps the later live-agent regression run plus its possible Action effects separate.",
+      "prompt": "Run our saved Test Suite cases against this unpublished prompt draft before publication.",
+      "expected_output": "Routes the saved-case regression to fini-api-testing, which supports an exact top-level promptVersionId and simulated Action mocks; retains Generate Answer Draft Validation for one new-turn comparison.",
       "assertions": [
-        "Does not claim a Test Set can apply promptVersionId",
-        "Uses Generate Answer with the persisted exact prompt draft for candidate behavior",
-        "States that Generate Answer creates the candidate conversations and events",
-        "Routes persistent cases and asynchronous live-agent regression to fini-api-testing after publication",
-        "States that the Test Set run may invoke Actions or external APIs",
-        "Does not call the live Test Set run proof that the unpublished draft was tested"
+        "Routes saved-case regression to fini-api-testing",
+        "Distinguishes Test Suite top-level selectors from Generate Answer artifacts",
+        "Does not claim a simulated draft pass means publication or real integration health"
       ]
     },
     {

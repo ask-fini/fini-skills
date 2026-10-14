@@ -1,4 +1,4 @@
 interface:
   display_name: "Fini Testing and Quality"
-  short_description: "Run Fini diagnostics and live regression."
-  default_prompt: "Use $fini-api-testing to diagnose behavior or run a persistent regression suite against the current live Fini agent."
+  short_description: "Run Fini diagnostics and Test Suite regressions."
+  default_prompt: "Use $fini-api-testing to compare saved cases under published or exact draft configuration with verified criteria and Action mocks."

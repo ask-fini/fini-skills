@@ -43,7 +43,7 @@ Conversations are evidence, not the fix. Use them to decide which workflow shoul
    - pass/fail reason
    - next action
 4. Remove unnecessary personal data before sharing the golden set.
-5. Hand selected eligible conversation IDs to `fini-api-testing` as persistent cases. A run evaluates current published live-agent behavior and may invoke Actions; it says nothing about a later configuration until that version is published and the same stable set is rerun.
+5. Hand selected eligible conversation IDs to `fini-api-testing` as persistent cases. A Test Suite run evaluates captured published or selected draft configuration using saved Attribute context and simulated Action mocks; verify the intended published configuration separately for a go-live claim.
 
 ## Conversation Evidence To Knowledge Improvement
 

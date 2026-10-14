@@ -4,15 +4,15 @@
     {
       "id": 1,
       "prompt": "We have an empty Fini workspace and want a new Slack support agent called Atlas trained on our help center. Take us through launch readiness.",
-      "expected_output": "A full onboarding flow that creates a bare agent, separates Slack installation, validates drafts when needed, publishes approved configuration, and ends with a persistent Test Set run against live-agent behavior.",
+      "expected_output": "Creates a bare agent, separates Slack installation, validates drafts when needed, publishes approved configuration, and ends with Test Suite case-level evidence under the intended published configuration.",
       "assertions": [
         "Inspects workspace state before classifying the onboarding",
         "Creates or resolves a bare agent and records its exact botId",
         "Does not claim bare-agent creation installs Slack or creates a workspace",
         "Verifies a usable knowledge tree and creates or initializes one when absent before source-backed generation",
         "Uses exact-ID draft validation before publication when candidate proof is needed",
-        "Uses a terminal live-agent Test Set run as the go-live gate",
-        "Preflights any Action or external-API effects in the Test Set cases"
+        "Uses a terminal Test Suite run under the intended published configuration as the go-live gate",
+        "Verifies saved Attribute context and recorded/custom Action mocks for the Test Suite cases"
       ]
     },
     {
@@ -25,8 +25,8 @@
         "Does not treat Action assignment as runtime reachability",
         "Publishes the reviewed intent Rulebook only with its explicit exact draftVersionId",
         "Keeps customer API auth, permissions, and idempotency as explicit prerequisites",
-        "Uses controlled accounts and acceptable targets for Action-bearing Test Set cases",
-        "States that the live Test Set run can invoke the Action and accounts for repeated effects"
+        "Verifies recorded/custom Action mocks for Action-bearing Test Suite cases",
+        "States that Test Suite simulates Actions and fails missing mocks without live fallback"
       ]
     },
     {
@@ -42,15 +42,13 @@
     },
     {
       "id": 4,
-      "prompt": "Our onboarding Test Set includes a cancellation case. Run it against production now; calling the cancellation API is intended.",
-      "expected_output": "Treats the Test Set as a live-agent run that can invoke the cancellation API, binds execution to controlled targets and expected multiplicity, then polls the exact run to terminal status.",
+      "prompt": "Our onboarding Test Suite includes a cancellation case. Run it against production now; calling the cancellation API is intended.",
+      "expected_output": "Explains that Test Suite simulates cancellation and cannot prove the real API call, runs the requested saved-case regression with verified mocks, and treats any real integration test as a separate scoped execution.",
       "assertions": [
-        "States that the Test Set run evaluates current published agent behavior and can invoke the cancellation Action",
-        "Uses the user's explicit execution intent without asking twice",
-        "Preflights exact cases, controlled targets, and possible repeated cancellations",
-        "Polls the same Test Set run to completed or failed",
-        "Does not expose stored headers, tokens, or raw secrets",
-        "Reports per-case failures and go-live disposition"
+        "States that Test Suite uses recorded/custom cancellation mocks without live fallback",
+        "Verifies exact selection, saved context, effective criteria and Action mocks",
+        "Polls the same run until all case items are terminal",
+        "Does not report simulated cancellation as a real provider call"
       ]
     },
     {
@@ -66,14 +64,14 @@
     },
     {
       "id": 6,
-      "prompt": "Our onboarding Test Set only contains conversations from before the final prompt and knowledge changes. Can that be our go-live proof?",
-      "expected_output": "Treats eligible old conversations as persistent case seeds, verifies they still represent launch requirements, and runs the Test Set against current published live-agent behavior before declaring readiness.",
+      "prompt": "Our onboarding Test Suite only contains conversations from before the final prompt and knowledge changes. Can that be our go-live proof?",
+      "expected_output": "Verifies saved inputs, criteria and mocks still represent launch requirements, then evaluates the intended published configuration and keeps real integration checks separate.",
       "assertions": [
-        "Does not treat old stored answers themselves as proof of current behavior",
-        "Verifies source-case eligibility, target agent, inputs, and expected outcomes",
-        "Uses the persistent cases to run the current published live agent",
-        "Uses controlled acceptable targets for every Action-bearing case",
-        "States that the Test Set run may invoke Actions or external APIs"
+        "Does not treat old stored answers as proof of current behavior",
+        "Verifies source-case eligibility, target agent, saved inputs and expected outcomes",
+        "Uses the saved cases under the intended published configuration",
+        "Verifies captured Attribute context and recorded/custom Action mocks",
+        "Explains that simulated Actions do not prove real customer API health"
       ]
     }
   ]

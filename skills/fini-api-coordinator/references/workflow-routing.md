@@ -72,7 +72,7 @@ Use only for full onboarding inside an authenticated workspace:
 10. `fini-api-draft-validation`: compare active behavior with isolated exact-ID candidates, then the reviewed combined candidate when needed.
 11. Publish separately approved exact versions through their owning skills.
 12. `fini-api-generate-answer`: create fresh active-behavior conversations and retain their IDs.
-13. `fini-api-testing`: run the persistent Test Suite against captured published or selected draft configuration, poll it, inspect case-level verdicts and mock diagnostics, and use the terminal result as the go-live gate.
+13. `fini-api-testing`: run the persistent Test Suite under the intended published configuration, inspect terminal case-level verdicts and mock diagnostics, and disposition blocking failures before declaring go-live readiness.
 
 ### Customer API Action
 
@@ -118,7 +118,7 @@ Use only for full onboarding inside an authenticated workspace:
 2. When the user wants Fini to diagnose and propose the correction, use `fini-api-refine-with-ai`; read the active session first, create one confirmed iteration, and poll it to a terminal state.
 3. Review the old/replayed answers, root cause, and exact returned article/prompt/rule draft IDs. Do not recreate those drafts manually.
 4. Route each artifact to Knowledge or Agent Configuration for exact review and separate publication approval.
-5. Use Draft Validation only for additional clean cases or combined-candidate proof; after publish, rerun the stable Test Suite against captured published or selected draft configuration.
+5. Use Draft Validation only for additional clean cases or combined-candidate proof; after publish, rerun the stable Test Suite under the intended published configuration.
 6. Mark feedback resolved only after the live evidence supports it.
 
 ## Clarify Only Material Ambiguity

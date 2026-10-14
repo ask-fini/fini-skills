@@ -2,7 +2,7 @@
 
 Workflow skills for AI coding agents using the Fini public API for agent lifecycle, configuration, customer API integrations, knowledge, runtime, analytics, conversations, Refine with AI, and quality.
 
-These skills do not replace the Fini API docs. They teach an agent how to choose and sequence workflows, handle async and versioned lifecycles, distinguish draft from live state, preserve source/knowledge boundaries, use Refine with AI for conversation-grounded fixes, validate exact unpublished candidate artifacts, run persistent cases against current published behavior, and verify that an API workflow actually worked.
+These skills do not replace the Fini API docs. They teach an agent how to choose and sequence workflows, handle async and versioned lifecycles, distinguish draft from live state, preserve source/knowledge boundaries, use Refine with AI for conversation-grounded fixes, validate exact unpublished candidate artifacts, run persistent cases against captured published or selected draft configuration, and verify that an API workflow actually worked.
 
 ## Install In Claude
 
@@ -56,7 +56,7 @@ npx skills add ask-fini/fini-skills --all
 | Skill | Use when |
 | --- | --- |
 | `fini-api-coordinator` | Route cross-domain Fini work across agent lifecycle, configuration, Actions/Attributes, knowledge, runtime, analytics, conversations, and quality. |
-| `fini-api-slack-onboarding` | Run full Slack-led onboarding, validate unpublished candidates when needed, and use a controlled live Test Set run as the go-live gate. |
+| `fini-api-slack-onboarding` | Run full Slack-led onboarding, validate unpublished candidates when needed, and use a Test Suite run under the intended published configuration as the go-live gate. |
 | `fini-api-agent-configuration` | Draft, review, and publish versioned prompts and intent Rulebooks; safely manage immediate-live Business Rules, tags, and tag groups; audit workspace Reply Rules. |
 | `fini-api-agents` | Create, inspect, delete, and analyze Fini agents, then route them into configuration, knowledge, Actions/Attributes, and testing workflows. |
 | `fini-api-actions-attributes` | Configure Actions, eligible-message Attributes, external API steps, assignments, Rulebook wiring, testing, and cleanup. |
@@ -66,7 +66,7 @@ npx skills add ask-fini/fini-skills --all
 | `fini-api-draft-validation` | Compare an active baseline with exact unpublished prompt, knowledge, snapshot, or eligible intent-rule candidates through request-scoped artifact IDs without publishing them. |
 | `fini-api-sources` | Import, crawl, register, ingest, refresh, poll, detect changed content for, or delete Fini sources before knowledge generation. |
 | `fini-api-knowledge` | Generate and manage knowledge, article drafts/history/rollback, folders, publishing, organization, and agent visibility. |
-| `fini-api-testing` | Choose among Generate Answer, replays, rule evaluation, analytics, and persistent Test Sets that run against current published live-agent behavior; interpret regression evidence and external effects. |
+| `fini-api-testing` | Choose among Generate Answer, replays, rule evaluation, analytics, and persistent Test Suite cases, shared criteria, mocks, and published/draft regression runs; interpret regression evidence and external effects. |
 
 ## Freshness
 
@@ -124,11 +124,12 @@ The skills add:
 - Folder reads are snapshot-backed; if snapshots disagree with current agents/articles/sources, stop and flag stale workspace state.
 - Knowledge is ready only after article/draft verification, publish/review decision, folder assignment, and runtime proof when needed.
 - Draft Validation sends exact persisted artifact IDs only, marks synthetic traffic, isolates one candidate dimension at a time, and never implies publication.
-- The MCP connector's `markAsTest: true` input is not a dry run. Generate Answer and live Test Set runs can invoke Attributes, Actions, Data Steps, and customer APIs; use controlled identities and acceptable effects. Direct REST docs expose no top-level field by that name.
-- Test Sets run persistent cases against current published live-agent behavior. They do not accept request-scoped unpublished draft overrides.
+- The MCP connector's `markAsTest: true` input is not a dry run. Generate Answer can invoke Attributes, Actions, Data Steps, and customer APIs; use controlled identities and acceptable effects. Direct REST docs expose no top-level field by that name.
+- Test Suite runs saved conversation/scenario cases under captured published or selected draft configuration. Actions use recorded/custom mocks; missing mocks fail without calling the live Action. Attributes use saved context or overrides.
+- Preview checks effective criteria, not Action mock completeness or draft eligibility. Read group impact before replacing criteria or unlinking cases, and preserve the latest `impactToken`.
 - Keep ordinary Action/Attribute updates same-kind by omitting `alwaysGet`. Use the typed update's optional `alwaysGet` only for an explicit in-place Action-to-Attribute or Attribute-to-Action conversion, then reconcile the non-atomic runtime topology cutover.
 - Build every Data Step update from a fresh complete backend read, preserve `{ "hide": true, "value": "********" }` wrappers unchanged, never use a sanitized summary as the write source, and block when a secret-bearing wrapper is missing or truncated.
 
 ## Current Shape
 
-The current package uses twelve skills. `fini-api-refine-with-ai` owns planning and execution of AI-assisted bad-response diagnosis, generated draft lineage, and the embedded replay; execution begins only after resolving one exact eligible response. Conversations retains evidence and QA state, while Knowledge and Agent Configuration retain exact review and publication. `fini-api-slack-onboarding` remains intentionally narrow: it should trigger only for full new-client-style onboarding, then route into focused skills. Agent lifecycle and analytics live in `fini-api-agents`; customer API integrations live in `fini-api-actions-attributes`; exact pre-publish artifact proof lives in `fini-api-draft-validation`; ordinary active-runtime turns live in `fini-api-generate-answer`; and standalone Replay, rule diagnostics, and persistent Test Sets against current published behavior live in `fini-api-testing`.
+The current package uses twelve skills. `fini-api-refine-with-ai` owns planning and execution of AI-assisted bad-response diagnosis, generated draft lineage, and the embedded replay; execution begins only after resolving one exact eligible response. Conversations retains evidence and QA state, while Knowledge and Agent Configuration retain exact review and publication. `fini-api-slack-onboarding` remains intentionally narrow: it should trigger only for full new-client-style onboarding, then route into focused skills. Agent lifecycle and analytics live in `fini-api-agents`; customer API integrations live in `fini-api-actions-attributes`; exact pre-publish artifact proof lives in `fini-api-draft-validation`; ordinary active-runtime turns live in `fini-api-generate-answer`; and standalone Replay, rule diagnostics, and persistent Test Suite published/draft regression with saved inputs and mocks live in `fini-api-testing`.

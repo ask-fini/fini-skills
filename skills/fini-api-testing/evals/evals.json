@@ -6,7 +6,7 @@
       "prompt": "We changed a prompt draft for our refund bot. Re-run this one previously bad conversation and tell me whether the answer improved.",
       "expected_output": "Uses one replay tied to the exact original response event and exact prompt draft version, preserves the original, and compares aligned evidence without claiming that default replay refreshes Rulebook or Attribute execution.",
       "assertions": [
-        "Chooses Replay instead of a broad Test Set or analytics query",
+        "Chooses Replay instead of a broad Test Suite or analytics query",
         "Captures the original conversation ID, target response event ID, answer, and exact promptVersionId",
         "Passes the promptVersionId in replay artifacts rather than testing the current published prompt",
         "Chooses single mode when only the selected response should be regenerated and explains that until can regenerate multiple turns and effects",
@@ -19,22 +19,20 @@
     {
       "id": 2,
       "prompt": "Run our refund regression suite after the Rulebook change. Some cases can trigger the cancel-order action.",
-      "expected_output": "Verifies the Rulebook change is published, preflights the persistent Test Set's live cancel-order effects, runs the suite against current agent behavior, and reports traceable case, criterion, and Action evidence.",
+      "expected_output": "Resolves the intended published or exact draft Rulebook configuration, verifies saved cases, criteria and cancel-order mocks, starts one simulated Test Suite run, and reports case-level results without calling the cancellation API.",
       "assertions": [
-        "Verifies the intended Rulebook version is current, published, and assigned to the target agent",
-        "Routes an unpublished Rulebook candidate to fini-api-draft-validation instead of pretending the Test Set accepts ruleVersionIds",
-        "Re-fetches the exact persistent cases and criteria before running",
-        "Names the potential cancel-order calls, multiplicity, controlled targets, and repeated-effect risk",
-        "States that the live Test Set run can invoke the cancel-order Action",
-        "Starts one run and polls the same run ID until completed or failed",
-        "Separates run failure, behavioral failure, and errored conversations",
-        "Reports per-case criterion reasoning plus Action and external-effect evidence instead of only an aggregate pass rate"
+        "Verifies the intended agent and published configuration, or selects exact eligible draft Rulebook versions through run-level ruleVersionIds without publishing",
+        "Re-fetches the exact persistent cases and effective criteria before running",
+        "Verifies recorded/custom cancel-order mocks and captured Attribute context",
+        "Explains that a missing Action mock fails rather than calling the cancel-order API",
+        "Starts one run and polls the same run ID until no case item remains queued or running",
+        "Separates completed criterion failures from execution errors"
       ]
     },
     {
       "id": 3,
       "prompt": "Before saving this Rulebook draft, tell me which fields it needs and generate some candidate tests. Do not execute the rule.",
-      "expected_output": "Uses unsaved-flow field preview and generated-test suggestions without evaluating the rule or running a Test Set.",
+      "expected_output": "Uses unsaved-flow field preview and generated-test suggestions without evaluating the rule or running a Test Suite.",
       "assertions": [
         "Uses Preview rule test fields for the unsaved flowConfig",
         "Treats generated Rulebook tests as reviewable suggestions",
@@ -66,27 +64,23 @@
     },
     {
       "id": 6,
-      "prompt": "The migration test set is finished. Delete criterion crit-9 and test set set-3, but keep all source conversations.",
-      "expected_output": "Preserves a reconstruction and audit snapshot, performs exact requested cleanup only after confirming no active run, keeps source conversations, and verifies the criterion and set are absent.",
+      "prompt": "The migration regression is finished. Delete saved case case-3 and its standalone library criterion crit-9, but keep all source conversations.",
+      "expected_output": "Preserves reconstruction evidence, deletes only the requested saved case through the supported route, verifies absence, and explains that no public standalone criterion-delete route exists.",
       "assertions": [
-        "Checks the exact Test Set, criterion, and run state before deletion",
-        "Preserves set metadata, conversation IDs, criterion definitions, run IDs, and retained results",
+        "Preserves case setup, criteria, membership and relevant run evidence",
         "Does not delete any source conversation",
-        "Waits for an active run to become terminal before deleting the Test Set",
-        "Deletes only crit-9 and set-3",
-        "Uses list/get checks to verify absence and reports the evidence"
+        "Does not invent a standalone criterion-delete, group-delete or run-delete endpoint",
+        "Uses list/get checks to verify case absence and reports unsupported criterion cleanup"
       ]
     },
     {
       "id": 7,
-      "prompt": "Run our persistent Test Set against unpublished prompt draft pv_42 before we decide whether to publish it.",
-      "expected_output": "Explains that Test Sets use current published live-agent behavior and do not accept prompt draft artifacts, then routes the exact draft comparison to fini-api-draft-validation.",
+      "prompt": "Run our saved Test Suite cases against unpublished prompt draft pv_42 before we decide whether to publish it.",
+      "expected_output": "Resolves the exact prompt version and saved setup, previews case readiness, then starts a Test Suite run with top-level promptVersionId without publishing or calling live Actions.",
       "assertions": [
-        "Does not pass promptVersionId to the Test Set run",
-        "Routes active-baseline versus exact unpublished draft proof to fini-api-draft-validation",
-        "When using MCP, uses its markAsTest input for Generate Answer candidate traffic; does not invent that top-level field on direct REST",
-        "Keeps publication a separate decision",
-        "Explains that a later Test Set run evaluates the published live agent and may invoke Actions or external APIs"
+        "Uses the verified exact workspace-owned promptVersionId at the Test Suite run top level with the intended saved-case selection, not Generate Answer artifacts",
+        "Preserves baseline/candidate inputs, effective criteria, saved Attributes and Action mocks",
+        "Explains that preview does not validate draft eligibility or all runtime Action mocks"
       ]
     }
   ]

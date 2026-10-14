@@ -62,7 +62,7 @@ Workflow:
 8. Add optional Attributes and Actions when requirements call for them.
 9. Validate review drafts through `fini-api-draft-validation` before publishing when pre-launch candidate proof is required.
 10. After publication, use marked Generate Answer for focused active smoke.
-11. Run the persistent Test Suite against captured published or selected draft configuration, inspect the same run until its case items are terminal, inspect mock diagnostics, and use its results as the go-live gate.
+11. Run the persistent Test Suite under the intended published configuration, inspect the same run until its case items are terminal, and inspect blocking failures and mock diagnostics before declaring go-live readiness.
 
 Proof:
 
@@ -191,7 +191,7 @@ Workflow:
 3. Review the returned root cause, old/replayed answers, and every exact article/prompt/rule draft ID. Verify factual claims against trusted evidence.
 4. Route each exact draft to Knowledge or Agent Configuration for its normal review and separate publication approval.
 5. Use `fini-api-draft-validation` only for additional clean cases or combined-candidate proof.
-6. Publish only the exact approved artifact, then rerun the persistent Test Suite against captured published or selected draft configuration and compare with baseline.
+6. Publish only the exact approved artifact, then rerun the persistent Test Suite under the intended published configuration and compare with baseline.
 7. Update feedback/resolution state only after the live evidence supports it.
 
 Proof:

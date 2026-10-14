@@ -9,7 +9,7 @@
         "Lists existing agents and checks the intended name before creating",
         "Captures the returned agent ID and verifies it appears in List agents",
         "States that agent creation does not provision a workspace, Slack, channels, or finished configuration",
-        "Routes prompts, knowledge, Actions or Attributes, unpublished draft validation, and persistent live-agent regression to their owning skills"
+        "Routes prompts, knowledge, Actions or Attributes, unpublished draft validation, and persistent Test Suite published/draft regression to their owning skills"
       ]
     },
     {
@@ -57,7 +57,7 @@
         "Defines explicit comparable before and after windows",
         "Keeps the timezone and filters consistent across both queries",
         "Distinguishes metric change from proof that the launch caused it",
-        "Routes causal investigation to conversation evidence and uses a persistent Test Set against current published live-agent behavior for regression proof"
+        "Routes causal investigation to conversation evidence and uses a persistent Test Suite under verified configuration with saved context and mocks for regression proof"
       ]
     }
   ]

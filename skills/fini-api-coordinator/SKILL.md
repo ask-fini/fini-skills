@@ -9,8 +9,6 @@ Use this skill as the front door for cross-domain Fini public API work. Route th
 
 Before relying on a route, field, enum, scope, response shape, or limit, fetch `https://docs.usefini.com/llms.txt` and the relevant linked Markdown page. The REST docs own direct HTTP contracts; the current MCP tool schema owns connector-only inputs, translations, defaults, and confirmation gates; skills own workflow judgment and safety. Label runtime observations as observed evidence rather than silently turning them into documented API facts.
 
-For Test Suite cases, folders, criteria groups, mocks, and published/draft runs, load `fini-api-testing` and its versioned public REST reference. That contract supports shell/HTTP execution when named MCP tools are absent or still use legacy set-based operations; unavailable or stale docs do not authorize guessing other API contracts.
-
 ## Package Freshness
 
 For read-only questions, inspect and report the installed Fini skill-pack version without silently changing it. If the user asks to install or refresh the project-scoped pack, run from the project root:

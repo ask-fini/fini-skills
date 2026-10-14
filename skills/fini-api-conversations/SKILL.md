@@ -52,7 +52,7 @@ Before endpoint-specific work, fetch `https://docs.usefini.com/llms.txt` and the
 - Preserve rating (`approved`), qualitative note (`feedback`), event resolution, conversation resolution, and CSAT as distinct signals. Do not collapse them into one "approval" field.
 - Route evidence by failure type: content gaps to Knowledge/Sources; behavior config issues to Agent Configuration; configured Attribute, Data Step, or Action failures to Actions/Attributes; Action reachability to Agent Configuration Tool-node wiring; and caller-supplied runtime context issues to Generate Answer metadata.
 - Prefer `fini-api-refine-with-ai` when the user wants a grounded proposed correction from a specific bad answer. It owns the iteration, generated draft lineage, and embedded replay; this skill retains evidence and QA state.
-- Use `fini-api-draft-validation` for unpublished exact-ID candidate comparisons. Use `fini-api-testing` for Replays, rule evaluation, and persistent Test Suite runs against captured published or selected draft configuration; those runs simulate Actions using recorded/custom mocks and captured Attribute context.
+- Use `fini-api-draft-validation` for unpublished exact-ID candidate comparisons. Use `fini-api-testing` for Replays, rule evaluation, and persistent Test Suite runs against captured published or selected draft configuration; Test Suite runs simulate Actions using recorded/custom mocks and captured Attribute context. Replay and rule evaluation retain their own external-effect rules.
 - Use `fini-api-agents` for aggregate analytics and section-level performance reads.
 - Do not bulk delete unless the user explicitly confirms exact IDs and, for more than 50 IDs, the disclosed batch boundaries.
 
